@@ -1,5 +1,6 @@
 import React from 'react';
 import Square from './Square';
+import '../stylesheets/Board.scss';
 
 // Board
 // this will represent the chess board
@@ -8,13 +9,13 @@ import Square from './Square';
 class Board extends React.Component {
     // renders an individual square of the board
     renderSquare(row, column, shade) {
-        // set the style so that this square will show a piece if one is in this square
-        let style = this.props.board[row][column].piece ? this.props.board[row][column].piece.style : null;
+        // if there is a piece in this square make sure to display the piece
+        let src = (this.props.board[row][column].piece === null ? "null" : this.props.board[row][column].piece.src);
         return (
             <Square 
-                onClick={this.props.onClick(row, column)}
-                style={style}
+                onClick={() => this.props.onClick(row, column)}
                 shade={shade}
+                src={src}
             />
         );
     }
@@ -27,13 +28,24 @@ class Board extends React.Component {
             toAdd.length = 8;
             for (let column = 0; column < 8; column++) {
                 let shade;
-                if ((row & 2 == 0 && column % 2 == 0) || (row % 2 != 0 && column % 2 != 0)) shade = "light";
+                if ((row % 2 === 0 && column % 2 === 0) || (row % 2 !== 0 && column % 2 !== 0)) shade = "light";
                 else shade = "dark";
-                toAdd[column] = renderSquare(row, column, shade);
+                toAdd[column] = this.renderSquare(row, column, shade);
             }
-            board[row] = <div>{toAdd}</div>
+            board[row] = (<ul className="row">
+                            {toAdd.map((square, i) => (
+                                <li key={`${row} ${i}`}>{square}</li>
+                            ))}
+                        </ul>
+                    );
         }
-        return <div>{board}</div>;
+        return (
+            <ul className="rows">
+                {board.map((row, i) => (
+                    <li key={i}>{row}</li>
+                ))}
+            </ul>
+        );
     }
 }
 

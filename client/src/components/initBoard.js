@@ -5,7 +5,6 @@ import Knight from '../chess-classes/Knight';
 import Bishop from '../chess-classes/Bishop';
 import Rook from '../chess-classes/Rook';
 import Pawn from '../chess-classes/Pawn';
-import Spot from '../chess-classes/Spot';
 
 // this file contains a function that initializes the chess board with all the pieces in their starting locations 
 const initBoard = () => {

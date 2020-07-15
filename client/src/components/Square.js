@@ -1,5 +1,6 @@
 import React from 'react';
-import color from './color';
+//import color from './color';
+import '../stylesheets/Square.scss';
 
 // class Square extends React.Component {
 //     constructor(props) {
@@ -19,12 +20,14 @@ import color from './color';
 // }
 
 const Square = (props) => {
+    if (props.src === "null") return <button className={"square-"+props.shade} onClick={props.handleClick} />;
     return (
-        <Button 
-            style={props.style}
-            className={"square-"+props.shade}
-            onClick={props.onClick}
-        />
+        <button className={"square-"+props.shade} onClick={props.handleClick}>
+            <img 
+                src={props.src}
+                alt="chess piece"
+            />
+        </button>
     );
 }
 
