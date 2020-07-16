@@ -20,15 +20,21 @@ import '../stylesheets/Square.scss';
 // }
 
 const Square = (props) => {
-    if (props.src === "null") return <button className={"square-"+props.shade} onClick={props.handleClick} />;
-    return (
-        <button className={"square-"+props.shade} onClick={props.handleClick}>
-            <img 
-                src={props.src}
-                alt="chess piece"
-            />
-        </button>
-    );
+    if (props.src === "null") {
+        return (<button 
+                    className={"square-"+props.shade} 
+                    onMouseDown={props.handleMouseDown} 
+                />);
+    } else {
+        return (<button 
+                    className={"square-"+props.shade} 
+                    onMouseDown={props.handleMouseDown}>
+                        <img 
+                            src={props.src}
+                            alt="chess piece"
+                        />
+                </button>);
+    }
 }
 
 export default Square;

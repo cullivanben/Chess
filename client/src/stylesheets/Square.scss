@@ -1,15 +1,27 @@
 $light-color: #ededd4;
 $dark-color: #7f945d;
+$light-highlight: #f6f693;
+$dark-highlight: #bdc956;
 
 button {
     padding: 0;
     margin: 0;
     height: 52px;
     width: 52px;
+    border: none;
+}
+button:focus {
+    outline: none;
 }
 .square-light {
     background: $light-color;
 }
+.square-light:focus {
+    background: $light-highlight;
+}
 .square-dark {
-    background-color: $dark-color;
+    background: $dark-color;
+}
+.square-dark:focus {
+    background: $dark-highlight;
 }

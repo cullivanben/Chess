@@ -10,7 +10,7 @@ class Knight extends Piece {
     }
 
     // determines whether the knight can be moved to the specified location
-    canMove(start, destination) {
+    canMove(start, destination, board) {
         return canMoveKnight(start, destination, board);
     }
 }

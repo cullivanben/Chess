@@ -2,12 +2,12 @@
 // row, column, piece, and whether it is occupied
 
 class Spot {
-    constructor(row, column) {
-        this.row = row;
-        this.column = column;
+    constructor(position) {
+        this.position = position;
         this.piece = null;
         this.canAttackKing = false;
         this.isProtectingKing = false;
+        this.highlighted = false;
     }
 }
 

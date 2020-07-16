@@ -6,50 +6,40 @@ import Bishop from '../chess-classes/Bishop';
 import Rook from '../chess-classes/Rook';
 import Pawn from '../chess-classes/Pawn';
 
-// this file contains a function that initializes the chess board with all the pieces in their starting locations 
+// initializes the chess board with all the pieces in their starting locations 
 const initBoard = () => {
-    // set up the 2D array that will hold all of the spots on the board
+    // set up the array that will hold all of the spots on the board
     let board = [];
-    board.length = 8;
-    for (let row = 0; row < 8; row++) {
-        // populate a row of the board with spots
-        let toAdd = [];
-        toAdd.length = 8;
-        for (let column = 0; column < 8; column++) {
-            toAdd[column] = new Spot(row, column);
-        }
-        // add the row to the board
-        board[row] = toAdd;
+    board.length = 64;
+    for (let i = 0; i < 64; i++) {
+        board[i] = new Spot(i);
     }
 
-    // add pieces to the boards in their starting locations
-    // pawns
-    for (let i = 0; i < 8; i++) {
-        board[1][i].piece = new Pawn(false, board);
-    }
-    for (let i = 0; i < 8; i++) {
-        board[6][i].piece = new Pawn(true, board);
+    // non friendly pieces
+    board[0].piece = new Rook(false, board);
+    board[1].piece = new Knight(false, board);
+    board[2].piece = new Bishop(false, board);
+    board[3].piece = new Queen(false, board);
+    board[4].piece = new King(false, board);
+    board[5].piece = new Bishop(false, board);
+    board[6].piece = new Knight(false, board);
+    board[7].piece = new Rook(false, board);
+    for (let i = 8; i < 16; i++) {
+        board[i].piece = new Pawn(false, board);
     }
 
-    // other non friendly pieces
-    board[0][0].piece = new Rook(false, board);
-    board[0][1].piece = new Knight(false, board);
-    board[0][2].piece = new Bishop(false, board);
-    board[0][3].piece = new Queen(false, board);
-    board[0][4].piece = new King(false, board);
-    board[0][5].piece = new Bishop(false, board);
-    board[0][6].piece = new Knight(false, board);
-    board[0][7].piece = new Rook(false, board);
-
-    // other friendly pieces
-    board[7][0].piece = new Rook(true, board);
-    board[7][1].piece = new Knight(true, board);
-    board[7][2].piece = new Bishop(true, board);
-    board[7][3].piece = new Queen(true, board);
-    board[7][4].piece = new King(true, board);
-    board[7][5].piece = new Bishop(true, board);
-    board[7][6].piece = new Knight(true, board);
-    board[7][7].piece = new Rook(true, board);
+    // friendly pieces
+    for (let i = 48; i < 56; i++) {
+        board[i].piece = new Pawn(true, board);
+    }
+    board[56].piece = new Rook(true, board);
+    board[57].piece = new Knight(true, board);
+    board[58].piece = new Bishop(true, board);
+    board[59].piece = new Queen(true, board);
+    board[60].piece = new King(true, board);
+    board[61].piece = new Bishop(true, board);
+    board[62].piece = new Knight(true, board);
+    board[63].piece = new Rook(true, board);
 
     return board;
 }
