@@ -1,10 +1,10 @@
 import Spot from '../chess-classes/Spot';
-import King from '../chess-classes/King';
-import Queen from '../chess-classes/Queen';
-import Knight from '../chess-classes/Knight';
-import Bishop from '../chess-classes/Bishop';
-import Rook from '../chess-classes/Rook';
-import Pawn from '../chess-classes/Pawn';
+import King from '../chess-classes/pieces/King';
+import Queen from '../chess-classes/pieces/Queen';
+import Knight from '../chess-classes/pieces/Knight';
+import Bishop from '../chess-classes/pieces/Bishop';
+import Rook from '../chess-classes/pieces/Rook';
+import Pawn from '../chess-classes/pieces/Pawn';
 
 // initializes the chess board with all the pieces in their starting locations 
 const initBoard = () => {

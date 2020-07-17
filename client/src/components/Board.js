@@ -16,6 +16,8 @@ class Board extends React.Component {
             board: initBoard(),
             deadEnemy: [],
             deadFriends: [],
+            enemyCheck: false,
+            selfCheck: false,
             selection: -1,
             kingPosition: 60,
             turn: "self"

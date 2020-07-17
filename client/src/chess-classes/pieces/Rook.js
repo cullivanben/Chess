@@ -1,7 +1,7 @@
 import Piece from './Piece';
-import sources from './sources';
-import { canMoveRook } from './movement-heplers';
-import { rookCanAttack } from './king-attack-helpers';
+import sources from '../sources';
+import { canMoveRook } from '../helpers/movement-heplers';
+import { rookWillAttack } from '../helpers/danger-helpers';
 
 // Rook
 // this class represents a chess rook
@@ -16,8 +16,8 @@ class Rook extends Piece {
     }
 
     // determines whether this rook will be able to attack the king after this move 
-    canAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
-        return rookCanAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
+    willAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
+        return rookWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
     }
 }
 

@@ -1,7 +1,7 @@
 import Piece from './Piece';
-import sources from './sources';
-import { canMoveBishop } from './movement-heplers';
-import { bishopCanAttack } from './king-attack-helpers';
+import sources from '../sources';
+import { canMoveBishop } from '../helpers/movement-heplers';
+import { bishopWillAttack } from '../helpers/danger-helpers';
 
 // Bishop
 // this class represents a chess bishop
@@ -16,8 +16,8 @@ class Bishop extends Piece {
     }
 
     // determines whether the bishop will be able to attack the king after this move has occurred
-    canAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
-        return bishopCanAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
+    willAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
+        return bishopWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
     }
 }
 

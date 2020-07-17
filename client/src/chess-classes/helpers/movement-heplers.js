@@ -29,7 +29,7 @@ export function canMovePawn(start, destination, board, kingPosition) {
 }
 
 // returns whether a rook can be moved from the start to the destination
-export function canMoveRook(start, destination, board) {
+export function canMoveRook(start, destination, board, kingPosition) {
     // if the destination contains a friendly piece, the rook cannot move there
     if (destination.piece !== null && destination.piece.friendly) return false;
     // convert the positions to rows and columns
@@ -71,7 +71,7 @@ export function canMoveRook(start, destination, board) {
 }
 
 // returns whether a knight can be moved from the start to the destination
-export function canMoveKnight(start, destination, board) {
+export function canMoveKnight(start, destination, board, kingPosition) {
     // if the destination contains a friendly piece, the knight cannot be moved there
     if (destination.piece !== null && destination.piece.friendly) return false;
     // convert the positions to rows and columns
@@ -94,7 +94,7 @@ export function canMoveKnight(start, destination, board) {
 }
 
 // returns whether a bishop can be moved from the start to the destination
-export function canMoveBishop(start, destination, board) {
+export function canMoveBishop(start, destination, board, kingPosition) {
     // if the destination contains a friendly piece the bishop cannot move there
     if (destination.piece !== null && destination.piece.friendly) return false;
     // convert the positions to rows and columns
@@ -136,7 +136,7 @@ export function canMoveBishop(start, destination, board) {
 }
 
 // returns whether a king can be moved from the start to the destination
-export function canMoveKing(start, destination, board) {
+export function canMoveKing(start, destination, board, kingPosition) {
     // if the destination is occupied by a friendly piece, the king cannot move there
     if (destination.piece !== null && destination.piece.friendly) return false;
     // convert the positions to rows and columns
