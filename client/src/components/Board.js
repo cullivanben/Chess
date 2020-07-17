@@ -1,7 +1,7 @@
 import React from 'react';
+import update from 'immutability-helper';
 import Square from './Square';
 import initBoard from './initBoard';
-import update from 'immutability-helper';
 import '../stylesheets/Board.scss';
 
 // Board
@@ -17,7 +17,8 @@ class Board extends React.Component {
             deadEnemy: [],
             deadFriends: [],
             selection: -1,
-            turn: "sefl"
+            kingPosition: 60,
+            turn: "self"
         }
         this.handleMouseDown = this.handleMouseDown.bind(this);
     }
@@ -30,27 +31,34 @@ class Board extends React.Component {
             // piece, do nothing
             if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
             // figure out which positions need to be highlighted
-            let toHighlight = this.whichHighlight(this.state.board, position);
+            let toHighlight = this.whichHighlight(this.state.board, position, this.state.kingPosition);
             // set the state with the selected position and the highlighted spots
-            this.setState({
+            this.setState(prevState => ({
                 selection: position,
-                board: update(this.state.board, {
+                board: update(prevState.board, {
                     $apply: board => board.map((spot, i) => {
-                        if (toHighlight.has(i)) board[i].highlighted = true;
-                        else board[i].highlighted = false;
+                        if (toHighlight.has(i)) spot.highlighted = true;
+                        else spot.highlighted = false;
                         return spot;
                     })
                 })
-            });
+            }));
         } 
         // if there is a piece currently selected
+        else {
+            // if the selection cannot move to this position, do nothing
+            if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
+                .canMove(this.state.board[this.state.selection], this.state.board[position], this.state.board))
+                return;
+            console.log("This is a valid move", position);
+        }
     }
 
     // returns a set of the positions of all the spots that can be moved to
-    whichHighlight(board, position) {
+    whichHighlight(board, position, kingPosition) {
         let positions = new Set();
         for (let i = 0; i < board.length; i++) {
-            if (board[position].piece.canMove(board[position], board[i], board)) {
+            if (board[position].piece.canMove(board[position], board[i], board, kingPosition)) {
                 positions.add(i);
             } 
         }

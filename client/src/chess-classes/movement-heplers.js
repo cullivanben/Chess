@@ -3,7 +3,7 @@ import { dangerous } from './danger-helpers';
 // this file contains helper export functions for the movement methods of the chess pieces
 
 // returns whether a pawn can be moved from the start to the destination
-export function canMovePawn(start, destination, board) {
+export function canMovePawn(start, destination, board, kingPosition) {
     // convert the positions to rows and columns
     let startRow = Math.floor(start.position / 8);
     let startColumn = start.position % 8;

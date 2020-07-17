@@ -1,29 +1,21 @@
 import React from 'react';
-//import color from './color';
+import color from './color';
 import '../stylesheets/Square.scss';
 
-// class Square extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.spot = this.props.spot;
-//     }
-
-//     render() {
-//         return (
-//             <Button 
-//                 style={this.props.style}
-//                 className={"square-"+this.props.shade}
-//                 onClick={this.props.onClick}
-//             />
-//         );
-//     }
-// }
-
 const Square = (props) => {
-    // figure out the style of this component based on the props
+    // set the style of this component based on the props
     let style = {};
-    if (props.selected) style.border = "2px solid #ff0000";
-    else if (props.highlighted) style.border = "2px solid #0000ff";
+    if (props.shade === "light") {
+        if (props.selected) style.background = color.lightSquareHighlight;
+        else style.background = color.lightSquareColor;
+        if (props.highlighted) style.border = ("2px solid " + color.blue);
+        else style.border = ("2px solid " + (props.selected ? color.lightSquareHighlight : color.lightSquareColor));
+    } else {
+        if (props.selected) style.background = color.darkSquareHighlight;
+        else style.background = color.darkSquareColor;
+        if (props.highlighted) style.border = ("2px solid " + color.blue);
+        else style.border = ("2px solid " + (props.selected ? color.darkSquareHighlight : color.darkSquareColor));
+    }
 
     // render the square 
     if (props.src === "null") {
