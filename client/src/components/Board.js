@@ -1,6 +1,7 @@
 import React from 'react';
 import Square from './Square';
-import initBoard from './initBoard'
+import initBoard from './initBoard';
+import update from 'immutability-helper';
 import '../stylesheets/Board.scss';
 
 // Board
@@ -15,7 +16,7 @@ class Board extends React.Component {
             board: initBoard(),
             deadEnemy: [],
             deadFriends: [],
-            selection: null,
+            selection: -1,
             turn: "sefl"
         }
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -24,41 +25,36 @@ class Board extends React.Component {
     // handles when a mouse is initially pressed down
     handleMouseDown(position) {
         // if there is no piece currently selected 
-        if (this.state.selection === null) {
+        if (this.state.selection === -1) {
             // if they clicked on a spot with no piece or if they clicked on a spot with a non-friendly 
             // piece, do nothing
-            if (this.state.board[position].piece === null || 
-                !this.state.board[position].piece.friendly) return;
-
-            // clone the current board and highlight the elements within it that can be attacked
-            let newBoard = this.highlightElements(this.state.board.slice());
-        
-            
-
-
-
-            // // update the state with the piece they selected
-            // this.setState(state => {
-            //     return {selection: state.board[row][column]};
-            // });
-
-
-
-
-
-
+            if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
+            // figure out which positions need to be highlighted
+            let toHighlight = this.whichHighlight(this.state.board, position);
+            // set the state with the selected position and the highlighted spots
+            this.setState({
+                selection: position,
+                board: update(this.state.board, {
+                    $apply: board => board.map((spot, i) => {
+                        if (toHighlight.has(i)) board[i].highlighted = true;
+                        else board[i].highlighted = false;
+                        return spot;
+                    })
+                })
+            });
         } 
         // if there is a piece currently selected
-        else {
-
-        }
-        let row = Math.floor(position / 8);
-        let column = position % 8;
-        console.log("you have pressed the mouse at " + row + " " + column);
     }
 
-    highlightElements(newBoard) {
-
+    // returns a set of the positions of all the spots that can be moved to
+    whichHighlight(board, position) {
+        let positions = new Set();
+        for (let i = 0; i < board.length; i++) {
+            if (board[position].piece.canMove(board[position], board[i], board)) {
+                positions.add(i);
+            } 
+        }
+        return positions;
     }
 
     // renders an individual square of the board
@@ -67,6 +63,8 @@ class Board extends React.Component {
         let src = (this.state.board[position].piece === null ? "null" : this.state.board[position].piece.src);
         return (<Square 
                     handleMouseDown={() => this.handleMouseDown(position)}
+                    highlighted={this.state.board[position].highlighted}
+                    selected={position === this.state.selection}
                     shade={shade}
                     src={src}
                 />);

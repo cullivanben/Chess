@@ -20,15 +20,23 @@ import '../stylesheets/Square.scss';
 // }
 
 const Square = (props) => {
+    // figure out the style of this component based on the props
+    let style = {};
+    if (props.selected) style.border = "2px solid #ff0000";
+    else if (props.highlighted) style.border = "2px solid #0000ff";
+
+    // render the square 
     if (props.src === "null") {
         return (<button 
                     className={"square-"+props.shade} 
                     onMouseDown={props.handleMouseDown} 
+                    style={style}
                 />);
     } else {
         return (<button 
                     className={"square-"+props.shade} 
-                    onMouseDown={props.handleMouseDown}>
+                    onMouseDown={props.handleMouseDown}
+                    style={style}>
                         <img 
                             src={props.src}
                             alt="chess piece"
