@@ -1,5 +1,5 @@
 import React from 'react';
-import color from './color';
+import color from './helpers/color';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/css/Square.css';
 

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A real time chess web app.",
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cullivanben/Chess.git"
+  },
   "scripts": {
     "start": "nodemon app",
     "dev": "npm app"
@@ -11,8 +15,13 @@
   "author": "Ben Cullivan",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "google-auth-library": "^6.0.5",
+    "googleapis": "^55.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "socket.io": "^2.3.0",
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

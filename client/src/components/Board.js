@@ -1,10 +1,12 @@
 import React from 'react';
+import io from 'socket.io-client';
 import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
 import King from '../chess-classes/pieces/King';
-import initBoard from './initBoard';
+import initBoard from './helpers/initBoard';
 import '../stylesheets/sass/Board.scss';
+const endpoint = "http://localhost:5000";
 
 
 // Board
@@ -28,13 +30,26 @@ class Board extends React.Component {
             turn: "self"
         }
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.socket = null;
+    }
+
+    componentDidMount() {
+        // connect to the socket
+        this.socket = io(endpoint);
+        // listen for incoming board updates and update the state when they are recieved
+        this.socket.on("incoming-board-update", data => this.handleBoardUpdate(data));
+    }
+
+    // handles when this component recieves data from the socket it is connected to
+    handleBoardUpdate(data) {
+        console.log(data.message);
     }
 
     // handles when a mouse is initially pressed down
     handleMouseDown(position) {
+        this.socket.emit("outgoing-board-update", {message: "oh yeah"});
         // if there is no piece currently selected 
         if (this.state.selection === -1) {
-            console.log("there is no selection");
             // if they clicked on a spot with no piece or if they clicked on a spot with a non-friendly 
             // piece, do nothing
             if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
@@ -48,12 +63,10 @@ class Board extends React.Component {
         } 
         // if there is a piece currently selected
         else {
-            console.log("there is a selection");
             // if the selection cannot move to this position, do nothing
             if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
                 .canMove(this.state.board[this.state.selection], this.state.board[position], 
                 this.state.board, this.state.kingPosition)) return;
-            console.log("the check was passed");
             // determine the new king position
             let newKingPosition = (this.state.board[this.state.selection].piece 
                 instanceof King ? position : this.state.kingPosition);
@@ -77,6 +90,7 @@ class Board extends React.Component {
                         })
                     })
                 }));
+                // send the new update to the other player
             }
             // if this move does not kill an enemy
             else {
@@ -110,7 +124,6 @@ class Board extends React.Component {
 
     // renders an individual square of the board
     renderSquare(position, shade) {
-        console.log(position, this.state.highlighted.has(position));
         // if there is a piece in this square make sure to display the piece
         let src = (this.state.board[position].piece === null ? "null" : 
             this.state.board[position].piece.src);
@@ -124,7 +137,6 @@ class Board extends React.Component {
     }
 
     render() {
-        console.log("\n\n\n\n");
         // set up the board of squares to render
         let board = [];
         board.length = 8;
