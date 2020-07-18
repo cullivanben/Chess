@@ -1,7 +1,8 @@
 import Piece from './Piece';
-import sources from '../sources';
+import sources from './sources';
 import { canMoveRook, canMoveBishop } from '../helpers/movement-heplers';
 import { rookWillAttack, bishopWillAttack } from '../helpers/danger-helpers';
+
 
 // Queen
 // this class represents a chess queen

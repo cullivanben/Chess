@@ -1,40 +1,36 @@
 import React from 'react';
 import color from './color';
-import '../stylesheets/Square.scss';
+import sources from '../chess-classes/pieces/sources';
+import '../stylesheets/css/Square.css';
 
-const Square = (props) => {
+
+const Square = props => {
     // set the style of this component based on the props
     let style = {};
     if (props.shade === "light") {
-        if (props.selected) style.background = color.lightSquareHighlight;
+        if (props.selected) style.background = color.lightSquareSelect;
+        else if (props.highlighted) style.background = color.lightSqareHighlight;
         else style.background = color.lightSquareColor;
-        if (props.highlighted) style.border = ("2px solid " + color.blue);
-        else style.border = ("2px solid " + (props.selected ? color.lightSquareHighlight : color.lightSquareColor));
-    } else {
-        if (props.selected) style.background = color.darkSquareHighlight;
+    } 
+    else {
+        if (props.selected) style.background = color.darkSquareSelect;
+        else if (props.highlighted) style.background = color.darkSquareHighlight;
         else style.background = color.darkSquareColor;
-        if (props.highlighted) style.border = ("2px solid " + color.blue);
-        else style.border = ("2px solid " + (props.selected ? color.darkSquareHighlight : color.darkSquareColor));
     }
 
-    // render the square 
-    if (props.src === "null") {
-        return (<button 
-                    className={"square-"+props.shade} 
-                    onMouseDown={props.handleMouseDown} 
-                    style={style}
-                />);
-    } else {
-        return (<button 
-                    className={"square-"+props.shade} 
-                    onMouseDown={props.handleMouseDown}
-                    style={style}>
-                        <img 
-                            src={props.src}
-                            alt="chess piece"
-                        />
-                </button>);
-    }
+    let src = (props.src === "null" ? sources.blackKnight : props.src);
+    let name = (props.src === "null" ? "transparent" : "opaque");
+
+    return (<button
+                className="square"
+                onMouseDown={props.handleMouseDown}
+                style={style}>
+                    <img 
+                        className={name}
+                        src={src}
+                        alt="Chess Piece"
+                    />
+            </button>);
 }
 
 export default Square;

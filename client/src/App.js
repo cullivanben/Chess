@@ -1,6 +1,6 @@
 import React from 'react';
 import Screen from './components/Screen';
-import './stylesheets/App.scss';
+import './stylesheets/sass/App.scss';
 
 const App = () => {
   return (

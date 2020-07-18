@@ -4,7 +4,6 @@ class Piece {
     constructor(friendly, iconURL) {
         this.friendly = friendly;
         this.src = iconURL;
-        this.protectingKing = false;
     }
 }
 

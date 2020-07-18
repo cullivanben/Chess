@@ -1,0 +1,14 @@
+.square {
+    padding: 0;
+    margin: 0;
+    height: 52px;
+    width: 52px;
+    border: none;
+    font-size: 0;
+}
+button:focus {
+    outline: none;
+}
+.transparent {
+    opacity: 0;
+}

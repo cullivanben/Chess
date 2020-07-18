@@ -1,0 +1,16 @@
+.dead-enemy, .dead-friends, .dead-row {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    li {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.dead-row {
+    li {
+        display: inline;
+    }
+}

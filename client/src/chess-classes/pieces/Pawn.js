@@ -1,6 +1,7 @@
 import Piece from './Piece';
-import sources from '../sources';
+import sources from './sources';
 import { canMovePawn } from '../helpers/movement-heplers';
+
 
 // Pawn 
 // This is the class to represent a pawn

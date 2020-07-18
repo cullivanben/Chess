@@ -1,3 +1,15 @@
+/*
+This file contains the urls to the source files of the chess piece svgs.
+I claim no right to any of these files, I am merely using them for this web app.
+I MADE NO CHANGES TO THESE FILES.
+The svg files are provided under the following licences:
+https://commons.wikimedia.org/wiki/Commons:GNU_Free_Documentation_License,_version_1.2
+https://creativecommons.org/licenses/by-sa/3.0/deed.en
+https://en.wikipedia.org/wiki/GNU_General_Public_License
+The copyright notice provided by the author is near the bottom of this page: 
+https://commons.wikimedia.org/wiki/File:Chess_kdt45.svg
+*/
+
 // svg source urls for the chess pieces
 const sources = {
     whitePawn: "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg",

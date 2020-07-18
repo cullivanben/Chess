@@ -1,6 +1,7 @@
 import Piece from './Piece';
-import sources from '../sources';
+import sources from './sources';
 import { canMoveKing } from '../helpers/movement-heplers';
+
 
 // King
 // this class represents a chess king

@@ -5,8 +5,10 @@ const color = {
     blue: "#0000ff",
     lightSquareColor: "#ededd4",
     darkSquareColor: "#7f945d",
-    lightSquareHighlight: "#f6f693",
-    darkSquareHighlight: "#bdc956"
+    lightSquareSelect: "#f6f693",
+    darkSquareSelect: "#bdc956",
+    lightSqareHighlight: "#91c2e3",
+    darkSquareHighlight: "#49a2de"
 };
 
 export default color;

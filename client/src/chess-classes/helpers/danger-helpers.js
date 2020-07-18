@@ -3,10 +3,10 @@ import Knight from '../pieces/Knight';
 import King from '../pieces/King';
 
 // whether a given spot on the board is being attacked by the enemy
-export function dangerous(location, board) {
+export function dangerous(location, board, friendly) {
     // check every piece on the board and see if it can attack the specified location
     for (let i = 0; i < board.length; i++) {
-        if (board[i].piece !== null && !board[i].piece.friendly && 
+        if (board[i].piece !== null && friendly !== board[i].piece.friendly &&
             board[i].piece.canMove(board[i], location, board)) return true;
     }
     return false;
@@ -15,7 +15,7 @@ export function dangerous(location, board) {
 // returns whether the king would be in check if this move took place
 export function cantMove(start, destination, board, kingPosition) {
     for (let i = 0; i < board.length; i++) {
-        if (board[i].piece !== null && !board[i].piece.friendly && board[i].position !== destination.position
+        if (board[i].piece !== null && (start.piece.friendly !== board[i].piece.friendly) && board[i].position !== destination.position
             && !(board[i].piece instanceof Pawn) && !(board[i].piece instanceof Knight) && !(board[i].piece instanceof King)
             && board[i].piece.willAttackKing(board[i], kingPosition, board, start, destination)) 
             return true;
@@ -28,8 +28,8 @@ export function rookWillAttack(position, kingPosition, board, ignoreOne, ignoreT
     // convert the positions to rows and columns
     let thisRow = Math.floor(position.position / 8);
     let thisColumn = position.position % 8;
-    let kingRow = Math.floor(kingPosition.position / 8);
-    let kingColumn = kingPosition.position % 8;
+    let kingRow = Math.floor(kingPosition / 8);
+    let kingColumn = kingPosition % 8;
     let ignoreRow = Math.floor(ignoreOne.position / 8);
     let ignoreColumn = ignoreOne.position % 8;
     let blockedRow = Math.floor(ignoreTwo.position / 8);
@@ -81,8 +81,8 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
     // convert the positions to rows and columns
     let thisRow = Math.floor(position.position / 8);
     let thisColumn = position.position % 8;
-    let kingRow = Math.floor(kingPosition.position / 8);
-    let kingColumn = kingPosition.position % 8;
+    let kingRow = Math.floor(kingPosition / 8);
+    let kingColumn = kingPosition % 8;
     let ignoreRow = Math.floor(ignoreOne.position / 8);
     let ignoreColumn = ignoreOne.position % 8;
     let blockedRow = Math.floor(ignoreTwo.position / 8);
@@ -92,7 +92,7 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
     // if there is a piece bwtween this bishop and the king, this bishop cannot attack
     if (thisColumn < kingColumn) {
         if (thisRow < kingRow) {
-            for (let i = thisRow+1, j = startColumn+1; i < kingRow; i++) {
+            for (let i = thisRow+1, j = thisColumn+1; i < kingRow; i++) {
                 if ((i !== ignoreRow || j !== ignoreColumn) &&
                     board[i * 8 + j].piece !== null) return false;
                 if (i === blockedRow && j++ === blockedColumn) return false;

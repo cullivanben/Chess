@@ -1,7 +1,8 @@
 import Piece from './Piece';
-import sources from '../sources';
+import sources from './sources';
 import { canMoveRook } from '../helpers/movement-heplers';
 import { rookWillAttack } from '../helpers/danger-helpers';
+
 
 // Rook
 // this class represents a chess rook

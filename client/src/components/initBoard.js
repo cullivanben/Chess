@@ -6,6 +6,7 @@ import Bishop from '../chess-classes/pieces/Bishop';
 import Rook from '../chess-classes/pieces/Rook';
 import Pawn from '../chess-classes/pieces/Pawn';
 
+
 // initializes the chess board with all the pieces in their starting locations 
 const initBoard = () => {
     // set up the array that will hold all of the spots on the board

@@ -1,8 +1,11 @@
 import React from 'react';
 import update from 'immutability-helper';
 import Square from './Square';
+import StatsBar from './StatsBar';
+import King from '../chess-classes/pieces/King';
 import initBoard from './initBoard';
-import '../stylesheets/Board.scss';
+import '../stylesheets/sass/Board.scss';
+
 
 // Board
 // this will represent the chess board
@@ -14,12 +17,14 @@ class Board extends React.Component {
         super(props);
         this.state = {
             board: initBoard(),
-            deadEnemy: [],
+            highlighted: new Set(),
+            deadEnemies: [],
             deadFriends: [],
             enemyCheck: false,
             selfCheck: false,
             selection: -1,
             kingPosition: 60,
+            enemyKingPosition: 4,
             turn: "self"
         }
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -29,30 +34,66 @@ class Board extends React.Component {
     handleMouseDown(position) {
         // if there is no piece currently selected 
         if (this.state.selection === -1) {
+            console.log("there is no selection");
             // if they clicked on a spot with no piece or if they clicked on a spot with a non-friendly 
             // piece, do nothing
             if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
             // figure out which positions need to be highlighted
             let toHighlight = this.whichHighlight(this.state.board, position, this.state.kingPosition);
             // set the state with the selected position and the highlighted spots
-            this.setState(prevState => ({
+            this.setState({
                 selection: position,
-                board: update(prevState.board, {
-                    $apply: board => board.map((spot, i) => {
-                        if (toHighlight.has(i)) spot.highlighted = true;
-                        else spot.highlighted = false;
-                        return spot;
-                    })
-                })
-            }));
+                highlighted: toHighlight
+            });
         } 
         // if there is a piece currently selected
         else {
+            console.log("there is a selection");
             // if the selection cannot move to this position, do nothing
             if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
-                .canMove(this.state.board[this.state.selection], this.state.board[position], this.state.board))
-                return;
-            console.log("This is a valid move", position);
+                .canMove(this.state.board[this.state.selection], this.state.board[position], 
+                this.state.board, this.state.kingPosition)) return;
+            console.log("the check was passed");
+            // determine the new king position
+            let newKingPosition = (this.state.board[this.state.selection].piece 
+                instanceof King ? position : this.state.kingPosition);
+            // get the piece that is being moved
+            let selectedPiece = this.state.board[this.state.selection].piece;
+            // if there is an enemy piece at this location, it is now dead
+            if (this.state.board[position].piece !== null) {
+                // get the piece that is being killed
+                let dead = this.state.board[position].piece;
+                // update the board accordingly
+                this.setState(prevState => ({
+                    selection: -1,
+                    kingPosition: newKingPosition,
+                    deadEnemies: prevState.deadEnemies.concat(dead),
+                    highlighted: new Set(),
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === position) spot.piece = selectedPiece;
+                            else if (i === prevState.selection) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }));
+            }
+            // if this move does not kill an enemy
+            else {
+                // update the board accordingly
+                this.setState(prevState => ({
+                    selection: -1,
+                    kingPosition: newKingPosition,
+                    highlighted: new Set(),
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === position) spot.piece = selectedPiece;
+                            else if (i === prevState.selection) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }));
+            }
         }
     }
 
@@ -69,11 +110,13 @@ class Board extends React.Component {
 
     // renders an individual square of the board
     renderSquare(position, shade) {
+        console.log(position, this.state.highlighted.has(position));
         // if there is a piece in this square make sure to display the piece
-        let src = (this.state.board[position].piece === null ? "null" : this.state.board[position].piece.src);
+        let src = (this.state.board[position].piece === null ? "null" : 
+            this.state.board[position].piece.src);
         return (<Square 
                     handleMouseDown={() => this.handleMouseDown(position)}
-                    highlighted={this.state.board[position].highlighted}
+                    highlighted={this.state.highlighted.has(position)}
                     selected={position === this.state.selection}
                     shade={shade}
                     src={src}
@@ -81,6 +124,7 @@ class Board extends React.Component {
     }
 
     render() {
+        console.log("\n\n\n\n");
         // set up the board of squares to render
         let board = [];
         board.length = 8;
@@ -102,9 +146,15 @@ class Board extends React.Component {
                         </ul>);
             position += 8;
         }
-        return (<ul className="rows">
-                    {board.map((row, i) => (<li key={i}>{row}</li>))}
-                </ul>);
+        return (<div>
+                    <ul className="rows">
+                        {board.map((row, i) => (<li key={i}>{row}</li>))}
+                    </ul>
+                    <StatsBar 
+                        deadEnemies={this.state.deadEnemies}
+                        deadFriends={this.state.deadFriends}
+                    />
+                </div>);
     }
 }
 
