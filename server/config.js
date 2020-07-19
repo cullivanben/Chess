@@ -2,10 +2,10 @@ require('dotenv/config')
 const port = process.env.PORT || 5000;
 const baseURL = `http://localhost:${port}`;
 module.exports = {
-    // secret key for jsonwebtoken encryption
-    JWTsecret: process.env.JWT_SECRET,
     baseURL: baseURL,
     port: port,
+    // secret key for jsonwebtoken encryption
+    JWTsecret: process.env.JWT_SECRET,
     // the credentials and information for OAuth2
     oauth2Credentials: {
         client_id: process.env.CLIENT_ID,
@@ -16,5 +16,8 @@ module.exports = {
         client_secret: process.env.CLIENT_SECRET,
         redirect_uris: [`${baseURL}/auth_callback`],
         scopes: ['https://www.googleapis.com/auth/youtube.readonly']
+    },
+    secrets: {
+        
     }
 }

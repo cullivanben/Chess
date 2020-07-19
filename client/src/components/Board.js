@@ -4,7 +4,7 @@ import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
 import King from '../chess-classes/pieces/King';
-import initBoard from './helpers/initBoard';
+import { initBoard, initKingPos, initEnemyKingPos, initTurn } from './helpers/initHelpers';
 import '../stylesheets/Board.scss';
 const endpoint = "http://localhost:5000";
 
@@ -17,16 +17,17 @@ export default class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            board: initBoard(),
+            color: null,
+            board: null,
             highlighted: new Set(),
             deadEnemies: [],
             deadFriends: [],
             enemyCheck: false,
             selfCheck: false,
             selection: -1,
-            kingPosition: 60,
-            enemyKingPosition: 4,
-            turn: "self"
+            kingPosition: null,
+            enemyKingPosition: null,
+            turn: null
         }
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.socket = null;
@@ -35,6 +36,17 @@ export default class Board extends React.Component {
     componentDidMount() {
         // connect to the socket
         this.socket = io(endpoint);
+        // listen for the color
+        this.socket.on("color", color => {
+            console.log(color);
+            this.setState({
+                color: color,
+                board: initBoard(color), 
+                kingPosition: initKingPos(color),
+                enemyKingPosition: initEnemyKingPos(color),
+                turn: initTurn(color)
+            });
+        });
         // listen for incoming board updates and update the state when they are recieved
         this.socket.on("incoming-board-update", data => this.handleBoardUpdate(data));
     }
@@ -136,6 +148,9 @@ export default class Board extends React.Component {
     }
 
     render() {
+        // if a color has not yet been set, render nothing
+        if (this.state.color === null) return <div></div>;
+
         // set up the board of squares to render
         let board = [];
         board.length = 8;

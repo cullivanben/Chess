@@ -1,14 +1,12 @@
-import Piece from './Piece';
 import sources from './sources';
 import { canMoveRook } from '../helpers/movement-heplers';
 import { rookWillAttack } from '../helpers/danger-helpers';
 
-
-// Rook
-// this class represents a chess rook
-class Rook extends Piece {
-    constructor(friendly) {
-        super(friendly, (friendly ? sources.blackRook : sources.whiteRook));
+export default class Rook {
+    constructor(friendly, color) {
+        this.friendly = friendly;
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
+            sources.blackRook : sources.whiteRook;
     }
 
     // determines whether this rook can move to the specified location
@@ -21,5 +19,3 @@ class Rook extends Piece {
         return rookWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
     }
 }
-
-export default Rook

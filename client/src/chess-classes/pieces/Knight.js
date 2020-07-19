@@ -1,13 +1,11 @@
-import Piece from './Piece';
 import sources from './sources';
 import { canMoveKnight } from '../helpers/movement-heplers';
 
-
-// Knight
-// this class represents a chess knight
-class Knight extends Piece {
-    constructor(friendly, board) {
-        super(friendly, (friendly ? sources.blackKnight : sources.whiteKnight), board);
+export default class Knight {
+    constructor(friendly, color) {
+        this.friendly = friendly;
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
+            sources.blackKnight : sources.whiteKnight;
     }
 
     // determines whether the knight can be moved to the specified location
@@ -15,5 +13,3 @@ class Knight extends Piece {
         return canMoveKnight(start, destination, board);
     }
 }
-
-export default Knight;

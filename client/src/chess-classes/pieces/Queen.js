@@ -1,14 +1,12 @@
-import Piece from './Piece';
 import sources from './sources';
 import { canMoveRook, canMoveBishop } from '../helpers/movement-heplers';
 import { rookWillAttack, bishopWillAttack } from '../helpers/danger-helpers';
 
-
-// Queen
-// this class represents a chess queen
-class Queen extends Piece {
-    constructor(friendly, board) {
-        super(friendly, (friendly ? sources.blackQueen : sources.whiteQueen), board);
+export default class Queen {
+    constructor(friendly, color) {
+        this.friendly = friendly;
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
+            sources.blackQueen : sources.whiteQueen;
     }
 
     // determines whether the queen can be moved to the specified destination
@@ -24,5 +22,3 @@ class Queen extends Piece {
             bishopWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo));
     }
 }
-
-export default Queen;

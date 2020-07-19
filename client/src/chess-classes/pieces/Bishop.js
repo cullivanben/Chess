@@ -1,14 +1,12 @@
-import Piece from './Piece';
 import sources from './sources';
 import { canMoveBishop } from '../helpers/movement-heplers';
 import { bishopWillAttack } from '../helpers/danger-helpers';
 
-
-// Bishop
-// this class represents a chess bishop
-class Bishop extends Piece {
-    constructor(friendly, board) {
-        super(friendly, (friendly ? sources.blackBishop : sources.whiteBishop), board);
+export default class Bishop {
+    constructor(friendly, color) {
+        this.friendly = friendly;
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
+            sources.blackBishop : sources.whiteBishop;
     }
 
     // determines whether the bishop can move to the specified location
@@ -21,5 +19,3 @@ class Bishop extends Piece {
         return bishopWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
     }
 }
-
-export default Bishop;

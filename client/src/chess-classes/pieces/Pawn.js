@@ -1,13 +1,11 @@
-import Piece from './Piece';
 import sources from './sources';
 import { canMovePawn } from '../helpers/movement-heplers';
 
-
-// Pawn 
-// This is the class to represent a pawn
-class Pawn extends Piece {
-    constructor(friendly) {
-        super(friendly, (friendly ? sources.blackPawn : sources.whitePawn));
+export default class Pawn {
+    constructor(friendly, color) {
+        this.friendly = friendly;
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
+            sources.blackPawn : sources.whitePawn;
     }
 
     // determines whether the pawn can be moved to the specified location
@@ -15,5 +13,3 @@ class Pawn extends Piece {
         return canMovePawn(start, destination, board);
     }
 }
-
-export default Pawn;
