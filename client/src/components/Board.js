@@ -5,7 +5,7 @@ import Square from './Square';
 import StatsBar from './StatsBar';
 import King from '../chess-classes/pieces/King';
 import initBoard from './helpers/initBoard';
-import '../stylesheets/sass/Board.scss';
+import '../stylesheets/Board.scss';
 const endpoint = "http://localhost:5000";
 
 
@@ -13,8 +13,7 @@ const endpoint = "http://localhost:5000";
 // this will represent the chess board
 // it will be indexed by row and column in the form [row,column]
 // starting with [0,0] in the top left
-class Board extends React.Component {
-
+export default class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -169,5 +168,3 @@ class Board extends React.Component {
                 </div>);
     }
 }
-
-export default Board;

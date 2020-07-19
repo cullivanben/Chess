@@ -8,7 +8,7 @@ import Pawn from '../../chess-classes/pieces/Pawn';
 
 
 // initializes the chess board with all the pieces in their starting locations 
-const initBoard = () => {
+export default function initBoard() {
     // set up the array that will hold all of the spots on the board
     let board = [];
     board.length = 64;
@@ -44,5 +44,3 @@ const initBoard = () => {
 
     return board;
 }
-
-export default initBoard;

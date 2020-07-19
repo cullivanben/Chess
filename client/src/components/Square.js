@@ -1,10 +1,10 @@
 import React from 'react';
 import color from './helpers/color';
 import sources from '../chess-classes/pieces/sources';
-import '../stylesheets/css/Square.css';
+import '../stylesheets/Square.scss';
 
 
-const Square = props => {
+export default function Square(props) {
     // set the style of this component based on the props
     let style = {};
     if (props.shade === "light") {
@@ -32,5 +32,3 @@ const Square = props => {
                     />
             </button>);
 }
-
-export default Square;

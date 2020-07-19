@@ -1,9 +1,9 @@
 import React from 'react';
 import sources from '../chess-classes/pieces/sources';
-import '../stylesheets/css/DeadSquare.css';
+import '../stylesheets/DeadSquare.scss';
 
 
-const DeadSquare = props => {
+export default function DeadSquare(props) {
     // get the svg source
     let src = (props.src === "null" ? sources.blackKnight : props.src);
     let name = (props.src === "null" ? "dead-transparent" : "dead-opaque");
@@ -16,5 +16,3 @@ const DeadSquare = props => {
                 />
             </button>);
 }
-
-export default DeadSquare;

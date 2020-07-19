@@ -2,12 +2,33 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const uuid = require('uuid');
+const session = require('express-session');
+const cors = require('cors');
+// const google = require('googleapis').google;
+// const path = require('path');
+// const jwt = require('jsonwebtoken');
+require('dotenv/config');
 
-// establish the port to listen on
-const port = process.env.PORT || 5000;
-
-// set up express and socket.io
+// set up express
 const app = express();
+app.use(session({
+    secret: process.env.COOKIE_SECRET,
+    saveUninitialized: true,
+    resave: false
+}));
+
+// set up routes
+// TODO: replace '/test' with '/' for production
+app.get('/test', (req, res) => {
+    // make sure the user has a guest id 
+    console.log(req.session.guest);
+    if (req.session.guest === undefined) {
+        req.session.guest = uuid.v1();
+    }
+    res.send({msg: "yay"});
+});
+
+// set up the server and socket.io
 const server = http.createServer(app);
 const io = socketIO(server);
 
@@ -41,8 +62,6 @@ io.on("connection", socket => {
 });
 
 // start listening on the specified port
-server.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+server.listen(5000, () => {
+    console.log(`Listening on port ${5000}`);
 });
-
-

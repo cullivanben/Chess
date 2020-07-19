@@ -1,6 +1,6 @@
 import React from 'react';
 import DeadSquare from './DeadSquare';
-import '../stylesheets/sass/StatsBar.scss';
+import '../stylesheets/StatsBar.scss';
 
 
 // renders a square corresponding to one of the dead pieces or an empty square 
@@ -20,7 +20,7 @@ function setUpRow(arr, start) {
     return out;
 }
 
-const StatsBar = props => {   
+export default function StatsBar(props) {   
     // create an array of the dead enemies
     let firstRowEnemy = setUpRow(props.deadEnemies, 0);
     let secondRowEnemy = setUpRow(props.deadEnemies, 8);
@@ -58,5 +58,3 @@ const StatsBar = props => {
                 </ul>
             </div>);
 }
-
-export default StatsBar;
