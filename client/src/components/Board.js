@@ -49,6 +49,8 @@ export default class Board extends React.Component {
         });
         // listen for incoming board updates and update the state when they are recieved
         this.socket.on("incoming-board-update", data => this.handleBoardUpdate(data));
+        // listen for turn updates and update the turn when they are recieved
+        this.socket.on("incoming-turn", () => this.setState({ turn: true }));
     }
 
     // handles when this component recieves data from the socket it is connected to
@@ -58,7 +60,10 @@ export default class Board extends React.Component {
 
     // handles when a mouse is initially pressed down
     handleMouseDown(position) {
-        this.socket.emit("outgoing-board-update", {message: "oh yeah"});
+        // if it is not this player's turn they cannot do anything to the board
+        if (!this.state.turn) return;
+        this.setState({turn:false});
+        this.socket.emit("outgoing-turn", {});
         // if there is no piece currently selected 
         if (this.state.selection === -1) {
             // if they clicked on a spot with no piece or if they clicked on a spot with a non-friendly 
