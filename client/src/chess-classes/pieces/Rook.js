@@ -6,6 +6,7 @@ export default class Rook {
     constructor(friendly, color) {
         this.friendly = friendly;
         this.color = color;
+        this.pieceType = 'Rook';
         this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
             sources.blackRook : sources.whiteRook;
     }

@@ -56,10 +56,9 @@ io.on('connection', socket => {
         let color = roomOpen ? 'black' : 'white';
         // save the user's room and color
         rooms.set(socket.request.session.guest, { room: roomId, color: color });
+        // send the color to the user
+        socket.emit('color', rooms.get(socket.request.session.guest).color);
     }
-
-    // send the color to the user
-    socket.emit('color', rooms.get(socket.request.session.guest).color);
 
     // when the board is updated, send the board update to the other user connected to this room
     socket.on('outgoing-board-update', data => {

@@ -3,8 +3,14 @@ import io from 'socket.io-client';
 import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
-import King from '../chess-classes/pieces/King';
 import { initBoard, initKingPos, initEnemyKingPos, initTurn } from './helpers/initHelpers';
+import King from '../chess-classes/pieces/King';
+import Queen from '../chess-classes/pieces/Queen';
+import Bishop from '../chess-classes/pieces/Bishop';
+import Knight from '../chess-classes/pieces/Knight';
+import Rook from '../chess-classes/pieces/Rook';
+import Pawn from '../chess-classes/pieces/Pawn';
+import Spot from '../chess-classes/Spot';
 import '../stylesheets/Board.scss';
 const endpoint = 'http://localhost:5000';
 
@@ -34,12 +40,15 @@ export default class Board extends React.Component {
 
     componentDidMount() {
         // restore state from local storage if possible
-        if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
+        if (localStorage.getItem('saved') !== null) {
+            console.log("restoring");
+            //this.restoreStateFromLocalStorage();
+        }
         // connect to the socket
         this.socket = io(endpoint);
         // listen for the color
         this.socket.on('color', color => {
-            console.log(color);
+            console.log(color, "set color");
             this.setState({
                 color: color,
                 board: initBoard(color), 
@@ -121,6 +130,31 @@ export default class Board extends React.Component {
         return 63 - position;
     }
 
+    // converts an object to a spot
+    createSpot(obj) {
+        let spot = new Spot(obj.position);
+        if (obj.piece !== null) spot.piece = this.createPiece(obj.piece);
+        return spot;
+    }
+
+    // converts an object to a piece
+    createPiece(obj) {
+        switch (obj.pieceType) {
+            case 'Pawn':
+                return new Pawn(obj.friendly, obj.color);
+            case 'Bishop':
+                return new Bishop(obj.friendly, obj.color);
+            case 'Knight':
+                return new Knight(obj.friendly, obj.color);
+            case 'Rook':
+                return new Rook(obj.friendly, obj.color);
+            case 'Queen':
+                return new Queen(obj.friendly, obj.color);
+            default:
+                return new King(obj.friendly, obj.color);
+        }
+    }
+
     // saves the state of the game to local storage before the window unloads
     saveStateToLocalStorage() {
         // save each item from the state
@@ -132,8 +166,14 @@ export default class Board extends React.Component {
         }));
         localStorage.setItem('highlighted', JSON.stringify([...this.state.highlighted]));
         localStorage.setItem('enemyHighlighted', JSON.stringify([...this.state.enemyHighlighted]));
-        localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies));
-        localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends));
+        localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends, (key, value) => {
+            if (key === 'src') return undefined;
+            else return value;
+        }));
+        localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies, (key, value) => {
+            if (key === 'src') return undefined;
+            else return value;
+        }));
         localStorage.setItem('selfCheck', (this.state.selfCheck ? 1 : 0));
         localStorage.setItem('enemyCheck', (this.state.enemyCheck ? 1 : 0));
         localStorage.setItem('selection', this.state.selection);
@@ -143,8 +183,56 @@ export default class Board extends React.Component {
         localStorage.setItem('turn', (this.state.turn ? 1 : 0));
     }
 
+    // restores the state of the game from local storage
     restoreStateFromLocalStorage() {
-        console.log(localStorage.get('selection'));
+        let restoredState = {};
+        if (localStorage.getItem('color') !== null) {
+            restoredState.color = toString(localStorage.getItem('color'));
+        }
+        if (localStorage.getItem('board') !== null) {
+            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => this.createSpot(obj));
+        }
+        if (localStorage.getItem('highlighted') !== null) {
+            restoredState.highlighted = new Set();
+            JSON.parse(localStorage.getItem('highlighted')).forEach(position => {
+                restoredState.highlighted.add(position);
+            });
+        }
+        if (localStorage.getItem('enemyHighlighted') !== null) {
+            restoredState.enemyHighlighted = new Set();
+            JSON.parse(localStorage.getItem('enemyHighlighted')).forEach(position => {
+                restoredState.enemyHighlighted.add(position);
+            });
+        }
+        if (localStorage.getItem('deadFriends') !== null) {
+            restoredState.deadFriends = JSON.parse(localStorage.getItem('deadFriends')).map(obj => this.createPiece(obj));
+        }
+        if (localStorage.getItem('deadEnemies') !== null) {
+            restoredState.deadEnemies = JSON.parse(localStorage.getItem('deadEnemies')).map(obj => this.createPiece(obj));
+        }
+        if (localStorage.getItem('selfCheck') !== null) {
+            restoredState.selfCheck = (localStorage.getItem('selfCheck') === '0' ? false : true);
+        }
+        if (localStorage.getItem('enemyCheck') !== null) {
+            restoredState.enemyCheck = (localStorage.getItem('enemyCheck') === '0' ? false : true);
+        }
+        if (localStorage.getItem('selection') !== null) {
+            restoredState.selection = parseInt(localStorage.getItem('selection'));
+        }
+        if (localStorage.getItem('enemySelection') !== null) {
+            restoredState.enemySelection = parseInt(localStorage.getItem('enemySelection'));
+        }
+        if (localStorage.getItem('kingPosition') !== null) {
+            restoredState.kingPosition = parseInt(localStorage.getItem('kingPosition'));
+        }
+        if (localStorage.getItem('enemyKingPosition') !== null) {
+            restoredState.enemyKingPosition = parseInt(localStorage.getItem('enemyKingPosition'));
+        }
+        if (localStorage.getItem('turn') !== null) {
+            restoredState.turn = (localStorage.getItem('turn') === 0 ? false : true);
+        }
+        this.setState(restoredState);
+        console.log("state has been restored");
     }
 
     // handles when a mouse is initially pressed down
@@ -257,7 +345,7 @@ export default class Board extends React.Component {
 
     render() {
         // if a color has not yet been set, render nothing
-        if (this.state.color === null) return <div></div>;
+        if (this.state.color === "no color") return <div></div>;
 
         // set up the board of squares to render
         let board = [];

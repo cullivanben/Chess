@@ -5,6 +5,7 @@ export default class King {
     constructor(friendly, color) {
         this.friendly = friendly;
         this.color = color;
+        this.pieceType = 'King';
         this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
             sources.blackKing : sources.whiteKing;
     }
