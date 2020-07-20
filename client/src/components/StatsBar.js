@@ -1,13 +1,12 @@
-import React from "react";
-import DeadSquare from "./DeadSquare";
-import "../stylesheets/StatsBar.scss";
-
+import React from 'react';
+import DeadSquare from './DeadSquare';
+import '../stylesheets/StatsBar.scss';
 
 // renders a square corresponding to one of the dead pieces or an empty square 
 // if there is no piece at this position
 function renderSquare(arr, i) {
-    // get the image source of the piece at this position or null if there isn"t one
-    let src = (i < arr.length ? arr[i].src : "null");
+    // get the image source of the piece at this position or null if there isn't one
+    let src = (i < arr.length ? arr[i].src : 'null');
     return <DeadSquare src={src} />;
 }
 
@@ -29,32 +28,32 @@ export default function StatsBar(props) {
     let secondRowFriends = setUpRow(props.deadFriends, 8);
 
     return (<div>
-                <ul className="dead-enemy">
-                    <li key="0">
-                        <ul className="dead-row">
-                            {firstRowEnemy.map((square, i) => (<li key={`0 ${i}`}>{square}</li>))}
-                        </ul>
-                    </li>
-                    <li key="1">
-                        <ul className="dead-row">
-                            {secondRowEnemy.map((square, i) => (<li key={`1 ${i}`}>{square}</li>))}
-                        </ul>
-                    </li>
+        <ul className="dead-enemy">
+            <li key="0">
+                <ul className="dead-row">
+                    {firstRowEnemy.map((square, i) => (<li key={`0 ${i}`}>{square}</li>))}
                 </ul>
-                <div>
-                    { /* TODO: replace with a list of all the moves that have been made */}
-                </div>
-                <ul className="dead-friends">
-                    <li key="2">    
-                        <ul className="dead-row">
-                            {firstRowFriends.map((square, i) => (<li key={`2 ${i}`}>{square}</li>))}
-                        </ul>
-                    </li>
-                    <li key="3">
-                        <ul className="dead-row">
-                            {secondRowFriends.map((square, i) => (<li key={`3 ${i}`}>{square}</li>))}
-                        </ul>
-                    </li>
+            </li>
+            <li key="1">
+                <ul className="dead-row">
+                    {secondRowEnemy.map((square, i) => (<li key={`1 ${i}`}>{square}</li>))}
                 </ul>
-            </div>);
+            </li>
+        </ul>
+        <div>
+            { /* TODO: replace with a list of all the moves that have been made */}
+        </div>
+        <ul className="dead-friends">
+            <li key="2">    
+                <ul className="dead-row">
+                    {firstRowFriends.map((square, i) => (<li key={`2 ${i}`}>{square}</li>))}
+                </ul>
+            </li>
+            <li key="3">
+                <ul className="dead-row">
+                    {secondRowFriends.map((square, i) => (<li key={`3 ${i}`}>{square}</li>))}
+                </ul>
+            </li>
+        </ul>
+    </div>);
 }

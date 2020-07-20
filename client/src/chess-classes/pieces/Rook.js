@@ -1,12 +1,12 @@
-import sources from "./sources";
-import { canMoveRook } from "../helpers/movement-heplers";
-import { rookWillAttack } from "../helpers/danger-helpers";
+import sources from './sources';
+import { canMoveRook } from '../helpers/movement-heplers';
+import { rookWillAttack } from '../helpers/danger-helpers';
 
 export default class Rook {
     constructor(friendly, color) {
         this.friendly = friendly;
         this.color = color;
-        this.src = ((color === "black" && friendly) || (color === "white" && !friendly)) ? 
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
             sources.blackRook : sources.whiteRook;
     }
 

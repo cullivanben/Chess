@@ -1,4 +1,4 @@
-import { dangerous, cantMove } from "./danger-helpers";
+import { dangerous, cantMove } from './danger-helpers';
 
 
 // returns whether a pawn can be moved from the start to the destination
@@ -78,7 +78,7 @@ export function canMoveRook(start, destination, board, kingPosition) {
         else return false;
     }
     // if none of the above conditions were met, the rook can move 
-    // to the destination if it doesn"t place the king in jeopardy
+    // to the destination if it doesn't place the king in jeopardy
     return !cantMove(start, destination, board, kingPosition);
 }
 
@@ -103,7 +103,7 @@ export function canMoveKnight(start, destination, board, kingPosition) {
         (destinationRow === startRow-1 && destinationColumn === startColumn-2) ||
         (destinationRow === startRow-2 && destinationColumn === startColumn-1)))
         return false;
-    // the knight can be moved if this move doesn"t place the king in jeopardy
+    // the knight can be moved if this move doesn't place the king in jeopardy
     return !cantMove(start, destination, board, kingPosition);
 }
 
@@ -149,7 +149,7 @@ export function canMoveBishop(start, destination, board, kingPosition) {
     }
     // if none of the above conditions were met 
     // the bishop can be moved to the destination
-    // if this move doesn"t place the king in jeopardy
+    // if this move doesn't place the king in jeopardy
     return !cantMove(start, destination, board, kingPosition);
 }
 

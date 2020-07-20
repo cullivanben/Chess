@@ -1,12 +1,12 @@
-import sources from "./sources";
-import { canMoveRook, canMoveBishop } from "../helpers/movement-heplers";
-import { rookWillAttack, bishopWillAttack } from "../helpers/danger-helpers";
+import sources from './sources';
+import { canMoveRook, canMoveBishop } from '../helpers/movement-heplers';
+import { rookWillAttack, bishopWillAttack } from '../helpers/danger-helpers';
 
 export default class Queen {
     constructor(friendly, color) {
         this.friendly = friendly;
         this.color = color;
-        this.src = ((color === "black" && friendly) || (color === "white" && !friendly)) ? 
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
             sources.blackQueen : sources.whiteQueen;
     }
 

@@ -1,12 +1,12 @@
-import sources from "./sources";
-import { canMoveBishop } from "../helpers/movement-heplers";
-import { bishopWillAttack } from "../helpers/danger-helpers";
+import sources from './sources';
+import { canMoveBishop } from '../helpers/movement-heplers';
+import { bishopWillAttack } from '../helpers/danger-helpers';
 
 export default class Bishop {
     constructor(friendly, color) {
         this.friendly = friendly;
         this.color = color;
-        this.src = ((color === "black" && friendly) || (color === "white" && !friendly)) ? 
+        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ? 
             sources.blackBishop : sources.whiteBishop;
     }
 
