@@ -1,6 +1,6 @@
-import React from 'react';
-import sources from '../chess-classes/pieces/sources';
-import '../stylesheets/DeadSquare.scss';
+import React from "react";
+import sources from "../chess-classes/pieces/sources";
+import "../stylesheets/DeadSquare.scss";
 
 
 export default function DeadSquare(props) {

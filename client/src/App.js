@@ -1,14 +1,14 @@
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import HomeScreen from "./components/HomeScreen";
-import GameScreen from './components/GameScreen';
-import './stylesheets/App.scss';
+import GameScreen from "./components/GameScreen";
+import "./stylesheets/App.scss";
 
 export default function App() {
 
   useEffect(() => {
     // TODO: ONLY FOR DEV
-    fetch('/test').then(res => console.log(res)).catch(err => console.log(err));
+    fetch("/test").then(res => console.log(res)).catch(err => console.log(err));
   });
 
   return (

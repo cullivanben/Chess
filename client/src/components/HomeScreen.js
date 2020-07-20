@@ -1,5 +1,5 @@
-import React from 'react';
-import '../stylesheets/HomeScreen.scss';
+import React from "react";
+import "../stylesheets/HomeScreen.scss";
 
 export default class HomeScreen extends React.Component {
     render() {

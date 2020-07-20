@@ -1,6 +1,6 @@
-import Pawn from '../pieces/Pawn';
-import Knight from '../pieces/Knight';
-import King from '../pieces/King';
+import Pawn from "../pieces/Pawn";
+import Knight from "../pieces/Knight";
+import King from "../pieces/King";
 
 // whether a given spot on the board is being attacked by the enemy
 export function dangerous(location, board, friendly) {

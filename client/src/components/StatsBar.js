@@ -1,12 +1,12 @@
-import React from 'react';
-import DeadSquare from './DeadSquare';
-import '../stylesheets/StatsBar.scss';
+import React from "react";
+import DeadSquare from "./DeadSquare";
+import "../stylesheets/StatsBar.scss";
 
 
 // renders a square corresponding to one of the dead pieces or an empty square 
 // if there is no piece at this position
 function renderSquare(arr, i) {
-    // get the image source of the piece at this position or null if there isn't one
+    // get the image source of the piece at this position or null if there isn"t one
     let src = (i < arr.length ? arr[i].src : "null");
     return <DeadSquare src={src} />;
 }

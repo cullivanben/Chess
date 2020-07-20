@@ -1,10 +1,10 @@
-import Spot from '../../chess-classes/Spot';
-import King from '../../chess-classes/pieces/King';
-import Queen from '../../chess-classes/pieces/Queen';
-import Knight from '../../chess-classes/pieces/Knight';
-import Bishop from '../../chess-classes/pieces/Bishop';
-import Rook from '../../chess-classes/pieces/Rook';
-import Pawn from '../../chess-classes/pieces/Pawn';
+import Spot from "../../chess-classes/Spot";
+import King from "../../chess-classes/pieces/King";
+import Queen from "../../chess-classes/pieces/Queen";
+import Knight from "../../chess-classes/pieces/Knight";
+import Bishop from "../../chess-classes/pieces/Bishop";
+import Rook from "../../chess-classes/pieces/Rook";
+import Pawn from "../../chess-classes/pieces/Pawn";
 
 
 // initializes the chess board with all the pieces in their starting locations 
@@ -39,7 +39,7 @@ export function initBoard(color) {
     board[63].piece = new Rook(true, color);
 
     // set up the kings and queens
-    if (color === 'black') {
+    if (color === "black") {
         board[3].piece = new Queen(false, color);
         board[4].piece = new King(false, color);
         board[59].piece = new Queen(true, color);
@@ -55,13 +55,13 @@ export function initBoard(color) {
 }
 
 export function initKingPos(color) {
-    return color === 'black' ? 60 : 59;
+    return color === "black" ? 60 : 59;
 }
 
 export function initEnemyKingPos(color) {
-    return color === 'black' ? 4 : 3;
+    return color === "black" ? 4 : 3;
 }
 
 export function initTurn(color) {
-    return color === 'black';
+    return color === "black";
 }

@@ -8,7 +8,9 @@ const color = {
     lightSquareSelect: "#f6f693",
     darkSquareSelect: "#bdc956",
     lightSqareHighlight: "#91c2e3",
-    darkSquareHighlight: "#49a2de"
+    darkSquareHighlight: "#49a2de",
+    lightEnemyHighlight: "#db9e93",
+    darkEnemyHighlight: "#cc604e"
 };
 
 export default color;
