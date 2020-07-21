@@ -15,7 +15,7 @@ export default function DeadSquare(props) {
         name = 'dead-opaque';
         countName = 'count-opaque';
     }
-    return (<div>
+    return (<div className="dead-square-wrapper">
         <button className="dead-square">
             <img 
                 className={name}

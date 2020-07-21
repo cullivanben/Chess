@@ -1,21 +1,25 @@
 import React from 'react';
+import { withRouter } from 'react-router';
 import io from 'socket.io-client';
 import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
-import { initBoard, initKingPos, initEnemyKingPos, initTurn } from './helpers/initHelpers';
 import King from '../chess-classes/pieces/King';
-import Queen from '../chess-classes/pieces/Queen';
-import Bishop from '../chess-classes/pieces/Bishop';
-import Knight from '../chess-classes/pieces/Knight';
-import Rook from '../chess-classes/pieces/Rook';
-import Pawn from '../chess-classes/pieces/Pawn';
-import Spot from '../chess-classes/Spot';
+import { 
+    initBoard, 
+    initKingPos, 
+    initEnemyKingPos, 
+    initTurn 
+} from './helpers/initHelpers';
+import { 
+    createSpot,
+    convertPos
+} from './helpers/helperFunctions';
 import '../stylesheets/Board.scss';
 const endpoint = 'http://localhost:5000';
 
 // this component will manage the state of the chess board
-export default class Board extends React.Component {
+class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -33,8 +37,14 @@ export default class Board extends React.Component {
             enemyKingPosition: 0,
             turn: false
         }
+        this.handleColorSet = this.handleColorSet.bind(this);
+        this.handleIncomingBoardUpdate = this.handleIncomingBoardUpdate.bind(this);
+        this.handleLeaveGame = this.handleLeaveGame.bind(this);
+        this.handleEnemyLeft = this.handleEnemyLeft.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleTurn = this.handleTurn.bind(this);
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
+        this.cleanup = this.cleanup.bind(this);
         this.socket = null;
     }
 
@@ -42,117 +52,28 @@ export default class Board extends React.Component {
         // restore state from local storage if possible
         if (localStorage.getItem('saved') !== null) {
             console.log("restoring");
-            //this.restoreStateFromLocalStorage();
+            this.restoreStateFromLocalStorage();
         }
         // connect to the socket
         this.socket = io(endpoint);
         // listen for the color
-        this.socket.on('color', color => {
-            console.log(color, "set color");
-            this.setState({
-                color: color,
-                board: initBoard(color), 
-                kingPosition: initKingPos(color),
-                enemyKingPosition: initEnemyKingPos(color),
-                turn: initTurn(color)
-            });
-        });
+        this.socket.on('color', this.handleColorSet);
         // listen for incoming board updates and update the state when they are recieved
-        this.socket.on('incoming-board-update', data => {
-            let stateUpdate = {};
-            // update the state fields that were sent from the enemy
-            if (data.selection) {
-                if (data.selection === -1) stateUpdate.enemySelection = -1;
-                else stateUpdate.enemySelection = this.convertPos(data.selection);
-            }
-            if (data.highlighted) {
-                console.log('highlighted', data.highlighted);
-                let enemyHigh = new Set();
-                data.highlighted.forEach(pos => enemyHigh.add(this.convertPos(pos)));
-                stateUpdate.enemyHighlighted = enemyHigh;
-            }
-            if (data.kingPosition) {
-                stateUpdate.enemyKingPosition = data.kingPosition;
-            }
-            // set the state with the updated state fields
-            this.setState(stateUpdate);
-            // if a move was made on the board we will make another state update
-            if (data.move) {
-                // convert the positions
-                let a = this.convertPos(data.move[0]);
-                let b = this.convertPos(data.move[1]);
-                let selectedPiece = this.state.board[a].piece;
-                // if this move killed a friendly piece
-                if (this.state.board[b].piece !== null) {
-                    // update the board and the list of dead friends
-                    let dead = this.state.board[b].piece.pieceType;
-                    this.setState(prevState => ({
-                        deadFriends: prevState.deadFriends.concat(dead),
-                        board: update(prevState.board, {
-                            $apply: board => board.map((spot, i) => {
-                                if (i === b) spot.piece = selectedPiece;
-                                else if (i === a) spot.piece = null;
-                                return spot;
-                            })
-                        })
-                    }));
-                }
-                // if this move did not kill a friendly piece
-                else {
-                    // only update the board
-                    this.setState(prevState => ({
-                        board: update(prevState.board, {
-                            $apply: board => board.map((spot, i) => {
-                                if (i === b) spot.piece = selectedPiece;
-                                else if (i === a) spot.piece = null;
-                                return spot;
-                            })
-                        })
-                    }));
-                }
-            }
-        });
+        this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
         // listen for turn updates and update the turn when they are recieved
-        this.socket.on('incoming-turn', () => {
-            this.setState({ turn: true });
-        });
+        this.socket.on('incoming-turn', this.handleTurn);
+        // listen for the other player leaving
+        this.socket.on('enemy-left', this.handleEnemyLeft);
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);
+        // make sure that game state and socket connections are cleaned up when the user navigates away from this page
+        window.addEventListener('popstate', this.cleanup);
     }
 
     // if the component gets a chance to unmount, remove the event listener
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.saveStateToLocalStorage);
-    }
-
-    // converts enemy positions to friendly positions
-    convertPos(position) {
-        return 63 - position;
-    }
-
-    // converts an object to a spot
-    createSpot(obj) {
-        let spot = new Spot(obj.position);
-        if (obj.piece !== null) spot.piece = this.createPiece(obj.piece);
-        return spot;
-    }
-
-    // converts an object to a piece
-    createPiece(obj) {
-        switch (obj.pieceType) {
-            case 'Pawn':
-                return new Pawn(obj.friendly, obj.color);
-            case 'Bishop':
-                return new Bishop(obj.friendly, obj.color);
-            case 'Knight':
-                return new Knight(obj.friendly, obj.color);
-            case 'Rook':
-                return new Rook(obj.friendly, obj.color);
-            case 'Queen':
-                return new Queen(obj.friendly, obj.color);
-            default:
-                return new King(obj.friendly, obj.color);
-        }
+        window.removeEventListener('popstate', this.cleanup);
     }
 
     // saves the state of the game to local storage before the window unloads
@@ -184,7 +105,7 @@ export default class Board extends React.Component {
             restoredState.color = toString(localStorage.getItem('color'));
         }
         if (localStorage.getItem('board') !== null) {
-            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => this.createSpot(obj));
+            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => createSpot(obj));
         }
         if (localStorage.getItem('highlighted') !== null) {
             restoredState.highlighted = new Set();
@@ -227,6 +148,102 @@ export default class Board extends React.Component {
         }
         this.setState(restoredState);
         console.log("state has been restored");
+    }
+
+    // disconnects the sockets and clears local storage
+    cleanup() {
+        // when this socket disconnects, the server will do all the necessary socket cleanup 
+        // and inform the other player that this player left
+        // tell the server to disconnect this socket
+        this.socket.emit('force-disconnect');
+        // clear local storage in order to remove all state info of this game
+        localStorage.clear();
+    }
+
+    // called when this player first recieves their color 
+    handleColorSet(color) {
+        console.log(color, "set color");
+        this.setState({
+            color: color,
+            board: initBoard(color), 
+            kingPosition: initKingPos(color),
+            enemyKingPosition: initEnemyKingPos(color),
+            turn: initTurn(color)
+        });
+    }
+
+    // called when this player recieves a board update from the enemy
+    handleIncomingBoardUpdate(data) {
+        let stateUpdate = {};
+        // update the state fields that were sent from the enemy
+        if (data.selection) {
+            if (data.selection === -1) stateUpdate.enemySelection = -1;
+            else stateUpdate.enemySelection = convertPos(data.selection);
+        }
+        if (data.highlighted) {
+            console.log('highlighted', data.highlighted);
+            let enemyHigh = new Set();
+            data.highlighted.forEach(pos => enemyHigh.add(convertPos(pos)));
+            stateUpdate.enemyHighlighted = enemyHigh;
+        }
+        if (data.kingPosition) {
+            stateUpdate.enemyKingPosition = data.kingPosition;
+        }
+        // set the state with the updated state fields
+        this.setState(stateUpdate);
+        // if a move was made on the board we will make another state update
+        if (data.move) {
+            // convert the positions
+            let a = convertPos(data.move[0]);
+            let b = convertPos(data.move[1]);
+            let selectedPiece = this.state.board[a].piece;
+            // if this move killed a friendly piece
+            if (this.state.board[b].piece !== null) {
+                // update the board and the list of dead friends
+                let dead = this.state.board[b].piece.pieceType;
+                this.setState(prevState => ({
+                    deadFriends: prevState.deadFriends.concat(dead),
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === b) spot.piece = selectedPiece;
+                            else if (i === a) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }));
+            }
+            // if this move did not kill a friendly piece
+            else {
+                // only update the board
+                this.setState(prevState => ({
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === b) spot.piece = selectedPiece;
+                            else if (i === a) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }));
+            }
+        }
+    }
+
+    // handles when this player is notified that it is their turn
+    handleTurn() {
+        this.setState({turn: true});
+    }
+
+    // performs cleanup and navigates back to the home page
+    handleLeaveGame() {
+        // clear local storage and disconnect the socket
+        //this.cleanup();
+        // navigate back to the main page
+        this.props.history.goBack();
+    }
+
+    // handles when the enemy leaves the game
+    handleEnemyLeft() {
+        console.log('lefttttttt');
     }
 
     // handles when a mouse is initially pressed down
@@ -306,7 +323,7 @@ export default class Board extends React.Component {
                 }));
             }
             // inform the enemy that it is their turn
-            this.socket.emit('outgoing-turn', {});
+            this.socket.emit('outgoing-turn');
         }
     }
 
@@ -370,6 +387,7 @@ export default class Board extends React.Component {
             position += 8;
         }
         return (<div className="board-and-stats">
+
             <ul className="rows">{board}</ul>
             <StatsBar 
                 className="stats-bar"
@@ -380,3 +398,5 @@ export default class Board extends React.Component {
         </div>);
     }
 }
+
+export default withRouter(Board);

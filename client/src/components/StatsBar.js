@@ -35,7 +35,7 @@ function arrangeDead(arr) {
         let i = out.length - 1;
         while (i > 0 && out[i-1][1] <= out[i][1]) {
             if (out[i-1][1] === out[i][1] && out[i-1][0] < out[i][0]) break;
-            temp = out[i];
+            let temp = out[i];
             out[i] = out[i-1];
             out[i---1] = temp;
         }
@@ -56,7 +56,7 @@ function renderDeadSquare(arr, i, color) {
         count = 0;
         key = i;
     }
-    return <li key={key}><DeadSquare src={src} count={count} /></li>;
+    return <DeadSquare key={key} src={src} count={count} />;
 }
 
 // sets up a row of dead enemies or dead friends
@@ -76,10 +76,13 @@ export default function StatsBar(props) {
     let rowFriends = setUpRow(arrangeDead(props.deadFriends), props.color);
 
     return (<div className="stats-wrapper">
-        <ul className="dead-enemy">{rowEnemies}</ul>
+        {/* for the rows of dead squares I used divs instead of ul's because this 
+        made it much easier to style the dead squares which are made up of a button 
+        and h5 in a horizontal row */}
+        <div className="dead-enemy">{rowEnemies}</div>
         <div className="moves-played">
             { /* TODO: replace with a list of all the moves that have been made */}
         </div>
-        <ul className="dead-friends">{rowFriends}</ul>
+        <div className="dead-friends">{rowFriends}</div>
     </div>);
 }

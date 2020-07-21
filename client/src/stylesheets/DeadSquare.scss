@@ -1,4 +1,6 @@
 .dead-square {
+    display: inline-block;
+    vertical-align: bottom; // very important
     padding: 0;
     margin: 0;
     border: none;
@@ -9,6 +11,17 @@ button:focus {
 }
 .dead-transparent {
     opacity: 0;
+}
+.count-transparent, .count-opaque {
+    display: inline-block;
+    vertical-align: bottom; // very important
+    background: red;
+}
+.count-transparent {
+    opacity: 0;
+}
+.count-opaque {
+    font-size: 2vh;
 }
 
 @media (max-aspect-ratio: 3/4) {
@@ -28,11 +41,11 @@ button:focus {
 }
 @media (min-aspect-ratio: 16/9) {
     .dead-square {
-        height: 6vh;
-        width: 6vh;
+        height: 5vh;
+        width: 5vh;
     }
-    .dead-transparent, .dead-opaque {
-        height: 6vh;
-        width: 6vh;
+    .dead-transparent, .dead-opaque, .count-transparent, .count-opaque {
+        height: 3vh;
+        width: 3vh;
     }
 }

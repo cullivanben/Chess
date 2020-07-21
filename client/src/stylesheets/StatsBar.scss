@@ -1,27 +1,14 @@
 .stats-wrapper {
     vertical-align: top;
-    background-color: purple;
 }
-.dead-enemy, .dead-friends, .dead-row {
+.dead-enemy, .dead-friends {
     list-style-type: none;
     margin: 0;
     padding: 0;
     font-size: 0;
-    li {
-        margin: 0;
-        padding: 0;
-    }
 }
-.dead-enemy {
-    vertical-align: top;
-}
-.dead-friends {
-    vertical-align: bottom;
-}
-.dead-row {
-    li {
-        display: inline;
-    }
+.dead-enemy > *, .dead-friends > * {
+    display: inline-block;
 }
 .moves-played {
     overflow-y: scroll;
@@ -45,6 +32,6 @@
 }
 @media (min-aspect-ratio: 16/9) {
     .moves-played {
-        height: 56vh;
+        height: 70vh;
     }
 }

@@ -34,7 +34,8 @@ const io = socketIO(server);
 // socket.io 
 var roomOpen = false;
 var currentId = uuid.v1();
-var rooms = new Map();
+// maps each guest id to their room and color
+var guestInfo = new Map();
 
 // access session store within incoming socket.io connections
 io.use((socket, next) => sessionMiddleWare(socket.request, socket.request.res || {}, next));
@@ -44,7 +45,7 @@ io.on('connection', socket => {
     console.log('guest from socket', socket.request.session.guest);
 
     // if this user is already part of a game, add them to the same room
-    if (rooms.has(socket.request.session.guest)) socket.join(rooms.get(socket.request.session.guest).room);
+    if (guestInfo.has(socket.request.session.guest)) socket.join(guestInfo.get(socket.request.session.guest).room);
     // if the user is not currently part of a game
     else {
         // add them to the open game
@@ -55,28 +56,39 @@ io.on('connection', socket => {
         // determine the color of this user
         let color = roomOpen ? 'black' : 'white';
         // save the user's room and color
-        rooms.set(socket.request.session.guest, { room: roomId, color: color });
+        guestInfo.set(socket.request.session.guest, { room: roomId, color: color });
+        // send the color to the user
+        socket.emit('color', guestInfo.get(socket.request.session.guest).color);
     }
-
-    // send the color to the user
-    socket.emit('color', rooms.get(socket.request.session.guest).color);
 
     // when the board is updated, send the board update to the other user connected to this room
     socket.on('outgoing-board-update', data => {
-        socket.to(rooms.get(socket.request.session.guest).room).emit('incoming-board-update', data);
+        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-board-update', data);
         //socket.broadcast.to(roomId).emit('incoming-board-update', data);
     });
 
     // inform the user when it is their turn
-    socket.on('outgoing-turn', data => {
-        socket.to(rooms.get(socket.request.session.guest).room).emit('incoming-turn', data);
+    socket.on('outgoing-turn', () => {
+        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-turn');
+    });
+
+    // forcibly disconnect the user
+    socket.on('force-disconnect', () => {
+        console.log('force-disconnect')
+        // inform the other player that this player left the room
+        socket.to(guestInfo.get(socket.request.session.guest).room).emit('enemy-left');
+        // remove this player from the map of guest info
+        if (guestInfo.has(socket.request.session.guest)) guestInfo.delete(socket.request.session.guest);
+        // disconnect the socket
+        //socket.disconnect(true);
     });
 
     // when a client disconnects
-    socket.on('disconnect', () => {
-        console.log('client disconnected');
+    socket.on('disconnect', (reason) => {
+        console.log('actual-disconnect');
+        console.log(reason);
     });
-});
+}); 
 
 // start listening on the specified port
 server.listen(config.port, () => {
