@@ -1,9 +1,11 @@
+import uuid from 'react-uuid';
 import sources from './sources';
 import { canMoveRook, canMoveBishop } from '../helpers/movement-heplers';
 import { rookWillAttack, bishopWillAttack } from '../helpers/danger-helpers';
 
 export default class Queen {
     constructor(friendly, color) {
+        this.id = uuid();
         this.friendly = friendly;
         this.color = color;
         this.pieceType = 'Queen';

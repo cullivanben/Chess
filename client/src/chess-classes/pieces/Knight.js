@@ -1,8 +1,10 @@
+import uuid from 'react-uuid';
 import sources from './sources';
 import { canMoveKnight } from '../helpers/movement-heplers';
 
 export default class Knight {
     constructor(friendly, color) {
+        this.id = uuid();
         this.friendly = friendly;
         this.color = color;
         this.pieceType = 'Knight';

@@ -85,7 +85,7 @@ export default class Board extends React.Component {
                 // if this move killed a friendly piece
                 if (this.state.board[b].piece !== null) {
                     // update the board and the list of dead friends
-                    let dead = this.state.board[b].piece;
+                    let dead = this.state.board[b].piece.pieceType;
                     this.setState(prevState => ({
                         deadFriends: prevState.deadFriends.concat(dead),
                         board: update(prevState.board, {
@@ -166,14 +166,8 @@ export default class Board extends React.Component {
         }));
         localStorage.setItem('highlighted', JSON.stringify([...this.state.highlighted]));
         localStorage.setItem('enemyHighlighted', JSON.stringify([...this.state.enemyHighlighted]));
-        localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends, (key, value) => {
-            if (key === 'src') return undefined;
-            else return value;
-        }));
-        localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies, (key, value) => {
-            if (key === 'src') return undefined;
-            else return value;
-        }));
+        localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends));
+        localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies));
         localStorage.setItem('selfCheck', (this.state.selfCheck ? 1 : 0));
         localStorage.setItem('enemyCheck', (this.state.enemyCheck ? 1 : 0));
         localStorage.setItem('selection', this.state.selection);
@@ -205,10 +199,10 @@ export default class Board extends React.Component {
             });
         }
         if (localStorage.getItem('deadFriends') !== null) {
-            restoredState.deadFriends = JSON.parse(localStorage.getItem('deadFriends')).map(obj => this.createPiece(obj));
+            restoredState.deadFriends = JSON.parse(localStorage.getItem('deadFriends'));
         }
         if (localStorage.getItem('deadEnemies') !== null) {
-            restoredState.deadEnemies = JSON.parse(localStorage.getItem('deadEnemies')).map(obj => this.createPiece(obj));
+            restoredState.deadEnemies = JSON.parse(localStorage.getItem('deadEnemies'));
         }
         if (localStorage.getItem('selfCheck') !== null) {
             restoredState.selfCheck = (localStorage.getItem('selfCheck') === '0' ? false : true);
@@ -278,7 +272,7 @@ export default class Board extends React.Component {
             // if there is an enemy piece at this location, it is now dead
             if (this.state.board[position].piece !== null) {
                 // get the piece that is being killed
-                let dead = this.state.board[position].piece;
+                let dead = this.state.board[position].piece.pieceType;
                 // update the board accordingly
                 this.setState(prevState => ({
                     selection: -1,
@@ -329,18 +323,27 @@ export default class Board extends React.Component {
 
     // renders an individual square of the board
     renderSquare(position, shade) {
-        // if there is a piece in this square make sure to display the piece
-        let src = (this.state.board[position].piece === null ? 'null' : 
-            this.state.board[position].piece.src);
-        return (<Square 
-                    handleMouseDown={() => this.handleMouseDown(position)}
-                    highlighted={this.state.highlighted.has(position)}
-                    enemyHighlighted={this.state.enemyHighlighted.has(position)}
-                    selected={position === this.state.selection}
-                    enemySelected={position === this.state.enemySelection}
-                    shade={shade}
-                    src={src}
-                />);
+        // set the svg source and the li key
+        let src, key;
+        if (this.state.board[position].piece === null) {
+            src = 'null';
+            key = this.state.board[position].id;
+        }
+        else {
+            src = this.state.board[position].piece.src;
+            key = this.state.board[position].piece.id;
+        }
+        return (<li key={key}>
+            <Square 
+                handleMouseDown={() => this.handleMouseDown(position)}
+                highlighted={this.state.highlighted.has(position)}
+                enemyHighlighted={this.state.enemyHighlighted.has(position)}
+                selected={position === this.state.selection}
+                enemySelected={position === this.state.enemySelection}
+                shade={shade}
+                src={src}
+            />
+        </li>);
     }
 
     render() {
@@ -362,19 +365,18 @@ export default class Board extends React.Component {
                     'light' : 'dark';
                 toAdd[column] = this.renderSquare(position + column, shade);
             }
-            board[row] = (<ul className="row">
-                            {toAdd.map((square, i) => (<li key={`${row} ${i}`}>{square}</li>))}
-                        </ul>);
+            // in this case it is okay to use the index as a key because the row uls of the chessboard will not change
+            board[row] = <li key={row}><ul className="row">{toAdd}</ul></li>;
             position += 8;
         }
-        return (<div>
-                    <ul className="rows">
-                        {board.map((row, i) => (<li key={i}>{row}</li>))}
-                    </ul>
-                    <StatsBar 
-                        deadEnemies={this.state.deadEnemies}
-                        deadFriends={this.state.deadFriends}
-                    />
-                </div>);
+        return (<div className="board-and-stats">
+            <ul className="rows">{board}</ul>
+            <StatsBar 
+                className="stats-bar"
+                color={this.state.color}
+                deadEnemies={this.state.deadEnemies}
+                deadFriends={this.state.deadFriends}
+            />
+        </div>);
     }
 }

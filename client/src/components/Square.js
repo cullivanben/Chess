@@ -19,8 +19,15 @@ export default function Square(props) {
         else style.background = color.darkSquareColor;
     }
 
-    let src = (props.src === 'null' ? sources.blackKnight : props.src);
-    let name = (props.src === 'null' ? 'transparent' : 'opaque');
+    let src, name;
+    if (props.src === 'null') {
+        src = sources.blackKnight;
+        name = 'transparent';
+    }
+    else {
+        src = props.src;
+        name = 'opaque';
+    }
 
     return (<button
         className="square"

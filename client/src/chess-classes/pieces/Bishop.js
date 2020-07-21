@@ -1,9 +1,11 @@
+import uuid from 'react-uuid';
 import sources from './sources';
 import { canMoveBishop } from '../helpers/movement-heplers';
 import { bishopWillAttack } from '../helpers/danger-helpers';
 
 export default class Bishop {
     constructor(friendly, color) {
+        this.id = uuid();
         this.friendly = friendly;
         this.color = color;
         this.pieceType = 'Bishop';

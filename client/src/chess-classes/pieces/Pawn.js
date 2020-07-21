@@ -1,8 +1,10 @@
+import uuid from 'react-uuid';
 import sources from './sources';
 import { canMovePawn } from '../helpers/movement-heplers';
 
 export default class Pawn {
     constructor(friendly, color) {
+        this.id = uuid();
         this.friendly = friendly;
         this.color = color;
         this.pieceType = 'Pawn';

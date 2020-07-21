@@ -1,3 +1,7 @@
+.stats-wrapper {
+    vertical-align: top;
+    background-color: purple;
+}
 .dead-enemy, .dead-friends, .dead-row {
     list-style-type: none;
     margin: 0;
@@ -8,21 +12,39 @@
         padding: 0;
     }
 }
-
+.dead-enemy {
+    vertical-align: top;
+}
+.dead-friends {
+    vertical-align: bottom;
+}
 .dead-row {
     li {
         display: inline;
     }
 }
-@media (max-width: 480px) {
+.moves-played {
+    overflow-y: scroll;
+    background: purple;
+}
+
+@media (max-aspect-ratio: 3/4) {
 
 }
-@media (max-width: 850px) {
+@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
 
 }
-@media (max-width: 1024px) {
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
 
 }
-@media (min-width: 1025px) {
-    
+@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
+
+}
+@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
+
+}
+@media (min-aspect-ratio: 16/9) {
+    .moves-played {
+        height: 56vh;
+    }
 }

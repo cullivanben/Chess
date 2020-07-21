@@ -1,8 +1,6 @@
 .square {
     padding: 0;
     margin: 0;
-    height: 52px;
-    width: 52px;
     border: none;
     font-size: 0;
 }
@@ -13,15 +11,49 @@ button:focus {
     opacity: 0;
 }
 
-@media (max-width: 480px) {
+// @media (orientation: landscape) {
+//     .square {
+//         height: 9vh;
+//         width: 9vh;
+//     }
+//     .transparent, .opaque {
+//         height: 8vh;
+//         width: 8vh;
+//     }
+// }
+@media (orientation: portrait) {
+    .square {
+        height: 9vw;
+        width: 9vw;
+    }
+    .transparent, .opaque {
+        height: 8vw;
+        width: 8vw;
+    }
+}
+
+@media (max-aspect-ratio: 3/4) {
 
 }
-@media (max-width: 768px) {
+@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
 
 }
-@media (max-width: 1024px) {
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
 
 }
-@media (min-width: 1025px) {
-    
+@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
+
+}
+@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
+
+}
+@media (min-aspect-ratio: 16/9) {
+    .square {
+        height: 10vh;
+        width: 10vh;
+    }
+    .transparent, .opaque {
+        height: 9vh;
+        width: 9vh;
+    }
 }
