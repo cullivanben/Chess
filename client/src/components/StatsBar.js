@@ -70,6 +70,8 @@ function setUpRow(arr, color) {
 export default function StatsBar(props) {
     // get the color of the enemy
     let enemyColor = props.color === 'black' ? 'white' : 'black';
+    console.log('this color', props.color);
+    console.log('enemy color', enemyColor);
     
     // create the rows of enemies and friends
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies), enemyColor);

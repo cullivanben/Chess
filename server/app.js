@@ -76,11 +76,12 @@ io.on('connection', socket => {
     socket.on('force-disconnect', () => {
         console.log('force-disconnect')
         // inform the other player that this player left the room
+        console.log(guestInfo.has(socket.request.session.guest));
         socket.to(guestInfo.get(socket.request.session.guest).room).emit('enemy-left');
         // remove this player from the map of guest info
         if (guestInfo.has(socket.request.session.guest)) guestInfo.delete(socket.request.session.guest);
         // disconnect the socket
-        //socket.disconnect(true);
+        socket.disconnect(true);
     });
 
     // when a client disconnects

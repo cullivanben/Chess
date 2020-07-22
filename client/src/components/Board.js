@@ -67,13 +67,12 @@ class Board extends React.Component {
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);
         // make sure that game state and socket connections are cleaned up when the user navigates away from this page
-        window.addEventListener('popstate', this.cleanup);
+        window.onpopstate = this.cleanup;
     }
 
     // if the component gets a chance to unmount, remove the event listener
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.saveStateToLocalStorage);
-        window.removeEventListener('popstate', this.cleanup);
     }
 
     // saves the state of the game to local storage before the window unloads
@@ -82,7 +81,7 @@ class Board extends React.Component {
         localStorage.setItem('saved', 'true');
         localStorage.setItem('color', this.state.color);
         localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
-            if (key === 'src') return undefined;
+            if (key === 'src' || key === 'id') return undefined;
             else return value;
         }));
         localStorage.setItem('highlighted', JSON.stringify([...this.state.highlighted]));
@@ -155,7 +154,7 @@ class Board extends React.Component {
         // when this socket disconnects, the server will do all the necessary socket cleanup 
         // and inform the other player that this player left
         // tell the server to disconnect this socket
-        this.socket.emit('force-disconnect');
+        if (this.socket !== null) this.socket.emit('force-disconnect');
         // clear local storage in order to remove all state info of this game
         localStorage.clear();
     }
@@ -243,7 +242,9 @@ class Board extends React.Component {
 
     // handles when the enemy leaves the game
     handleEnemyLeft() {
-        console.log('lefttttttt');
+        console.log('lefttttt');
+        // clear local storage and disconnect from the socket
+        this.cleanup();
     }
 
     // handles when a mouse is initially pressed down
@@ -386,6 +387,7 @@ class Board extends React.Component {
             board[row] = <li key={row}><ul className="row">{toAdd}</ul></li>;
             position += 8;
         }
+        console.log('render board', this.state.color);
         return (<div className="board-and-stats">
 
             <ul className="rows">{board}</ul>

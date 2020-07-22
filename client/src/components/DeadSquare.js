@@ -4,17 +4,11 @@ import '../stylesheets/DeadSquare.scss';
 
 export default function DeadSquare(props) {
     // set the source and classnames
-    let src, name, countName;
-    if (props.src === 'null') {
-        src = sources.blackKnight;
-        name = 'dead-transparent';
-        countName = 'count-transparent';
-    }
-    else {
-        src = props.src;
-        name = 'dead-opaque';
-        countName = 'count-opaque';
-    }
+    let src = props.src === 'null' ? sources.blackKnight : props.src;
+    let name = props.src === 'null' ? 'dead-transparent' : 'dead-opaque';
+    let countName = (props.src === 'null' || props.count <= 1 ? 
+        'count-transparent' : 'count-opaque');
+    // override countName if there is only one 
     return (<div className="dead-square-wrapper">
         <button className="dead-square">
             <img 
@@ -22,7 +16,8 @@ export default function DeadSquare(props) {
                 src={src}
                 alt="Chess Piece"
             />
+            <div className={countName}>{props.count}</div>
         </button>
-        <h5 className={countName}>{`x${props.count}`}</h5>
+        {/* <h5 className={countName}>{`x${props.count}`}</h5> */}
     </div>);
 }

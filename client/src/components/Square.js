@@ -37,6 +37,7 @@ export default function Square(props) {
                 className={name}
                 src={src}
                 alt="Chess Piece"
+                draggable="false"
             />
     </button>);
 }

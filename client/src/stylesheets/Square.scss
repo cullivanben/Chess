@@ -7,31 +7,13 @@
 button:focus {
     outline: none;
 }
+// .transparent, .opaque {
+//     -webkit-user-drag: none;
+//     user-select: none;
+// }
 .transparent {
     opacity: 0;
 }
-
-// @media (orientation: landscape) {
-//     .square {
-//         height: 9vh;
-//         width: 9vh;
-//     }
-//     .transparent, .opaque {
-//         height: 8vh;
-//         width: 8vh;
-//     }
-// }
-@media (orientation: portrait) {
-    .square {
-        height: 9vw;
-        width: 9vw;
-    }
-    .transparent, .opaque {
-        height: 8vw;
-        width: 8vw;
-    }
-}
-
 @media (max-aspect-ratio: 3/4) {
 
 }
