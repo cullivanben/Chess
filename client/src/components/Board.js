@@ -4,14 +4,15 @@ import io from 'socket.io-client';
 import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
+import Chat from './Chat';
 import King from '../chess-classes/pieces/King';
-import { 
-    initBoard, 
-    initKingPos, 
-    initEnemyKingPos, 
-    initTurn 
+import {
+    initBoard,
+    initKingPos,
+    initEnemyKingPos,
+    initTurn
 } from './helpers/initHelpers';
-import { 
+import {
     createSpot,
     convertPos
 } from './helpers/helperFunctions';
@@ -164,7 +165,7 @@ class Board extends React.Component {
         console.log(color, "set color");
         this.setState({
             color: color,
-            board: initBoard(color), 
+            board: initBoard(color),
             kingPosition: initKingPos(color),
             enemyKingPosition: initEnemyKingPos(color),
             turn: initTurn(color)
@@ -202,7 +203,7 @@ class Board extends React.Component {
                 let dead = this.state.board[b].piece.pieceType;
                 this.setState(prevState => ({
                     deadFriends: prevState.deadFriends.concat((prevState.color === 'black' ?
-                        'b'+dead : 'w'+dead)),
+                        'b' + dead : 'w' + dead)),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === b) spot.piece = selectedPiece;
@@ -230,7 +231,7 @@ class Board extends React.Component {
 
     // handles when this player is notified that it is their turn
     handleTurn() {
-        this.setState({turn: true});
+        this.setState({ turn: true });
     }
 
     // performs cleanup and navigates back to the home page
@@ -269,15 +270,15 @@ class Board extends React.Component {
                 selection: position,
                 highlighted: toHighlight
             });
-        } 
+        }
         // if there is a piece currently selected
         else {
             // if the selection cannot move to this position, do nothing
             if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
-                .canMove(this.state.board[this.state.selection], this.state.board[position], 
-                this.state.board, this.state.kingPosition)) return;
+                .canMove(this.state.board[this.state.selection], this.state.board[position],
+                    this.state.board, this.state.kingPosition)) return;
             // determine the new king position
-            let newKingPosition = (this.state.board[this.state.selection].piece 
+            let newKingPosition = (this.state.board[this.state.selection].piece
                 instanceof King ? position : this.state.kingPosition);
             // get the piece that is being moved
             let selectedPiece = this.state.board[this.state.selection].piece;
@@ -296,8 +297,8 @@ class Board extends React.Component {
                 this.setState(prevState => ({
                     selection: -1,
                     kingPosition: newKingPosition,
-                    deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ? 
-                        'w'+dead : 'b'+dead)),
+                    deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ?
+                        'w' + dead : 'b' + dead)),
                     highlighted: new Set(),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
@@ -336,7 +337,7 @@ class Board extends React.Component {
         for (let i = 0; i < board.length; i++) {
             if (board[position].piece.canMove(board[position], board[i], board, kingPosition)) {
                 positions.add(i);
-            } 
+            }
         }
         return positions;
     }
@@ -354,7 +355,7 @@ class Board extends React.Component {
             key = this.state.board[position].piece.id;
         }
         return (<li key={key}>
-            <Square 
+            <Square
                 handleMouseDown={() => this.handleMouseDown(position)}
                 highlighted={this.state.highlighted.has(position)}
                 enemyHighlighted={this.state.enemyHighlighted.has(position)}
@@ -391,9 +392,9 @@ class Board extends React.Component {
         }
         console.log('render board', this.state.color);
         return (<div className="board-and-stats">
-
+            <Chat className="board-chat" />
             <ul className="rows">{board}</ul>
-            <StatsBar 
+            <StatsBar
                 className="stats-bar"
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}

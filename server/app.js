@@ -43,7 +43,7 @@ io.use((socket, next) => sessionMiddleWare(socket.request, socket.request.res ||
 // handle connection to the socket
 io.on('connection', socket => {
     console.log('guest from socket', socket.request.session.guest);
-
+    console.log('guest info', guestInfo);
     // if this user is already part of a game, add them to the same room
     if (guestInfo.has(socket.request.session.guest)) socket.join(guestInfo.get(socket.request.session.guest).room);
     // if the user is not currently part of a game
