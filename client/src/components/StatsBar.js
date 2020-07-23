@@ -4,8 +4,12 @@ import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/StatsBar.scss';
 
 // gets the svg source of a piece
-function getSrc(piece, color) {
-    switch (piece) {
+function getSrc(piece) {
+    console.log('piece', piece)
+    let color = piece.substring(0, 1) === 'b' ? 'black' : 'white';
+    console.log('parsed color', color)
+    let parsed = piece.substring(1);
+    switch (parsed) {
         case 'Pawn':
             return color === 'black' ? sources.blackPawn : sources.whitePawn;
         case 'Rook':
@@ -44,10 +48,10 @@ function arrangeDead(arr) {
 }
 
 // constructs a square with a piece svg and the number of this piece that have been killed
-function renderDeadSquare(arr, i, color) {
+function renderDeadSquare(arr, i) {
     let src, count, key;
     if (i < arr.length) {
-        src = getSrc(arr[i][0], color);
+        src = getSrc(arr[i][0]);
         count = arr[i][1];
         key = `${arr[i][0]} ${arr[i][1]}`;
     }
@@ -60,22 +64,17 @@ function renderDeadSquare(arr, i, color) {
 }
 
 // sets up a row of dead enemies or dead friends
-function setUpRow(arr, color) {
+function setUpRow(arr) {
     let row = [];
     row.length = 5;
-    for (let i = 0; i < 5; i++) row[i] = renderDeadSquare(arr, i, color);
+    for (let i = 0; i < 5; i++) row[i] = renderDeadSquare(arr, i);
     return row;
 }
 
-export default function StatsBar(props) {
-    // get the color of the enemy
-    let enemyColor = props.color === 'black' ? 'white' : 'black';
-    console.log('this color', props.color);
-    console.log('enemy color', enemyColor);
-    
+export default function StatsBar(props) {  
     // create the rows of enemies and friends
-    let rowEnemies = setUpRow(arrangeDead(props.deadEnemies), enemyColor);
-    let rowFriends = setUpRow(arrangeDead(props.deadFriends), props.color);
+    let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));
+    let rowFriends = setUpRow(arrangeDead(props.deadFriends));
 
     return (<div className="stats-wrapper">
         {/* for the rows of dead squares I used divs instead of ul's because this 

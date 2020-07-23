@@ -201,7 +201,8 @@ class Board extends React.Component {
                 // update the board and the list of dead friends
                 let dead = this.state.board[b].piece.pieceType;
                 this.setState(prevState => ({
-                    deadFriends: prevState.deadFriends.concat(dead),
+                    deadFriends: prevState.deadFriends.concat((prevState.color === 'black' ?
+                        'b'+dead : 'w'+dead)),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === b) spot.piece = selectedPiece;
@@ -295,7 +296,8 @@ class Board extends React.Component {
                 this.setState(prevState => ({
                     selection: -1,
                     kingPosition: newKingPosition,
-                    deadEnemies: prevState.deadEnemies.concat(dead),
+                    deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ? 
+                        'w'+dead : 'b'+dead)),
                     highlighted: new Set(),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
@@ -393,7 +395,6 @@ class Board extends React.Component {
             <ul className="rows">{board}</ul>
             <StatsBar 
                 className="stats-bar"
-                color={this.state.color}
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}
             />
