@@ -28,7 +28,9 @@ class Board extends React.Component {
         super(props);
         this.socket = null;
         this.state = {
-            color: 'no color',
+            name: '',
+            enemyName: 'Phil Hanlon',
+            color: '',
             board: [],
             highlighted: new Set(),
             enemyHighlighted: new Set(),
@@ -58,7 +60,7 @@ class Board extends React.Component {
     componentDidMount() {
         // restore state from local storage if possible
         if (localStorage.getItem('saved') !== null) {
-            console.log("restoring");
+            console.log('restoring');
             this.restoreStateFromLocalStorage();
         }
         // connect to the socket
@@ -85,6 +87,7 @@ class Board extends React.Component {
     // saves the state of the game to local storage before the window unloads
     saveStateToLocalStorage() {
         localStorage.setItem('saved', 'true');
+        localStorage.setItem('guest-name', this.state.name);
         localStorage.setItem('color', this.state.color);
         localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
             if (key === 'src' || key === 'id') return undefined;
@@ -109,6 +112,9 @@ class Board extends React.Component {
     // restores the state of the game from local storage
     restoreStateFromLocalStorage() {
         let restoredState = {};
+        if (localStorage.getItem('guest-name') !== null) {
+            restoredState.name = localStorage.getItem('guest-name');
+        }
         if (localStorage.getItem('color') !== null) {
             restoredState.color = localStorage.getItem('color');
         }
@@ -178,8 +184,12 @@ class Board extends React.Component {
 
     // called when this player first recieves their color 
     handleColorSet(color) {
-        console.log(color, "set color");
+        // retireve the name of this user from local storage
+        let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
+            ('Guest ' + Math.floor(Math.random() * 90000) + 10000));
+        // set the initial state of the game
         this.setState({
+            name: name,
             color: color,
             board: initBoard(color),
             kingPosition: initKingPos(color),
@@ -409,7 +419,7 @@ class Board extends React.Component {
 
     render() {
         // if a color has not yet been set, render nothing
-        if (this.state.color === "no color" || this.state.color === undefined) return <div></div>;
+        if (this.state.color === '' || this.state.color === undefined) return <div></div>;
 
         // set up the board of squares to render
         let board = [];
@@ -427,23 +437,25 @@ class Board extends React.Component {
                 toAdd[column] = this.renderSquare(position + column, shade);
             }
             // in this case it is okay to use the index as a key because the row uls of the chessboard will not change
-            board[row] = <li key={row}><ul className="row">{toAdd}</ul></li>;
+            board[row] = <li key={row}><ul className='row'>{toAdd}</ul></li>;
             position += 8;
         }
-        return (<div className="board-and-stats">
-            <Chat className="board-chat" />
+        return (<div className='board-and-stats'>
+            <Chat className='board-chat' name={this.state.name} />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
-            <ul className="num-labels">
-                {this.state.nums.map(num => <li className="num-label" key={num}>{num}</li>)}
+            <ul className='num-labels'>
+                {this.state.nums.map(num => <li className='num-label' key={num}><p className='num-p'>{num}</p></li>)}
             </ul>
-            <div className="middle-column">
-                <ul className="rows">{board}</ul>
-                <ul className="letter-labels">
-                    {this.state.letters.map(letter => <li className="letter-label" key={letter}>{letter}</li>)}
+            <div className='middle-column'>
+                <ul className='rows'>{board}</ul>
+                <ul className='letter-labels'>
+                    {this.state.letters.map(letter => <li className='letter-label' key={letter}>{letter}</li>)}
                 </ul>
             </div>
             <StatsBar
-                className="stats-bar"
+                className='stats-bar'
+                name={this.state.name}
+                enemyName={this.state.enemyName}
                 moves={this.state.moves}
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}

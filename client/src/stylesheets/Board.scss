@@ -18,25 +18,27 @@
 }
 .num-labels {
     vertical-align: top;
-    background: turquoise;
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 .num-label {
+    color: white;
     text-align: right;
     margin: 0;
     padding: 0;
-    background: violet;
+}
+.num-p {
+    margin: 0;
+    padding: 0;
 }
 .letter-labels {
-    background: yellowgreen;
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 .letter-label {
-    background: red;
+    color: white;
     display: inline-block;
     text-align: center;
     margin: 0;
@@ -69,13 +71,13 @@
 }
 @media (min-aspect-ratio: 16/9) {
     .board-and-stats {
-        background: white;
+        background: green;
         position: fixed;
         top: 54%;
         left: 50%;
         transform: translate(-50%,-53%);
         height: 84vh;
-        width: 155vh;
+        width: 154vh;
     }
     .board-and-stats > * {
         display: inline-block;
@@ -85,8 +87,16 @@
         width: 4vh;
     }
     .num-label {
+        position: relative;
         height: 10vh;
         width: 4vh;
+        font-size: 3vh;
+    }
+    .num-p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
     }
     .letter-labels {
         height: 4vh;
@@ -95,5 +105,6 @@
     .letter-label {
         height: 4vh;
         width: 10vh;
+        font-size: 3vh;
     }
 }

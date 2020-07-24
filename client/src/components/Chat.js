@@ -49,13 +49,11 @@ export default class Chat extends React.Component {
     // handles when this user presses the send button to send a message
     handleSend(message) {
         if (!this.socket) return;
-        // generate the id of the message
         let payload = {
             id: uuid(),
-            user: "phil hanlon",
+            user: this.props.name,
             content: message
         }
-        console.log('message', payload);
         // send the message to the other player
         this.socket.emit('outgoing-message', payload);
         // update the state with the new message

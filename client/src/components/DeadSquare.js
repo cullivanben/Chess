@@ -15,6 +15,7 @@ export default function DeadSquare(props) {
                 className={name}
                 src={src}
                 alt="Chess Piece"
+                draggable="false"
             />
             <div className={countName}>{props.count}</div>
         </button>

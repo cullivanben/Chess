@@ -78,7 +78,7 @@ export default function StatsBar(props) {
     let rowFriends = setUpRow(arrangeDead(props.deadFriends));
 
     return (<div className="stats-wrapper">
-        <h3 className="enemy-name">Enemy</h3>
+        <h3 className="enemy-name">{props.enemyName}</h3>
         <ul className="dead-enemy">{rowEnemies}</ul>
         <div className="moves-played">
             <ul className="moves-ul">
@@ -89,6 +89,6 @@ export default function StatsBar(props) {
             </ul>
         </div>
         <ul className="dead-friends">{rowFriends}</ul>
-        <h3 className="your-name">You</h3>
+        <h3 className="your-name">{props.name}</h3>
     </div>);
 }

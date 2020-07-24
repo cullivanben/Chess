@@ -157,7 +157,7 @@ export function canMoveBishop(start, destination, board, kingPosition) {
 // returns whether a king can be moved from the start to the destination
 export function canMoveKing(start, destination, board, kingPosition) {
     if (start.piece === null) return false;
-    // if the destination is occupied by a fpiece on the same team, the king cannot move there
+    // if the destination is occupied by a piece on the same team, the king cannot move there
     if (destination.piece !== null && teammates(start, destination)) return false;
     // convert the positions to rows and columns
     let startRow = Math.floor(start.position / 8);
