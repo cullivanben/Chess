@@ -186,7 +186,7 @@ class Board extends React.Component {
     handleColorSet(color) {
         // retireve the name of this user from local storage
         let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
-            ('Guest ' + Math.floor(Math.random() * 90000) + 10000));
+            ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
         // set the initial state of the game
         this.setState({
             name: name,
@@ -441,7 +441,14 @@ class Board extends React.Component {
             position += 8;
         }
         return (<div className='board-and-stats'>
-            <Chat className='board-chat' name={this.state.name} />
+            <StatsBar
+                className='stats-bar'
+                name={this.state.name}
+                enemyName={this.state.enemyName}
+                moves={this.state.moves}
+                deadEnemies={this.state.deadEnemies}
+                deadFriends={this.state.deadFriends}
+            />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
             <ul className='num-labels'>
                 {this.state.nums.map(num => <li className='num-label' key={num}><p className='num-p'>{num}</p></li>)}
@@ -452,14 +459,7 @@ class Board extends React.Component {
                     {this.state.letters.map(letter => <li className='letter-label' key={letter}>{letter}</li>)}
                 </ul>
             </div>
-            <StatsBar
-                className='stats-bar'
-                name={this.state.name}
-                enemyName={this.state.enemyName}
-                moves={this.state.moves}
-                deadEnemies={this.state.deadEnemies}
-                deadFriends={this.state.deadFriends}
-            />
+            <Chat className='board-chat' name={this.state.name} />
         </div>);
     }
 }

@@ -1,20 +1,45 @@
+@import './colors.scss';
+
 .home-wrapper {
-    background: red;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    padding: 0;
+    margin: 0;
 }
-
 .home-screen, .br-wrapper, .wr-wrapper {
-    background: green;
     vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+.logo-header {
+    color: white;
+}
+.guest-prompt {
+    color: white;
+}
+.guest-name-input:focus {
+    outline: none;
+}
+.br-wrapper {
+    background: $dark-square-highlight;
+}
+.wr-wrapper {
+    background: $dark-enemy-highlight;
+}
+.play-button-wrapper {
+    margin: 0;
+    padding: 0;
 }
 .home-screen {
     text-align: center;
 }
 .play-button {
     margin: 0;
+    padding: 0;
+    background: $dark-gray;
+    color: white;
 }
 .guest-prompt {
     margin-left: 0;
@@ -26,6 +51,15 @@
     margin-left: 0;
     margin-right: 0;
     padding: 0;
+    background-color: $dark-gray;
+    color: white;
+}
+::placeholder {
+    opacity: 1;
+    color: white;
+}
+::-ms-input-placeholder, :-ms-input-placeholder {
+    color: white;
 }
 @media (max-aspect-ratio: 3/4) {
 
@@ -39,44 +73,56 @@
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
 
 }
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
+// @media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
 
-}
-@media (min-aspect-ratio: 16/9) {
+// }
+@media (min-aspect-ratio: 3/2) {
     .home-wrapper {
-        width: 140vh;
+        width: 92vw;
     }
     .home-screen {
-        width: 60vh;
-        height: 60vh;
+        width: 40vw;
+        height: 40vw;
     }
     .home-wrapper > * {
         display: inline-block;
     }
     .logo-header {
-        font-size: 12vh;
+        width: 40vw;
+        height: 10vw;
+        font-size: 8vw;
     }
     .play-button {
-        width: 18vh;
-        height: 6vh;
+        width: 16vw;
+        height: 4vw;
+        font-size: 1.75vw;
+        border-radius: 1vw;
+        border: none;
     }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
-        height: 30vh;
-        width: 30vh;
+        height: 20vw;
+        width: 20vw;
     }
     .br-wrapper {
-        margin-right: 10vh;
+        margin-right: 6vw;
     }
     .wr-wrapper {
-        margin-left: 10vh;
+        margin-left: 6vw;
     }
     .guest-prompt {
-        margin-top: 3vh;
-        margin-bottom: 3vh;
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        font-size: 2vw;
     }
     .guest-name-input {
-        margin-bottom: 1vh;
-        height: 3vh;
-        width: 18vh;
+        margin-bottom: 1vw;
+        height: 2vw;
+        width: 16vw;
+        font-size: 1vw;
+    }
+}
+@media (min-aspect-ratio: 5/1) {
+    .home-wrapper > * {
+        opacity: 0;
     }
 }

@@ -14,7 +14,7 @@ function getSrc(piece) {
             return color === 'black' ? sources.blackPawn : sources.whitePawn;
         case 'Rook':
             return color === 'black' ? sources.blackRook : sources.whiteRook;
-        case 'Knight': 
+        case 'Knight':
             return color === 'black' ? sources.blackKnight : sources.whiteKnight;
         case 'Bishop':
             return color === 'black' ? sources.blackBishop : sources.whiteBishop;
@@ -30,18 +30,18 @@ function getSrc(piece) {
 function arrangeDead(arr) {
     let counts = new Map();
     arr.forEach(piece => {
-        if (counts.has(piece)) counts.set(piece, counts.get(piece)+1);
+        if (counts.has(piece)) counts.set(piece, counts.get(piece) + 1);
         else counts.set(piece, 1);
     });
     let out = [];
     for (let key of counts.keys()) {
         out.push([key, counts.get(key)]);
         let i = out.length - 1;
-        while (i > 0 && out[i-1][1] <= out[i][1]) {
-            if (out[i-1][1] === out[i][1] && out[i-1][0] < out[i][0]) break;
+        while (i > 0 && out[i - 1][1] <= out[i][1]) {
+            if (out[i - 1][1] === out[i][1] && out[i - 1][0] < out[i][0]) break;
             let temp = out[i];
-            out[i] = out[i-1];
-            out[i---1] = temp;
+            out[i] = out[i - 1];
+            out[i-- - 1] = temp;
         }
     }
     return out;
@@ -71,24 +71,23 @@ function setUpRow(arr) {
     return row;
 }
 
-export default function StatsBar(props) {  
+export default function StatsBar(props) {
     // create the rows of enemies and friends
     console.log('MOVES', props.moves);
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));
     let rowFriends = setUpRow(arrangeDead(props.deadFriends));
 
     return (<div className="stats-wrapper">
-        <h3 className="enemy-name">{props.enemyName}</h3>
+        <div className="enemy-name-wrapper"><h3 className="enemy-name">{props.enemyName}</h3></div>
         <ul className="dead-enemy">{rowEnemies}</ul>
         <div className="moves-played">
             <ul className="moves-ul">
-                {props.moves.map((move, i) => {
-                    let color = move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ';
-                    return <li key={i+move}>{i + color + move.substring(1)}</li>;
-                })}
+                {props.moves.map((move, i) => (<li key={i + move}>{(i + 1) + 
+                    (move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ') + 
+                    move.substring(1)}</li>))}
             </ul>
         </div>
         <ul className="dead-friends">{rowFriends}</ul>
-        <h3 className="your-name">{props.name}</h3>
+        <div className="your-name-wrapper"><h3 className="your-name">{props.name}</h3></div>
     </div>);
 }

@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 .stats-wrapper {
     vertical-align: top;
 }
@@ -12,12 +14,22 @@
 }
 .moves-played {
     overflow-y: scroll;
-    background: purple;
+    background: $chat-background;
+}
+.enemy-name-wrapper, .your-name-wrapper {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    background: $dark-square-highlight;
 }
 .enemy-name, .your-name {
     margin: 0;
     padding: 0;
-    background: orange;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
 }
 .moves-ul {
     list-style-type: none;
@@ -35,19 +47,41 @@
 
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
-}
-@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
-}
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
-
-}
-@media (min-aspect-ratio: 16/9) {
+    .stats-wrapper {
+        display: inline-block;
+    }
     .moves-played {
-        height: 64vh;
+        height: 44vw;
+    }
+    .enemy-name-wrapper, .your-name-wrapper {
+        height: 5vw;
     }
     .enemy-name, .your-name {
-        height: 4vh;
+        width: 15vw;
+        font-size: 2.5vw;
+    }
+}
+@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
+    .moves-played {
+        height: 35.5vw;
+    }
+    .enemy-name-wrapper, .your-name-wrapper {
+        height: 3vw;
+    }
+    .enemy-name, .your-name {
+        width: 15vw;
+        font-size: 1.5vw;
+    }
+}
+@media (min-aspect-ratio: 3/2) {
+    .moves-played {
+        height: 27vw;
+    }
+    .enemy-name-wrapper, .your-name-wrapper {
+        height: 2vw;
+    }
+    .enemy-name, .your-name {
+        width: 15vw;
+        font-size: 1.5vw;
     }
 }

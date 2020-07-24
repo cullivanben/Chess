@@ -1,3 +1,4 @@
+
 .square {
     padding: 0;
     margin: 0;
@@ -21,21 +22,32 @@ button:focus {
 
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
-}
-@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
-}
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
-
-}
-@media (min-aspect-ratio: 16/9) {
     .square {
-        height: 10vh;
-        width: 10vh;
+        height: 8vw;
+        width: 8vw;
     }
     .transparent, .opaque {
-        height: 9vh;
-        width: 9vh;
+        height: 7vw;
+        width: 7vw;
+    }
+}
+@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
+    .square {
+        height: 6.5vw;
+        width: 6.5vw;
+    }
+    .transparent, .opaque {
+        height: 5.5vw;
+        width: 5.5vw;
+    }
+}
+@media (min-aspect-ratio: 3/2) {
+    .square {
+        height: 5vw;
+        width: 5vw;
+    }
+    .transparent, .opaque {
+        height: 4.5vw;
+        width: 4.5vw;
     }
 }

@@ -31,26 +31,47 @@ button:focus {
 
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
-}
-@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
-}
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
-
-}
-@media (min-aspect-ratio: 16/9) {
     .dead-square {
-        height: 6vh;
-        width: 6vh;
+        height: 5vw;
+        width: 5vw;
     }
     .dead-transparent, .dead-opaque {
-        height: 5vh;
-        width: 5vh;
+        height: 4vw;
+        width: 4vw;
     }
     .count-transparent, .count-opaque {
-        font-size: 2.5vh;
-        height: 2vh;
-        width: 2vh;
+        font-size: 1.75vw;
+        height: 1.5vw;
+        width: 1.5vw;
+    }
+}
+@media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
+    .dead-square {
+        height: 3.5vw;
+        width: 3.5vw;
+    }
+    .dead-transparent, .dead-opaque {
+        height: 2.5vw;
+        width: 2.5vw;
+    }
+    .count-transparent, .count-opaque {
+        font-size: 1.25vw;
+        height: 1vw;
+        width: 1vw;
+    }
+}
+@media (min-aspect-ratio: 3/2) {
+    .dead-square {
+        height: 3vw;
+        width: 3vw;
+    }
+    .dead-transparent, .dead-opaque {
+        height: 2.5vw;
+        width: 2.5vw;
+    }
+    .count-transparent, .count-opaque {
+        font-size: 1.25vw;
+        height: 1vw;
+        width: 1vw;
     }
 }

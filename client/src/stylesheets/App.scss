@@ -1,7 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import './colors.scss';
+
 html, body {
     margin: 0 !important;
     padding: 0 !important;
-    background: #2d2d2d;
+    background: $app-background;
+    overflow: visible;
+}
+body {
+    font-family: 'Lato', sans-serif;
 }
 @media (max-aspect-ratio: 3/4) {
 

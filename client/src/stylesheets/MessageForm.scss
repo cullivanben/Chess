@@ -1,8 +1,21 @@
+@import './colors.scss';
+
 .send-message-input, .send-message {
     border: none;
     margin: 0;
     padding: 0;
     vertical-align: bottom;
+}
+.send-message-input {
+    color: white;
+    background: $dark-gray;
+}
+.send-message {
+    color: white;
+    background: $dark-square-highlight;
+}
+.send-message-input:focus {
+    outline: none;
 }
 @media (max-aspect-ratio: 3/4) {
 
@@ -14,21 +27,32 @@
 
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
-}
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
-
-}
-@media (min-aspect-ratio: 16/9) {
     .send-message-wrapper {
-        width: 40vh;
+        width: 25vw;
     }
     .send-message-input {
-        width: 30vh;
-        height: 6vh;
+        width: 18vw;
+        height: 2.5vw;
+        font-size: 1vw;
     }
     .send-message {
-        width: 10vh;
-        height: 6vh;
+        width: 7vw;
+        height: 2.5vw;
+        font-size: 2vw;
+    }
+}
+@media (min-aspect-ratio: 3/2) {
+    .send-message-wrapper {
+        width: 20vw;
+    }
+    .send-message-input {
+        width: 15vw;
+        height: 3vw;
+        font-size: 1vw;
+    }
+    .send-message {
+        width: 5vw;
+        height: 3vw;
+        font-size: 1.5vw;
     }
 }

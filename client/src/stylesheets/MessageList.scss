@@ -1,12 +1,14 @@
+@import './colors.scss';
+
 .message-list-wrapper {
     margin: 0;
     padding: 0;
     overflow-y: scroll;
     border: none;
+    background: $chat-background;
 }
 .message-list {
     margin: 0;
-
     list-style-type: none;
     li {
         margin: 0;
@@ -32,27 +34,38 @@
 
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
-}
-@media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
-
-}
-@media (min-aspect-ratio: 16/9) {
     .message-list-wrapper {
-        height: 72vh;
-        background: #49a2de;
+        height: 49.5vw;
     }
     .message-list {
-       padding: 1vh;
+       padding: 0.5vw;
        li {
-           padding-bottom: 1vh;
+           padding-bottom: 0.5vw;
        }
     }
     .message-content {
-        padding: 1vh;
+        padding: 0.5vw;
         width: max-content;
-        max-width: 30vh;
-        border-radius: 1.5vh;
+        max-width: 19vw;
+        border-radius: 1vw;
+        word-wrap: break-word;
+    }
+}
+@media (min-aspect-ratio: 3/2) {
+    .message-list-wrapper {
+        height: 36vw;
+    }
+    .message-list {
+       padding: 0.5vw;
+       li {
+           padding-bottom: 0.5vw;
+       }
+    }
+    .message-content {
+        padding: 0.5vw;
+        width: max-content;
+        max-width: 15vw;
+        border-radius: 1vw;
         word-wrap: break-word;
     }
 }

@@ -10,7 +10,9 @@ const color = {
     lightSqareHighlight: '#91c2e3',
     darkSquareHighlight: '#49a2de',
     lightEnemyHighlight: '#db9e93',
-    darkEnemyHighlight: '#cc604e'
+    darkEnemyHighlight: '#cc604e',
+    lightGrey: '#d4d4d4',
+    darkGrey: '#a1a1a1'
 };
 
 export default color;
