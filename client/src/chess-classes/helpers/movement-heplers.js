@@ -169,7 +169,7 @@ export function canMoveKing(start, destination, board, kingPosition) {
         || destinationColumn > startColumn+1) return false;
     // if the king will be attacked at the destination, it cannot move there
     // if there are no threatening pieces at the destination, it king can move there
-    return !dangerous(destination, board, start.friendly);
+    return !dangerous(destination, board, start.piece.friendly);
 }
 
 
