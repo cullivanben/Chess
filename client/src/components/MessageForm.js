@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import '../stylesheets/MessageForm.scss';
 
 // handles message input and sends the message when the user submits the form
 export default class MessageForm extends React.Component {
@@ -8,15 +9,16 @@ export default class MessageForm extends React.Component {
         this.handleSend = this.handleSend.bind(this); 
     }
 
-    // handles when the text in the input field is changed
+    // handles when the send button is pressed
     handleSend() {
         this.props.handleSend(this.inputRef.current.value);
+        this.inputRef.current.value = '';
     }
 
     render() {
         return (<div
             className="send-message-wrapper">
-            <input
+            <textarea
                 className="send-message-input"
                 placeholder="Send a message to your opponent"
                 type="text"

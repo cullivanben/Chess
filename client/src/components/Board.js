@@ -10,11 +10,14 @@ import {
     initBoard,
     initKingPos,
     initEnemyKingPos,
-    initTurn
+    initTurn,
+    initLetters,
+    initNumbers
 } from './helpers/initHelpers';
 import {
     createSpot,
-    convertPos
+    convertPos,
+    getNumLetterCode
 } from './helpers/helperFunctions';
 import '../stylesheets/Board.scss';
 const endpoint = 'http://localhost:5000';
@@ -23,6 +26,7 @@ const endpoint = 'http://localhost:5000';
 class Board extends React.Component {
     constructor(props) {
         super(props);
+        this.socket = null;
         this.state = {
             color: 'no color',
             board: [],
@@ -36,7 +40,10 @@ class Board extends React.Component {
             enemySelection: -1,
             kingPosition: 0,
             enemyKingPosition: 0,
-            turn: false
+            turn: false,
+            moves: [],
+            letters: [],
+            nums: []
         }
         this.handleColorSet = this.handleColorSet.bind(this);
         this.handleIncomingBoardUpdate = this.handleIncomingBoardUpdate.bind(this);
@@ -46,7 +53,6 @@ class Board extends React.Component {
         this.handleTurn = this.handleTurn.bind(this);
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
         this.cleanup = this.cleanup.bind(this);
-        this.socket = null;
     }
 
     componentDidMount() {
@@ -78,7 +84,6 @@ class Board extends React.Component {
 
     // saves the state of the game to local storage before the window unloads
     saveStateToLocalStorage() {
-        // save each item from the state
         localStorage.setItem('saved', 'true');
         localStorage.setItem('color', this.state.color);
         localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
@@ -96,13 +101,16 @@ class Board extends React.Component {
         localStorage.setItem('kingPosition', this.state.kingPosition);
         localStorage.setItem('enemyKingPosition', this.state.enemyKingPosition);
         localStorage.setItem('turn', (this.state.turn ? 1 : 0));
+        localStorage.setItem('moves', JSON.stringify(this.state.moves));
+        localStorage.setItem('letters', JSON.stringify(this.state.letters));
+        localStorage.setItem('nums', JSON.stringify(this.state.nums));
     }
 
     // restores the state of the game from local storage
     restoreStateFromLocalStorage() {
         let restoredState = {};
         if (localStorage.getItem('color') !== null) {
-            restoredState.color = toString(localStorage.getItem('color'));
+            restoredState.color = localStorage.getItem('color');
         }
         if (localStorage.getItem('board') !== null) {
             restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => createSpot(obj));
@@ -144,10 +152,18 @@ class Board extends React.Component {
             restoredState.enemyKingPosition = parseInt(localStorage.getItem('enemyKingPosition'));
         }
         if (localStorage.getItem('turn') !== null) {
-            restoredState.turn = (localStorage.getItem('turn') === 0 ? false : true);
+            restoredState.turn = (localStorage.getItem('turn') === '0' ? false : true);
+        }
+        if (localStorage.getItem('moves') !== null) {
+            restoredState.moves = JSON.parse(localStorage.getItem('moves'));
+        }
+        if (localStorage.getItem('letters') !== null) {
+            restoredState.letters = JSON.parse(localStorage.getItem('letters'));
+        }
+        if (localStorage.getItem('nums') !== null) {
+            restoredState.nums = JSON.parse(localStorage.getItem('nums'));
         }
         this.setState(restoredState);
-        console.log("state has been restored");
     }
 
     // disconnects the sockets and clears local storage
@@ -168,7 +184,9 @@ class Board extends React.Component {
             board: initBoard(color),
             kingPosition: initKingPos(color),
             enemyKingPosition: initEnemyKingPos(color),
-            turn: initTurn(color)
+            turn: initTurn(color),
+            letters: initLetters(color),
+            nums: initNumbers(color)
         });
     }
 
@@ -188,6 +206,9 @@ class Board extends React.Component {
         }
         if (data.kingPosition) {
             stateUpdate.enemyKingPosition = data.kingPosition;
+        }
+        if (data.code) {
+            stateUpdate.moves = [...this.state.moves].concat(data.code);
         }
         // set the state with the updated state fields
         this.setState(stateUpdate);
@@ -244,7 +265,6 @@ class Board extends React.Component {
 
     // handles when the enemy leaves the game
     handleEnemyLeft() {
-        console.log('lefttttt');
         // clear local storage and disconnect from the socket
         this.cleanup();
     }
@@ -273,6 +293,20 @@ class Board extends React.Component {
         }
         // if there is a piece currently selected
         else {
+            // if the person clicked on the piece that is selected, unselect it
+            if (this.state.selection === position) {
+                // send the update to the enemy
+                this.socket.emit('outgoing-board-update', {
+                    selection: -1,
+                    highlighted: []
+                });
+                // update the state
+                this.setState({
+                    selection: -1,
+                    highlighted: new Set()
+                });
+                return;
+            }
             // if the selection cannot move to this position, do nothing
             if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
                 .canMove(this.state.board[this.state.selection], this.state.board[position],
@@ -282,8 +316,11 @@ class Board extends React.Component {
                 instanceof King ? position : this.state.kingPosition);
             // get the piece that is being moved
             let selectedPiece = this.state.board[this.state.selection].piece;
+            // get the chess code of this move
+            let code = getNumLetterCode(position, selectedPiece.pieceType, this.state.color);
             // send the update to the enemy
             this.socket.emit('outgoing-board-update', {
+                code: code,
                 selection: -1,
                 kingPosition: newKingPosition,
                 highlighted: [],
@@ -295,11 +332,13 @@ class Board extends React.Component {
                 let dead = this.state.board[position].piece.pieceType;
                 // update the board accordingly
                 this.setState(prevState => ({
+                    turn: false,
                     selection: -1,
                     kingPosition: newKingPosition,
                     deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ?
                         'w' + dead : 'b' + dead)),
                     highlighted: new Set(),
+                    moves: prevState.moves.concat(code),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === position) spot.piece = selectedPiece;
@@ -317,6 +356,7 @@ class Board extends React.Component {
                     selection: -1,
                     kingPosition: newKingPosition,
                     highlighted: new Set(),
+                    moves: prevState.moves.concat(code),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === position) spot.piece = selectedPiece;
@@ -369,7 +409,7 @@ class Board extends React.Component {
 
     render() {
         // if a color has not yet been set, render nothing
-        if (this.state.color === "no color") return <div></div>;
+        if (this.state.color === "no color" || this.state.color === undefined) return <div></div>;
 
         // set up the board of squares to render
         let board = [];
@@ -390,12 +430,21 @@ class Board extends React.Component {
             board[row] = <li key={row}><ul className="row">{toAdd}</ul></li>;
             position += 8;
         }
-        console.log('render board', this.state.color);
         return (<div className="board-and-stats">
             <Chat className="board-chat" />
-            <ul className="rows">{board}</ul>
+            {/* for the num labels it is okay to use each num as the key for its li because they never change */}
+            <ul className="num-labels">
+                {this.state.nums.map(num => <li className="num-label" key={num}>{num}</li>)}
+            </ul>
+            <div className="middle-column">
+                <ul className="rows">{board}</ul>
+                <ul className="letter-labels">
+                    {this.state.letters.map(letter => <li className="letter-label" key={letter}>{letter}</li>)}
+                </ul>
+            </div>
             <StatsBar
                 className="stats-bar"
+                moves={this.state.moves}
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}
             />

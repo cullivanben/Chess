@@ -60,7 +60,7 @@ function renderDeadSquare(arr, i) {
         count = 0;
         key = i;
     }
-    return <DeadSquare key={key} src={src} count={count} />;
+    return <li key={key}><DeadSquare src={src} count={count} /></li>;
 }
 
 // sets up a row of dead enemies or dead friends
@@ -73,17 +73,22 @@ function setUpRow(arr) {
 
 export default function StatsBar(props) {  
     // create the rows of enemies and friends
+    console.log('MOVES', props.moves);
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));
     let rowFriends = setUpRow(arrangeDead(props.deadFriends));
 
     return (<div className="stats-wrapper">
-        {/* for the rows of dead squares I used divs instead of ul's because this 
-        made it much easier to style the dead squares which are made up of a button 
-        and h5 in a horizontal row */}
-        <div className="dead-enemy">{rowEnemies}</div>
+        <h3 className="enemy-name">Enemy</h3>
+        <ul className="dead-enemy">{rowEnemies}</ul>
         <div className="moves-played">
-            { /* TODO: replace with a list of all the moves that have been made */}
+            <ul className="moves-ul">
+                {props.moves.map((move, i) => {
+                    let color = move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ';
+                    return <li key={i+move}>{i + color + move.substring(1)}</li>;
+                })}
+            </ul>
         </div>
-        <div className="dead-friends">{rowFriends}</div>
+        <ul className="dead-friends">{rowFriends}</ul>
+        <h3 className="your-name">You</h3>
     </div>);
 }

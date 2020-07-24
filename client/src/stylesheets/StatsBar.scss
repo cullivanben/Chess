@@ -14,7 +14,20 @@
     overflow-y: scroll;
     background: purple;
 }
-
+.enemy-name, .your-name {
+    margin: 0;
+    padding: 0;
+    background: orange;
+}
+.moves-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+        margin: 0;
+        padding: 0;
+    }
+}
 @media (max-aspect-ratio: 3/4) {
 
 }
@@ -32,6 +45,9 @@
 }
 @media (min-aspect-ratio: 16/9) {
     .moves-played {
-        height: 68vh;
+        height: 60vh;
+    }
+    .enemy-name, .your-name {
+        height: 4vh;
     }
 }

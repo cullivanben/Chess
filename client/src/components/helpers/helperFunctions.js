@@ -35,3 +35,29 @@ function createPiece(obj) {
             return new King(obj.friendly, obj.color);
     }
 }
+
+// returns the chess code for the move with the color appended to the beginning for id purposes
+export function getNumLetterCode(location, pieceType, color) {
+    if (color === 'white') location = 63 - location;
+    return (color.substring(0, 1) + 
+        getPieceLetter(pieceType) +  
+        String.fromCharCode(97 + (location % 8)) + 
+        (8 - Math.floor(location / 8)));
+}
+
+function getPieceLetter(pieceType) {
+    switch (pieceType) {
+        case 'Pawn':
+            return '';
+        case 'Bishop':
+            return 'B';
+        case 'Knight':
+            return 'N';
+        case 'Rook':
+            return 'R';
+        case 'Queen':
+            return 'Q';
+        default:
+            return 'K';
+    } 
+}

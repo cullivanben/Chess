@@ -1,6 +1,8 @@
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
+.send-message-input, .send-message {
+    border: none;
+    margin: 0;
+    padding: 0;
+    vertical-align: bottom;
 }
 @media (max-aspect-ratio: 3/4) {
 
@@ -18,5 +20,15 @@ html, body {
 
 }
 @media (min-aspect-ratio: 16/9) {
-
+    .send-message-wrapper {
+        width: 40vh;
+    }
+    .send-message-input {
+        width: 30vh;
+        height: 6vh;
+    }
+    .send-message {
+        width: 10vh;
+        height: 6vh;
+    }
 }

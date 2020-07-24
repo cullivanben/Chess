@@ -18,6 +18,5 @@ export default function DeadSquare(props) {
             />
             <div className={countName}>{props.count}</div>
         </button>
-        {/* <h5 className={countName}>{`x${props.count}`}</h5> */}
     </div>);
 }

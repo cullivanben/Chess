@@ -1,4 +1,5 @@
 import React from 'react';
+import '../stylesheets/MessageList.scss';
 
 // renders the list of all messages that have been sent
 export default function MessageList(props) {

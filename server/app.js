@@ -43,7 +43,6 @@ io.use((socket, next) => sessionMiddleWare(socket.request, socket.request.res ||
 // handle connection to the socket
 io.on('connection', socket => {
     console.log('guest from socket', socket.request.session.guest);
-    console.log('guest info', guestInfo);
     // if this user is already part of a game, add them to the same room
     if (guestInfo.has(socket.request.session.guest)) socket.join(guestInfo.get(socket.request.session.guest).room);
     // if the user is not currently part of a game
@@ -72,15 +71,25 @@ io.on('connection', socket => {
         socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-turn');
     });
 
+    // when a message is recieved, send the message to the other user
+    socket.on('outgoing-message', data => {
+        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-message', data);
+    });
+
     // forcibly disconnect the user
     socket.on('force-disconnect', () => {
-        console.log('force-disconnect')
+        console.log('force-disconnect');
         // inform the other player that this player left the room
         console.log(guestInfo.has(socket.request.session.guest));
         socket.to(guestInfo.get(socket.request.session.guest).room).emit('enemy-left');
         // remove this player from the map of guest info
         if (guestInfo.has(socket.request.session.guest)) guestInfo.delete(socket.request.session.guest);
         // disconnect the socket
+        socket.disconnect(true);
+    });
+
+    // forcibly disconnect the message socket
+    socket.on('disconnect-message', () => {
         socket.disconnect(true);
     });
 
