@@ -9,6 +9,15 @@
     padding: 0;
     font-size: 0;
 }
+.resign {
+    color: white;
+    background-color: $dark-enemy-highlight;
+    border: none;
+    padding: 0;
+}
+.resign:focus {
+    outline: none;
+}
 .dead-enemy > *, .dead-friends > * {
     display: inline-block;
 }
@@ -54,6 +63,16 @@
         width: 70vw;
         font-size: 6vw;
     }
+    .resign {
+        width: 40vw;
+        height: 10vw;
+        font-size: 6vw;
+        border-radius: 2vw;
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        margin-left: 26vw;
+        margin-right: 26vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .stats-wrapper {
@@ -69,6 +88,16 @@
         width: 15vw;
         font-size: 2.5vw;
     }
+    .resign {
+        width: 19vw;
+        height: 7vw;
+        font-size: 3.5vw;
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        margin-left: 3vw;
+        margin-right: 3vw;
+        border-radius: 1vw;
+    }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
     .moves-played {
@@ -81,6 +110,16 @@
         width: 15vw;
         font-size: 1.5vw;
     }
+    .resign {
+        width: 12.5vw;
+        height: 4vw;
+        font-size: 2.25vw;
+        margin-top: 1vw;
+        margin-bottom: 1vw;
+        margin-left: 2.5vw;
+        margin-right: 2.5vw;
+        border-radius: 1vw;
+    }
 }
 @media (min-aspect-ratio: 3/2) {
     .moves-played {
@@ -92,5 +131,15 @@
     .enemy-name, .your-name {
         width: 15vw;
         font-size: 1.5vw;
+    }
+    .resign {
+        width: 11vw;
+        height: 3vw;
+        font-size: 2vw;
+        margin-top: 1vw;
+        margin-bottom: 1vw;
+        margin-left: 2vw;
+        margin-right: 2vw;
+        border-radius: 0.75vw;
     }
 }
