@@ -49,21 +49,58 @@
     margin: 0;
     padding: 0;
 }
-@media (max-aspect-ratio: 3/4) {
+@media (max-aspect-ratio: 1/1) {
     .board-and-stats {
-        background-color: springgreen;
+        width: 92vw;
+        height: 318vw;
+        background: $board-brown;
+        margin-top: 4vw;
+        margin-left:4vw;
+        display: flex;
+        flex-direction: column;
     }
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-    .board-and-stats {
-        background-color: sienna;
+    .ml-wrapper {
+        order: 1;
+    }
+    .middle-column, .num-labels{
+        display: inline-block;
+    }
+    .num-labels {
+        height: 88vw;
+        width: 4vw;
+    }
+    .num-label {
+        position: relative;
+        height: 11vw;
+        width: 4vw;
+        font-size: 3vw;
+    }
+    .num-p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .letter-labels {
+        height: 4vw;
+        width: 88vw;
+    }
+    .letter-label {
+        height: 4vw;
+        width: 11vw;
+        font-size: 3vw;
     }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .board-and-stats {
-        width: 100vw;
-        background: red;
-        margin-top: 3vw;
+        width: 92vw;
+        height: 102vw;
+        background: $board-brown;
+        margin-top: 4vw;
+        margin-left:4vw
+    }
+    .ml-wrapper {
+        display: inline-block;
     }
     .middle-column, .num-labels{
         display: inline-block;
@@ -106,7 +143,11 @@
     .board-and-stats > * {
         display: inline-block;
     }
+    .middle-column {
+        display: inline-block;
+    }
     .num-labels {
+        display: inline-block;
         height: 52vw;
         width: 2.5vw;
     }
@@ -134,17 +175,19 @@
 }
 @media (min-aspect-ratio: 3/2) {
     .board-and-stats {
-        position: fixed;
-        top: 54%;
-        left: 50%;
-        transform: translate(-50%,-53%);
         height: 42vw;
         width: 77vw;
+        margin-left: 11.5vw;
+        margin-top: 3vw;
     }
     .board-and-stats > * {
         display: inline-block;
     }
+    .middle-column {
+        display: inline-block;
+    }
     .num-labels {
+        display: inline-block;
         height: 40vw;
         width: 2vw;
     }

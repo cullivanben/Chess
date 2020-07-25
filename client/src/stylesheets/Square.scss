@@ -15,11 +15,16 @@ button:focus {
 .transparent {
     opacity: 0;
 }
-@media (max-aspect-ratio: 3/4) {
 
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-
+@media (max-aspect-ratio: 1/1) {
+    .square {
+        height: 11vw;
+        width: 11vw;
+    }
+    .transparent, .opaque {
+        height: 10vw;
+        width: 10vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .square {

@@ -1,12 +1,7 @@
 @import './colors.scss';
 
 .home-wrapper {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     padding: 0;
-    margin: 0;
 }
 .home-screen, .br-wrapper, .wr-wrapper {
     vertical-align: middle;
@@ -61,10 +56,8 @@
 ::-ms-input-placeholder, :-ms-input-placeholder {
     color: white;
 }
-@media (max-aspect-ratio: 3/4) {
 
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 1/1) {
 
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
@@ -73,12 +66,13 @@
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
 
 }
-// @media (min-aspect-ratio: 3/2) and (max-aspect-ratio: 16/9) {
 
-// }
 @media (min-aspect-ratio: 3/2) {
     .home-wrapper {
         width: 92vw;
+        margin-top: 4vw;
+        margin-left: 4vw;
+        margin-right: 4vw;
     }
     .home-screen {
         width: 40vw;
@@ -119,10 +113,5 @@
         height: 2vw;
         width: 16vw;
         font-size: 1vw;
-    }
-}
-@media (min-aspect-ratio: 5/1) {
-    .home-wrapper > * {
-        opacity: 0;
     }
 }

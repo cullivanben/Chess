@@ -24,11 +24,20 @@ button:focus {
 .count-transparent {
     opacity: 0;
 }
-@media (max-aspect-ratio: 3/4) {
-
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-
+@media (max-aspect-ratio: 1/1) {
+    .dead-square {
+        height: 7vw;
+        width: 18.4vw;
+    }
+    .dead-transparent, .dead-opaque {
+        height: 6vw;
+        width: 6vw;
+    }
+    .count-transparent, .count-opaque {
+        font-size: 1.75vw;
+        height: 1.5vw;
+        width: 1.5vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .dead-square {

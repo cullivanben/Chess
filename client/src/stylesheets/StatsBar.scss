@@ -40,18 +40,27 @@
         padding: 0;
     }
 }
-@media (max-aspect-ratio: 3/4) {
-
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-
+@media (max-aspect-ratio: 1/1) {
+    .stats-wrapper {
+        order: 2;
+    }
+    .moves-played {
+        height: 36vw;
+    }
+    .enemy-name-wrapper, .your-name-wrapper {
+        height: 10vw;
+    }
+    .enemy-name, .your-name {
+        width: 70vw;
+        font-size: 6vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .stats-wrapper {
         display: inline-block;
     }
     .moves-played {
-        height: 44vw;
+        height: 36vw;
     }
     .enemy-name-wrapper, .your-name-wrapper {
         height: 5vw;

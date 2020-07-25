@@ -1,10 +1,8 @@
 @import './colors.scss';
 
 .send-message-input, .send-message {
+    padding: 0;    
     border: none;
-    margin: 0;
-    padding: 0;
-    vertical-align: bottom;
 }
 .send-message-input {
     color: white;
@@ -17,14 +15,59 @@
 .send-message-input:focus {
     outline: none;
 }
-@media (max-aspect-ratio: 3/4) {
 
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-
+@media (max-aspect-ratio: 1/1) {
+    .send-message-wrapper {
+        width: 92vw;
+        height: 62vw;
+        display: inline-block;
+        
+        background: $app-background;
+    }
+    .send-message-input {
+        width: 92vw;
+        height: 40vw;
+        font-size: 3.5vw;
+        display: block;
+        margin: 0;
+    }
+    .send-message {
+        width: 35vw;
+        height: 12vw;
+        font-size: 4.5vw;
+        display: block;
+        margin-top: 3vw;
+        margin-bottom: 0;
+        margin-left: 28.5vw;
+        margin-right: 28.5vw;
+        border-radius: 3.5vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
+    .send-message-wrapper {
+        width: 32vw;
+        height: 30vw;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .send-message-input {
+        width: 32vw;
+        height: 20vw;
+        font-size: 2vw;
+        display: block;
+        margin: 0;
+    }
+    .send-message {
+        width: 20vw;
+        height: 5vw;
+        font-size: 2.5vw;
+        display: block;
+        margin-left: 6vw;
+        margin-top: 2.5vw;
+        margin-bottom: 0;
+        margin-right: 6vw;
+        border-radius: 1vw;
+    }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
     .send-message-wrapper {
@@ -34,11 +77,16 @@
         width: 18vw;
         height: 2.5vw;
         font-size: 1vw;
+        vertical-align: bottom;
     }
     .send-message {
         width: 7vw;
         height: 2.5vw;
         font-size: 2vw;
+        vertical-align: bottom;
+    }
+    .send-message-input, .send-message {
+        margin: 0;
     }
 }
 @media (min-aspect-ratio: 3/2) {
@@ -49,10 +97,15 @@
         width: 15vw;
         height: 3vw;
         font-size: 1vw;
+        vertical-align: bottom;
     }
     .send-message {
         width: 5vw;
         height: 3vw;
         font-size: 1.5vw;
+        vertical-align: bottom;
+    }
+    .send-message-input, .send-message {
+        margin: 0;
     }
 }

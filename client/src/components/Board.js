@@ -450,14 +450,16 @@ class Board extends React.Component {
                 deadFriends={this.state.deadFriends}
             />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
-            <ul className='num-labels'>
-                {this.state.nums.map(num => <li className='num-label' key={num}><p className='num-p'>{num}</p></li>)}
-            </ul>
-            <div className='middle-column'>
-                <ul className='rows'>{board}</ul>
-                <ul className='letter-labels'>
-                    {this.state.letters.map(letter => <li className='letter-label' key={letter}>{letter}</li>)}
+            <div className="ml-wrapper">
+                <ul className='num-labels'>
+                    {this.state.nums.map(num => <li className='num-label' key={num}><p className='num-p'>{num}</p></li>)}
                 </ul>
+                <div className='middle-column'>
+                    <ul className='rows'>{board}</ul>
+                    <ul className='letter-labels'>
+                        {this.state.letters.map(letter => <li className='letter-label' key={letter}>{letter}</li>)}
+                    </ul>
+                </div>
             </div>
             <Chat className='board-chat' name={this.state.name} />
         </div>);

@@ -3,7 +3,6 @@
 .ct-wrapper {
     background: $dark-square-highlight;
     position: relative;
-    margin: 0;
     padding: 0;
     border: none;
 }
@@ -16,18 +15,31 @@
     left: 50%;
     transform: translate(-50%,-50%);
 }
-@media (max-aspect-ratio: 3/4) {
-
-}
-@media (min-aspect-ratio: 3/4) and (max-aspect-ratio: 1/1) {
-
+@media (max-aspect-ratio: 1/1) {
+    .ct-wrapper {
+        height: 10vw;
+        margin-top: 4vw;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .chat-title {
+        font-size: 5.5vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
+    .ct-wrapper {
+        height: 5vw;
+        margin: 0;
+    }
+    .chat-title {
+        font-size: 3.5vw;
+    }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
     .ct-wrapper {
         height: 2.5vw;
+        margin: 0;
     }
     .chat-title {
         font-size: 2vw;
@@ -36,6 +48,7 @@
 @media (min-aspect-ratio: 3/2) {
     .ct-wrapper {
         height: 3vw;
+        margin: 0;
     }
     .chat-title {
         font-size: 2vw;

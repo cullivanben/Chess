@@ -6,7 +6,7 @@ export default class MessageForm extends React.Component {
     constructor(props) {
         super(props);
         this.inputRef = React.createRef();
-        this.handleSend = this.handleSend.bind(this); 
+        this.handleSend = this.handleSend.bind(this);
     }
 
     // handles when the send button is pressed
@@ -16,18 +16,15 @@ export default class MessageForm extends React.Component {
     }
 
     render() {
-        return (<div
-            className="send-message-wrapper">
+        return (<div className="send-message-wrapper">
             <textarea
                 className="send-message-input"
-                placeholder="Send a message to your opponent"
+                placeholder="Write a message to your opponent"
                 type="text"
                 maxLength="140"
                 ref={this.inputRef}
             />
-            <button className="send-message" onClick={this.handleSend}>
-                Send
-                </button>
+            <button className="send-message" onClick={this.handleSend}>Send</button>
         </div>);
     }
 }
