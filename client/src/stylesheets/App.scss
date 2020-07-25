@@ -10,3 +10,10 @@ html, body {
 body {
     font-family: 'Lato', sans-serif;
 }
+::placeholder {
+    opacity: 1;
+    color: white;
+}
+::-ms-input-placeholder, :-ms-input-placeholder {
+    color: white;
+}

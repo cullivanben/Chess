@@ -49,13 +49,6 @@
     background-color: $dark-gray;
     color: white;
 }
-::placeholder {
-    opacity: 1;
-    color: white;
-}
-::-ms-input-placeholder, :-ms-input-placeholder {
-    color: white;
-}
 
 @media (max-aspect-ratio: 1/1) {
     .home-wrapper {
