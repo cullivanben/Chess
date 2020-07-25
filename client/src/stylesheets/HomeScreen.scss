@@ -3,9 +3,11 @@
 .home-wrapper {
     padding: 0;
 }
+.home-screen {
+    margin: 0;
+}
 .home-screen, .br-wrapper, .wr-wrapper {
     vertical-align: middle;
-    margin: 0;
     padding: 0;
 }
 .logo-header {
@@ -24,7 +26,6 @@
     background: $dark-enemy-highlight;
 }
 .play-button-wrapper {
-    margin: 0;
     padding: 0;
 }
 .home-screen {
@@ -53,50 +54,60 @@
 @media (max-aspect-ratio: 1/1) {
     .home-wrapper {
         width: 92vw;
-        height: 92vw;
+        height: 164vw;
         margin-top: 4vw;
         margin-left: 4vw;
         margin-right: 4vw;
     }
     .home-screen {
         width: 40vw;
-        height: 72vw;
-    }
-    .home-wrapper > * {
-        display: inline-block;
+        height: 90vw;
     }
     .logo-header {
-        width: 40vw;
-        height: 25vw;
-        font-size: 12vw;
+        width: 90vw;
+        height: 20vw;
+        font-size: 15vw;
     }
     .play-button {
-        width: 30vw;
-        height: 10vw;
-        font-size: 4.5vw;
-        border-radius: 4vw;
+        width: 50vw;
+        height: 15vw;
+        font-size: 7vw;
+        border-radius: 7vw;
         border: none;
+    }
+    .play-button-wrapper {
+        margin: 0;
+        width: 92vw;
     }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
         height: 20vw;
         width: 20vw;
+        margin-bottom: 0;
+    }
+    .br-wrapper, .wr-wrapper {
+        margin-right: 36vw;
+        margin-left: 36vw;
     }
     .br-wrapper {
-        margin-right: 6vw;
+        margin-top: 0;
     }
     .wr-wrapper {
-        margin-left: 6vw;
+        margin-top: 18vw; 
     }
     .guest-prompt {
-        margin-top: 2vw;
-        margin-bottom: 2vw;
-        font-size: 4vw;
+        width: 60vw;
+        text-align: center;
+        margin-top: 2.5vw;
+        margin-bottom: 2.5vw;
+        margin-left: 16vw;
+        margin-right: 16vw;
+        font-size: 6vw;
     }
     .guest-name-input {
-        margin-bottom: 1.5vw;
-        height: 5vw;
-        width: 30vw;
-        font-size: 3vw;
+        margin-bottom: 2.5vw;
+        height: 10vw;
+        width: 50vw;
+        font-size: 5vw;
     }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
@@ -116,8 +127,8 @@
     }
     .logo-header {
         width: 40vw;
-        height: 22vw;
-        font-size: 10vw;
+        height: 12vw;
+        font-size: 8vw;
     }
     .play-button {
         width: 21vw;
@@ -126,15 +137,22 @@
         border-radius: 3vw;
         border: none;
     }
+    .play-button-wrapper {
+        margin: 0;
+    }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
         height: 20vw;
         width: 20vw;
+        margin-bottom: 0;
+        margin-top: 0;
     }
     .br-wrapper {
         margin-right: 6vw;
+        margin-left: 0;
     }
     .wr-wrapper {
         margin-left: 6vw;
+        margin-right: 0;
     }
     .guest-prompt {
         margin-top: 2vw;
@@ -165,8 +183,8 @@
     }
     .logo-header {
         width: 40vw;
-        height: 20vw;
-        font-size: 10vw;
+        height: 10vw;
+        font-size: 8vw;
     }
     .play-button {
         width: 18vw;
@@ -175,15 +193,22 @@
         border-radius: 2vw;
         border: none;
     }
+    .play-button-wrapper {
+        margin: 0;
+    }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
         height: 20vw;
         width: 20vw;
+        margin-top: 0;
+        margin-bottom: 0;
     }
     .br-wrapper {
         margin-right: 6vw;
+        margin-left: 0;
     }
     .wr-wrapper {
         margin-left: 6vw;
+        margin-right: 0;
     }
     .guest-prompt {
         margin-top: 2vw;
@@ -214,7 +239,7 @@
     .logo-header {
         width: 40vw;
         height: 10vw;
-        font-size: 8vw;
+        font-size: 7vw;
     }
     .play-button {
         width: 16vw;
@@ -223,15 +248,22 @@
         border-radius: 1vw;
         border: none;
     }
+    .play-button-wrapper {
+        margin: 0;
+    }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
         height: 20vw;
         width: 20vw;
+        margin-top: 0;
+        margin-bottom: 0;
     }
     .br-wrapper {
         margin-right: 6vw;
+        margin-left: 0;
     }
     .wr-wrapper {
         margin-left: 6vw;
+        margin-right: 0;
     }
     .guest-prompt {
         margin-top: 2vw;
