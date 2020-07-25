@@ -58,15 +58,152 @@
 }
 
 @media (max-aspect-ratio: 1/1) {
-
+    .home-wrapper {
+        width: 92vw;
+        height: 92vw;
+        margin-top: 4vw;
+        margin-left: 4vw;
+        margin-right: 4vw;
+    }
+    .home-screen {
+        width: 40vw;
+        height: 72vw;
+    }
+    .home-wrapper > * {
+        display: inline-block;
+    }
+    .logo-header {
+        width: 40vw;
+        height: 25vw;
+        font-size: 12vw;
+    }
+    .play-button {
+        width: 30vw;
+        height: 10vw;
+        font-size: 4.5vw;
+        border-radius: 4vw;
+        border: none;
+    }
+    .br-wrapper, .wr-wrapper, .home-br, .home-wr {
+        height: 20vw;
+        width: 20vw;
+    }
+    .br-wrapper {
+        margin-right: 6vw;
+    }
+    .wr-wrapper {
+        margin-left: 6vw;
+    }
+    .guest-prompt {
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        font-size: 4vw;
+    }
+    .guest-name-input {
+        margin-bottom: 1.5vw;
+        height: 5vw;
+        width: 30vw;
+        font-size: 3vw;
+    }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
-
+    .home-wrapper {
+        width: 92vw;
+        height: 72vw;
+        margin-top: 4vw;
+        margin-left: 4vw;
+        margin-right: 4vw;
+    }
+    .home-screen {
+        width: 40vw;
+        height: 72vw;
+    }
+    .home-wrapper > * {
+        display: inline-block;
+    }
+    .logo-header {
+        width: 40vw;
+        height: 22vw;
+        font-size: 10vw;
+    }
+    .play-button {
+        width: 21vw;
+        height: 8vw;
+        font-size: 3.25vw;
+        border-radius: 3vw;
+        border: none;
+    }
+    .br-wrapper, .wr-wrapper, .home-br, .home-wr {
+        height: 20vw;
+        width: 20vw;
+    }
+    .br-wrapper {
+        margin-right: 6vw;
+    }
+    .wr-wrapper {
+        margin-left: 6vw;
+    }
+    .guest-prompt {
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        font-size: 3vw;
+    }
+    .guest-name-input {
+        margin-bottom: 1.5vw;
+        height: 3.5vw;
+        width: 21vw;
+        font-size: 2.5vw;
+    }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-
+    .home-wrapper {
+        width: 92vw;
+        height: 62vw;
+        margin-top: 4vw;
+        margin-left: 4vw;
+        margin-right: 4vw;
+    }
+    .home-screen {
+        width: 40vw;
+        height: 62vw;
+    }
+    .home-wrapper > * {
+        display: inline-block;
+    }
+    .logo-header {
+        width: 40vw;
+        height: 20vw;
+        font-size: 10vw;
+    }
+    .play-button {
+        width: 18vw;
+        height: 6vw;
+        font-size: 2.5vw;
+        border-radius: 2vw;
+        border: none;
+    }
+    .br-wrapper, .wr-wrapper, .home-br, .home-wr {
+        height: 20vw;
+        width: 20vw;
+    }
+    .br-wrapper {
+        margin-right: 6vw;
+    }
+    .wr-wrapper {
+        margin-left: 6vw;
+    }
+    .guest-prompt {
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        font-size: 2.5vw;
+    }
+    .guest-name-input {
+        margin-bottom: 1.5vw;
+        height: 3vw;
+        width: 18vw;
+        font-size: 2vw;
+    }
 }
-
 @media (min-aspect-ratio: 3/2) {
     .home-wrapper {
         width: 92vw;
