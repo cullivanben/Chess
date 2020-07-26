@@ -28,6 +28,7 @@ class Board extends React.Component {
             attackingFriendlyKing: new Set(),
             attackingEnemyKing: new Set(),
             selection: -1,
+            newPosition: -1,
             enemySelection: -1,
             kingPosition: 0,
             enemyKingPosition: 0,
@@ -42,13 +43,11 @@ class Board extends React.Component {
         this.handleEnemyLeft = this.handleEnemyLeft.bind(this);
         this.handleResign = this.handleResign.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
-        this.handleTurn = this.handleTurn.bind(this);
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
         this.cleanup = this.cleanup.bind(this);
         this.updateAttackers = this.updateAttackers.bind(this);
         this.sendUpdate1 = this.sendUpdate1.bind(this);
         this.sendUpdate2 = this.sendUpdate2.bind(this);
-        this.sendUpdate3 = this.sendUpdate3.bind(this);
     }
 
     componentDidMount() {
@@ -146,13 +145,13 @@ class Board extends React.Component {
         }
         if (localStorage.getItem('attackingFriendlyKing') !== null) {
             restoredState.attackingFriendlyKing = new Set();
-            JSON.parse('attackingFriendlyKing').forEach(position => {
+            JSON.parse(localStorage.getItem('attackingFriendlyKing')).forEach(position => {
                 restoredState.attackingFriendlyKing.add(position)
             });
         }
         if (localStorage.getItem('attackingEnemyKing') !== null) {
             restoredState.attackingEnemyKing = new Set();
-            JSON.parse('attackingEnemyKing').forEach(position => {
+            JSON.parse(localStorage.getItem('attackingEnemyKing')).forEach(position => {
                 restoredState.attackingEnemyKing.add(position);
             });
         }
@@ -176,6 +175,7 @@ class Board extends React.Component {
 
     // called when this player first recieves their color 
     handleColorSet(color) {
+        console.log('color set', color);
         // retireve the name of this user from local storage
         let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
             ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
@@ -189,7 +189,7 @@ class Board extends React.Component {
             turn: Init.initTurn(color),
             letters: Init.initLetters(color),
             nums: Init.initNumbers(color)
-        });
+        }, () => console.log('the state was set upon color receival'));
     }
 
     // called when this player recieves a board update from the enemy
@@ -344,6 +344,7 @@ class Board extends React.Component {
                 this.setState(prevState => ({
                     turn: false,
                     selection: -1,
+                    newPosition: position,
                     attackingFriendlyKing: new Set(),
                     kingPosition: newKingPosition,
                     deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ?
@@ -366,8 +367,8 @@ class Board extends React.Component {
                 this.setState(prevState => ({
                     turn: false,
                     selection: -1,
+                    newPosition: position,
                     attackingFriendlyKing: new Set(),
-                    attackingEnemyKing: attackers,
                     kingPosition: newKingPosition,
                     highlighted: new Set(),
                     moves: prevState.moves.concat(code),
@@ -386,19 +387,18 @@ class Board extends React.Component {
     // updates whether any of the friendly pieces are attacking the enemy king,
     // this is necessary because occasionally double-checks are possible, this cannot
     // be accounted for unless the board is scanned
-    // this method then sends all of the updated state to the enemy
+    // once the state is updated, the update is send to the enemy
     updateAttackers() {
-        let attackers = [];
+        let attackers = new Set();
         let threats = new Set();
         for (let i = 0; i < 64; i++) {
             if (this.state.board[i].piece !== null && this.state.board[i].piece.friendly
-                && this.state.board[i].piece.canMove(this.state.board[i],
-                    this.state.board[this.state.enemyKingPosition], 
+                && Movement.canMove(this.state.board[i], this.state.board[this.state.enemyKingPosition],
                     this.state.board, this.state.kingPosition, threats)) {
-                attackers.push(i);
+                attackers.add(i);
             }
         }
-        this.setState({ attackingEnemyKing: new Set(attackers) }, this.sendUpdate1);
+        this.setState({ attackingEnemyKing: attackers }, this.sendUpdate1);
     }
 
     // sends the main type of state update to the enemy
@@ -413,7 +413,7 @@ class Board extends React.Component {
             attackingEnemyKing: [],
             enemyKingPosition: this.state.kingPosition,
             enemyHighlighted: [],
-            move: [this.state.selection, position]
+            move: [this.state.selection, this.state.newPosition]
         }
         // send the update to the enemy
         this.socket.emit('outgoing-board-update', update);
@@ -431,7 +431,7 @@ class Board extends React.Component {
     // returns a set of the positions of all the spots that can be moved to
     whichHighlight(position) {
         let positions = new Set();
-        for (let i = 0; i < board.length; i++) {
+        for (let i = 0; i < this.state.board.length; i++) {
             if (Movement.canMove(this.state.board[position], this.state.board[i], this.state.board,
                 this.state.kingPosition, this.state.attackingFriendlyKing)) positions.add(i);
         }

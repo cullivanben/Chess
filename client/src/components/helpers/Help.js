@@ -16,7 +16,7 @@ export default class Help {
     // converts an object to a spot
     static createSpot(obj) {
         let spot = new Spot(obj.position);
-        if (obj.piece !== null) spot.piece = createPiece(obj.piece);
+        if (obj.piece !== null) spot.piece = this.createPiece(obj.piece);
         return spot;
     }
 
@@ -42,7 +42,7 @@ export default class Help {
     static getNumLetterCode(location, pieceType, color) {
         if (color === 'white') location = 63 - location;
         return (color.substring(0, 1) +
-            getPieceLetter(pieceType) +
+            this.getPieceLetter(pieceType) +
             String.fromCharCode(97 + (location % 8)) +
             (8 - Math.floor(location / 8)));
     }

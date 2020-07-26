@@ -8,6 +8,10 @@ import Pawn from '../../chess-classes/pieces/Pawn';
 
 // this class contains static methods that help initialize the chess game
 export default class Init {
+
+    static testMethod() {
+        console.log('This is a static test method');
+    }
     // initializes the chess board with all the pieces in their starting locations 
     static initBoard(color) {
         // set up the array that will hold all of the spots on the board

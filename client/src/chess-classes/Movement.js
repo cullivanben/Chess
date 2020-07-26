@@ -27,6 +27,7 @@ export default class Movement {
     // returns whether a pawn can be moved from the start to the destination
     static canMovePawn(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
+        console.log('pawn start', start);
         let shift = start.piece.friendly ? -1 : 1;
         // convert the positions to rows and columns
         let startRow = Math.floor(start.position / 8);
@@ -37,12 +38,14 @@ export default class Movement {
         // moving two spots ahead is legal
         if (start.piece.friendly && startRow === 6 && destinationRow === 4 && startColumn === destinationColumn
             && destination.piece === null && board[40 + startColumn].piece === null) {
-            if (attackingFriendlyKing.size > 0) return;
+            if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+                kingPosition, attackingFriendlyKing);
             return !this.cantMove(start, destination, board, kingPosition);
         }
         if (!start.piece.friendly && startRow === 1 && destinationRow === 3 && startColumn === destinationColumn
             && destination.piece === null && board[16 + startColumn].piece === null) {
-            if (attackingFriendlyKing.size > 0) return;
+            if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+                kingPosition, attackingFriendlyKing);
             return !this.cantMove(start, destination, board, kingPosition);
         }
         // if the destination is occupied, the move must be diagonal and forward and the piece must not be friendly
@@ -52,14 +55,16 @@ export default class Movement {
             // this piece can move to one of the two spots diagonally in front of it
             if (startRow + shift !== destinationRow || (destinationColumn !== startColumn - 1
                 && destinationColumn !== startColumn + 1)) return false;
-            if (attackingFriendlyKing.size > 0) return;
+            if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+                kingPosition, attackingFriendlyKing);
             return !this.cantMove(start, destination, board, kingPosition);
         }
         // if the destination is not occupied, diagonal moves are not legal
         else {
             // this piece can only move to the spot directly in front of it
             if (startRow + shift !== destinationRow || startColumn !== destinationColumn) return false;
-            if (attackingFriendlyKing.size > 0) return;
+            if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+                kingPosition, attackingFriendlyKing);
             return !this.cantMove(start, destination, board, kingPosition);
         }
     }
@@ -106,7 +111,8 @@ export default class Movement {
         }
         // if the king is in check, the rook can move to the destination 
         // if this move brings the king out of check
-        if (attackingFriendlyKing.size > 0) return;
+        if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+            kingPosition, attackingFriendlyKing);
         // if none of the above conditions were met, the rook can move 
         // to the destination if it doesn't place the king in jeopardy
         return !this.cantMove(start, destination, board, kingPosition);
@@ -153,7 +159,8 @@ export default class Movement {
         }
         // if the king is in check, the rook can move to the destination 
         // if this move brings the king out of check
-        if (attackingFriendlyKing.size > 0) return;
+        if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+            kingPosition, attackingFriendlyKing);
         // if none of the above conditions were met 
         // the bishop can be moved to the destination
         // if this move doesn't place the king in jeopardy
@@ -182,7 +189,8 @@ export default class Movement {
             return false;
         // if the king is in check, the rook can move to the destination 
         // if this move brings the king out of check
-        if (attackingFriendlyKing.size > 0) return;
+        if (attackingFriendlyKing.size > 0) return this.willRemoveCheck(start, destination, board,
+            kingPosition, attackingFriendlyKing);
         // the knight can be moved if this move doesn't place the king in jeopardy
         return !this.cantMove(start, destination, board, kingPosition);
     }
@@ -237,27 +245,25 @@ export default class Movement {
         // thus, we will ignore the start location and hypothetically fill the destination position
         // if the piece will be able to attack the king after this move, then this move does not remove 
         // the king from check, return false
-        let it = attackerPositions.values();
-        let num = it.next();
-        while (!it.done()) {
-            if (board[num.value].piece === null) {
-                switch (board[num.value].piece.pieceType) {
+        for (let pos of attackerPositions) {
+            if (board[pos].piece === null) {
+                switch (board[pos].piece.pieceType) {
                     case 'Pawn':
                     case 'Knight':
                     case 'King':
                         return false;
                     case 'Rook':
-                        if (this.rookWillAttack(board[num.value], kingPosition, board, start, destination)) return false;
+                        if (this.rookWillAttack(board[pos], kingPosition, board, start, destination)) return false;
                         break;
                     case 'Bishop':
-                        if (this.bishopWillAttack(board[num.value], kingPosition, board, start, destination)) return false;
+                        if (this.bishopWillAttack(board[pos], kingPosition, board, start, destination)) return false;
                         break;
                     default:
-                        if (this.rookWillAttack(board[num.value], kingPosition, board, start, destination) ||
-                            this.bishopWillAttack(board[num.value], kingPosition, board, start, destination)) return false;
+                        if (this.rookWillAttack(board[pos], kingPosition, board, start, destination) ||
+                            this.bishopWillAttack(board[pos], kingPosition, board, start, destination))
+                            return false;
                 }
             }
-            num = it.next();
         }
         // if execution made it this far, then the attackers can no longer attack the king
         return true;
@@ -266,6 +272,7 @@ export default class Movement {
     // if this function executes we know that the king is not currently in check
     // this function returns whether the king would be in check if this move took place
     static cantMove(start, destination, board, kingPosition) {
+        console.log('cant start', start.piece);
         // loop over every spot on the board.
         // at any given spot, if there is a piece and it is on the opposite team as the piece that is moving
         // if it is not in the distination spot (i.e. is not about to be killed) and will be able to attack the king 
@@ -284,7 +291,8 @@ export default class Movement {
         // friendly king after this move takes place we will not take into account whether the enemy piece is protecting its own king
         // all that matters is that it could conceivably attack the friendly king
         for (let i = 0; i < board.length; i++) {
-            if (board[i].piece !== null && !this.teammates(start.piece, board[i].piece) && board[i].position !== destination.position
+            console.log('board i', board[i].piece);
+            if (board[i].piece !== null && !this.teammates(start, board[i]) && board[i].position !== destination.position
                 && !(board[i].piece.pieceType === 'Pawn') && !(board[i].piece.pieceType === 'Knight') && !(board[i].piece.pieceType === 'King')
                 && ((board[i].piece.pieceType === 'Rook' && this.rookWillAttack(board[i], kingPosition, board, start, destination)) ||
                     (board[i].piece.pieceType === 'Bishop' && this.bishopWillAttack(board[i], kingPosition, board, start, destination)) ||

@@ -36,10 +36,8 @@ function arrangeDead(arr) {
     // if the number of dead of two piece types are equal, ties are broken 
     // alphabetically
     let out = [];
-    let it = counts.keys();
-    let key = it.next();
-    while (!it.done()) {
-        out.push([key.value, counts.get(key.value)]);
+    for (let [k, v] of counts) {
+        out.push([k, v]);
         let i = out.length - 1;
         while (i > 0 && out[i - 1][1] <= out[i][1]) {
             if (out[i - 1][1] === out[i][1] && out[i - 1][0] < out[i][0]) break;
@@ -47,7 +45,6 @@ function arrangeDead(arr) {
             out[i] = out[i - 1];
             out[i-- - 1] = temp;
         }
-        key = it.next();
     }
     return out;
 }
@@ -81,7 +78,6 @@ export default function StatsBar(props) {
     console.log('MOVES', props.moves);
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));
     let rowFriends = setUpRow(arrangeDead(props.deadFriends));
-
     return (<div className="stats-wrapper">
         <div className="enemy-name-wrapper"><h3 className="enemy-name">{props.enemyName}</h3></div>
         <ul className="dead-enemy">{rowEnemies}</ul>
