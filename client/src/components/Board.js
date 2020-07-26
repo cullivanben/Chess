@@ -5,21 +5,9 @@ import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
 import Chat from './Chat';
-import King from '../chess-classes/pieces/King';
-import Spot from '../chess-classes/Spot';
-import {
-    initBoard,
-    initKingPos,
-    initEnemyKingPos,
-    initTurn,
-    initLetters,
-    initNumbers
-} from './helpers/initHelpers';
-import {
-    createSpot,
-    convertPos,
-    getNumLetterCode
-} from './helpers/helperFunctions';
+import Movement from '../chess-classes/Movement';
+import Init from './helpers/Init';
+import Help from './helpers/Help';
 import '../stylesheets/Board.scss';
 const endpoint = 'http://localhost:5000';
 
@@ -124,7 +112,7 @@ class Board extends React.Component {
             restoredState.color = localStorage.getItem('color');
         }
         if (localStorage.getItem('board') !== null) {
-            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => createSpot(obj));
+            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => Help.createSpot(obj));
         }
         if (localStorage.getItem('highlighted') !== null) {
             restoredState.highlighted = new Set();
@@ -195,12 +183,12 @@ class Board extends React.Component {
         this.setState({
             name: name,
             color: color,
-            board: initBoard(color),
-            kingPosition: initKingPos(color),
-            enemyKingPosition: initEnemyKingPos(color),
-            turn: initTurn(color),
-            letters: initLetters(color),
-            nums: initNumbers(color)
+            board: Init.initBoard(color),
+            kingPosition: Init.initKingPos(color),
+            enemyKingPosition: Init.initEnemyKingPos(color),
+            turn: Init.initTurn(color),
+            letters: Init.initLetters(color),
+            nums: Init.initNumbers(color)
         });
     }
 
@@ -213,24 +201,24 @@ class Board extends React.Component {
         }
         if (data.enemySelection) {
             if (data.enemySelection === -1) stateUpdate.enemySelection = -1;
-            else stateUpdate.enemySelection = convertPos(data.enemySelection);
+            else stateUpdate.enemySelection = Help.convertPos(data.enemySelection);
         }
         if (data.enemyHighlighted) {
             let enemyHigh = new Set();
-            data.enemyHighlighted.forEach(pos => enemyHigh.add(convertPos(pos)));
+            data.enemyHighlighted.forEach(pos => enemyHigh.add(Help.convertPos(pos)));
             stateUpdate.enemyHighlighted = enemyHigh;
         }
         if (data.enemyKingPosition) {
-            stateUpdate.enemyKingPosition = convertPos(data.enemyKingPosition);
+            stateUpdate.enemyKingPosition = Help.convertPos(data.enemyKingPosition);
         }
         if (data.attackingEnemyKing) {
             let attackEnemy = new Set();
-            data.attackingEnemyKing.forEach(pos => attackEnemy.add(convertPos(pos)));
+            data.attackingEnemyKing.forEach(pos => attackEnemy.add(Help.convertPos(pos)));
             stateUpdate.attackingEnemyKing = attackEnemy;
         }
         if (data.attackingFriendlyKing) {
             let attackFriendly = new Set();
-            data.attackingFriendlyKing.forEach(pos => attackFriendly.add(convertPos(pos)));
+            data.attackingFriendlyKing.forEach(pos => attackFriendly.add(Help.convertPos(pos)));
             stateUpdate.attackingFriendlyKing = attackFriendly;
         }
         if (data.code) {
@@ -239,8 +227,8 @@ class Board extends React.Component {
         // if a move was made on the board we will update the board as well
         if (data.move) {
             // convert the positions
-            let a = convertPos(data.move[0]);
-            let b = convertPos(data.move[1]);
+            let a = Help.convertPos(data.move[0]);
+            let b = Help.convertPos(data.move[1]);
             let selectedPiece = this.state.board[a].piece;
             // if this move killed a friendly piece
             if (this.state.board[b].piece !== null) {
@@ -315,8 +303,7 @@ class Board extends React.Component {
             // piece, do nothing
             if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
             // figure out which positions need to be highlighted
-            let toHighlight = this.whichHighlight(this.state.board, position, this.state.kingPosition,
-                this.state.selfCheck, this.state.attackerPos);
+            let toHighlight = this.whichHighlight(position);
             // set the state with the selected position and the highlighted spots
             // and then send the update to the enemy
             this.setState({
@@ -336,20 +323,19 @@ class Board extends React.Component {
                 return;
             }
             // if the selection cannot move to this position, do nothing
-            if (this.state.board[this.state.selection].piece === null || !this.state.board[this.state.selection].piece
-                .canMove(this.state.board[this.state.selection], this.state.board[position], this.state.board,
-                    this.state.kingPosition, this.state.selfCheck, this.state.attackerPos)) return;
+            if (this.state.board[this.state.selection].piece === null || !Movement.canMove(this.state.board[this.state.selection],
+                this.state.board[position], this.state.board, this.state.kingPosition, this.state.attackingFriendlyKing)) return;
             // ***
             // if this piece is able to move, the friendly king must no longer be in check, else 
             // it would be in checkmate. Therefore, the set of pieces attacking the friendly king must be empty
             // *** 
             // determine the new king position
-            let newKingPosition = (this.state.board[this.state.selection].piece
-                instanceof King ? position : this.state.kingPosition);
+            let newKingPosition = (this.state.board[this.state.selection].piece.pieceType === 'King' ? 
+                position : this.state.kingPosition);
             // get the piece that is being moved
             let selectedPiece = this.state.board[this.state.selection].piece;
             // get the chess code of this move
-            let code = getNumLetterCode(position, selectedPiece.pieceType, this.state.color);
+            let code = Help.getNumLetterCode(position, selectedPiece.pieceType, this.state.color);
             // if there is an enemy piece at this location, it is now dead
             if (this.state.board[position].piece !== null) {
                 // get the piece that is being killed
@@ -443,11 +429,11 @@ class Board extends React.Component {
     }
 
     // returns a set of the positions of all the spots that can be moved to
-    whichHighlight(board, position, kingPosition, inCheck, attackerPos) {
+    whichHighlight(position) {
         let positions = new Set();
         for (let i = 0; i < board.length; i++) {
-            if (board[position].piece.canMove(board[position], board[i], board,
-                kingPosition, inCheck, attackerPos)) positions.add(i);
+            if (Movement.canMove(this.state.board[position], this.state.board[i], this.state.board,
+                this.state.kingPosition, this.state.attackingFriendlyKing)) positions.add(i);
         }
         return positions;
     }

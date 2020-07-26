@@ -1,14 +1,7 @@
-import Bishop from './pieces/Bishop';
-import King from './pieces/King';
-import Knight from './pieces/Knight';
-import Pawn from './pieces/Pawn';
-import Queen from './pieces/Queen';
-import Rook from './pieces/Rook';
 import Spot from './Spot';
 
 // this class will contain static methods for dealing with gameplay logic
 export default class Movement {
-
     // returns whether the piece at start can be moved to destination
     static canMove(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
@@ -531,5 +524,16 @@ export default class Movement {
         // if none of the above conditions were met
         // this enemy bishop will be able to attack the friendly king
         return true;
+    }
+
+    // determines whether this move just put the enemy king in check
+    putKingInCheck(startSpot, piece, enemyKingSpot, board, kingPosition) {
+        // add this piece to the startSpot
+        startSpot.piece = piece;
+        // this player's king will not be in check because even if it was in check before this move, 
+        // the only moves are allowed when a player is in check are moves that bring them out of check
+        // therefore, if this player is able to make a move, they will not be in check after this turn
+        // for this reason we can use an empty set to represent the pieces that are attacking the friendly king
+        return this.canMove(startSpot, enemyKingSpot, board, kingPosition, new Set());
     }
 }
