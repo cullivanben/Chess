@@ -89,6 +89,6 @@ export default function StatsBar(props) {
         </div>
         <ul className="dead-friends">{rowFriends}</ul>
         <div className="your-name-wrapper"><h3 className="your-name">{props.name}</h3></div>
-        <button className="resign">Resign</button>
+        <button className="resign" onClick={props.handleResign}>Resign</button>
     </div>);
 }

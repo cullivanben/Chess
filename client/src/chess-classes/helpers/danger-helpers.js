@@ -17,10 +17,16 @@ export function cantMove(start, destination, board, kingPosition) {
     for (let i = 0; i < board.length; i++) {
         if (board[i].piece !== null && (start.piece.friendly !== board[i].piece.friendly) && board[i].position !== destination.position
             && !(board[i].piece instanceof Pawn) && !(board[i].piece instanceof Knight) && !(board[i].piece instanceof King)
-            && board[i].piece.willAttackKing(board[i], kingPosition, board, start, destination)) 
+            && board[i].piece.willAttackKing(board[i], kingPosition, board, start, destination))
             return true;
     }
     return false;
+}
+
+// determines if making this move will remove the king from check
+export function willRemoveCheck(start, destination, board, kingPosition, attackerPositions) {
+    // if there is only one attacker and this piece is about to kill the attacker, 
+    // this move will remove the king from check
 }
 
 // returns whether the rook will be able to attack the king after ignoreOne moves to ignoreTwo
@@ -39,32 +45,32 @@ export function rookWillAttack(position, kingPosition, board, ignoreOne, ignoreT
     // if there is a piece between this rook and the king, then it cannot attack
     if (thisRow === kingRow) {
         if (thisColumn < kingColumn) {
-            for (let i = thisColumn+1; i < kingColumn; i++) {
+            for (let i = thisColumn + 1; i < kingColumn; i++) {
                 if ((thisRow !== ignoreRow || i !== ignoreColumn) &&
                     board[thisRow * 8 + i].piece !== null) return false;
                 if (thisRow === blockedRow && i === blockedColumn) return false;
             }
-        } 
+        }
         else if (thisColumn > kingColumn) {
-            for (let i = thisColumn-1; i > kingColumn; i--) {
+            for (let i = thisColumn - 1; i > kingColumn; i--) {
                 if ((thisRow !== ignoreRow || i !== ignoreColumn) &&
                     board[thisRow * 8 + i].piece !== null) return false;
                 if (thisRow === blockedRow && i === blockedColumn) return false;
             }
         }
         else return false;
-    } 
+    }
     else {
         if (thisRow < kingRow) {
-            for (let i = thisRow+1; i < kingRow; i++) {
-                if ((i !== ignoreRow || thisColumn !== ignoreColumn) && 
+            for (let i = thisRow + 1; i < kingRow; i++) {
+                if ((i !== ignoreRow || thisColumn !== ignoreColumn) &&
                     board[i * 8 + thisColumn].piece !== null) return false;
                 if (i === blockedRow && thisColumn === blockedColumn) return false;
             }
-        } 
+        }
         else if (thisColumn > kingColumn) {
-            for (let i = thisRow-1; i > kingRow; i--) {
-                if ((i !== ignoreRow || thisColumn !== ignoreColumn) && 
+            for (let i = thisRow - 1; i > kingRow; i--) {
+                if ((i !== ignoreRow || thisColumn !== ignoreColumn) &&
                     board[i * 8 + thisColumn].piece !== null) return false;
                 if (i === blockedRow && thisColumn === blockedColumn) return false;
             }
@@ -92,15 +98,15 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
     // if there is a piece bwtween this bishop and the king, this bishop cannot attack
     if (thisColumn < kingColumn) {
         if (thisRow < kingRow) {
-            for (let i = thisRow+1, j = thisColumn+1; i < kingRow; i++) {
+            for (let i = thisRow + 1, j = thisColumn + 1; i < kingRow; i++) {
                 if ((i !== ignoreRow || j !== ignoreColumn) &&
                     board[i * 8 + j].piece !== null) return false;
                 if (i === blockedRow && j++ === blockedColumn) return false;
             }
         }
         else if (thisRow > kingRow) {
-            for (let i = thisRow-1, j = thisColumn+1; i > kingRow; i--) {
-                if ((i !== ignoreRow || j !== ignoreColumn) && 
+            for (let i = thisRow - 1, j = thisColumn + 1; i > kingRow; i--) {
+                if ((i !== ignoreRow || j !== ignoreColumn) &&
                     board[i * 8 + j].piece !== null) return false;
                 if (i === blockedRow && j++ === blockedColumn) return false;
             }
@@ -109,7 +115,7 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
     }
     else {
         if (thisRow < kingRow) {
-            for (let i = thisRow+1, j = thisColumn-1; i < kingRow; i++) {
+            for (let i = thisRow + 1, j = thisColumn - 1; i < kingRow; i++) {
                 if ((i !== ignoreRow || j !== ignoreColumn) &&
                     board[i * 8 + j].piece !== null) return false;
                 if (i === blockedRow && j-- === blockedColumn) return false;
@@ -117,8 +123,8 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
             }
         }
         else if (thisRow > kingRow) {
-            for (let i = thisRow-1, j = thisColumn-1; i > kingRow; i--) {
-                if ((i !== ignoreRow || j !== ignoreColumn) && 
+            for (let i = thisRow - 1, j = thisColumn - 1; i > kingRow; i--) {
+                if ((i !== ignoreRow || j !== ignoreColumn) &&
                     board[i * 8 + j].piece !== null) return false;
                 if (i === blockedRow && j-- === blockedColumn) return false;
             }
@@ -129,3 +135,4 @@ export function bishopWillAttack(position, kingPosition, board, ignoreOne, ignor
     // this bishop will be able to attack the king
     return true;
 }
+

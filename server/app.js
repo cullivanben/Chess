@@ -4,6 +4,7 @@ const socketIO = require('socket.io');
 const uuid = require('uuid');
 const session = require('express-session');
 const config = require('./config');
+const path = require('path');
 
 // set up the middleware for recognizing user sessions
 var sessionMiddleWare = session({
@@ -26,6 +27,10 @@ app.get('/test', (req, res) => {
     }
     res.send({msg: 'yay'});
 });
+
+app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'robots.txt'));
+})
 
 // set up the server and socket.io
 const server = http.createServer(app);
