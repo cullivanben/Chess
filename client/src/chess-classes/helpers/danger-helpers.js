@@ -53,8 +53,8 @@ export function willRemoveCheck(start, destination, board, kingPosition, attacke
     // thus, we will ignore the start location and hypothetically fill the destination position
     // if the piece will be able to attack the king after this move, then this move does not remove 
     // the king from check, return false
-    it = attackerPositions.values();
-    num = it.next();
+    let it = attackerPositions.values();
+    let num = it.next();
     while (!it.done()) {
         if (board[num.value].piece !== null && (board[num.value].piece instanceof Pawn ||
             board[num.value].piece instanceof Knight || board[num.value].piece.willAttackKing(board[num.value],
