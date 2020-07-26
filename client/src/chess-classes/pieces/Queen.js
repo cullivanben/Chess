@@ -22,9 +22,9 @@ export default class Queen {
     }
 
     // determines whether this queen will be able to attack the king after this move has occurred
-    willAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
-        return (rookWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo) ||
-            bishopWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo));
+    willAttackKing(position, kingPosition, board, ignore, blocked) {
+        return (rookWillAttack(position, kingPosition, board, ignore, blocked) ||
+            bishopWillAttack(position, kingPosition, board, ignore, blocked));
     }
 
     // determines whether this piece just put the king in check

@@ -19,8 +19,8 @@ export default class Rook {
     }
 
     // determines whether this rook will be able to attack the king after this move 
-    willAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
-        return rookWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
+    willAttackKing(position, kingPosition, board, ignore, blocked) {
+        return rookWillAttack(position, kingPosition, board, ignore, blocked);
     }
 
     // determines whether this piece just put the king in check

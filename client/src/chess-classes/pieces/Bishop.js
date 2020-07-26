@@ -19,8 +19,8 @@ export default class Bishop {
     }
 
     // determines whether the bishop will be able to attack the king after this move has occurred
-    willAttackKing(position, kingPosition, board, ignoreOne, ignoreTwo) {
-        return bishopWillAttack(position, kingPosition, board, ignoreOne, ignoreTwo);
+    willAttackKing(position, kingPosition, board, ignore, blocked) {
+        return bishopWillAttack(position, kingPosition, board, ignore, blocked);
     }
 
     // determines whether this piece just put the king in check

@@ -10,7 +10,7 @@ The copyright notice provided by the author is near the bottom of this page:
 https://commons.wikimedia.org/wiki/File:Chess_kdt45.svg
 */
 
-// svg source urls for the chess pieces
+// source urls for the chess piece svg files
 const sources = {
     whitePawn: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
     blackPawn: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',

@@ -5,9 +5,7 @@ import '../stylesheets/StatsBar.scss';
 
 // gets the svg source of a piece
 function getSrc(piece) {
-    console.log('piece', piece)
     let color = piece.substring(0, 1) === 'b' ? 'black' : 'white';
-    console.log('parsed color', color)
     let parsed = piece.substring(1);
     switch (parsed) {
         case 'Pawn':
@@ -28,14 +26,20 @@ function getSrc(piece) {
 // counts the number of dead pieces of each type and returns an array of them sorted by 
 // number of casualties
 function arrangeDead(arr) {
+    // add the number of occurrences of each piece type to a hashmap
     let counts = new Map();
     arr.forEach(piece => {
         if (counts.has(piece)) counts.set(piece, counts.get(piece) + 1);
         else counts.set(piece, 1);
     });
+    // loop over the map and sort the pieces based on the number of dead,
+    // if the number of dead of two piece types are equal, ties are broken 
+    // alphabetically
     let out = [];
-    for (let key of counts.keys()) {
-        out.push([key, counts.get(key)]);
+    let it = counts.keys();
+    let key = it.next();
+    while (!it.done()) {
+        out.push([key.value, counts.get(key.value)]);
         let i = out.length - 1;
         while (i > 0 && out[i - 1][1] <= out[i][1]) {
             if (out[i - 1][1] === out[i][1] && out[i - 1][0] < out[i][0]) break;
@@ -43,6 +47,7 @@ function arrangeDead(arr) {
             out[i] = out[i - 1];
             out[i-- - 1] = temp;
         }
+        key = it.next();
     }
     return out;
 }
@@ -82,8 +87,8 @@ export default function StatsBar(props) {
         <ul className="dead-enemy">{rowEnemies}</ul>
         <div className="moves-played">
             <ul className="moves-ul">
-                {props.moves.map((move, i) => (<li key={i + move}>{(i + 1) + 
-                    (move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ') + 
+                {props.moves.map((move, i) => (<li key={i + move}>{(i + 1) +
+                    (move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ') +
                     move.substring(1)}</li>))}
             </ul>
         </div>
