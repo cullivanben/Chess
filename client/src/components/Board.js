@@ -25,11 +25,11 @@ class Board extends React.Component {
             enemyHighlighted: new Set(),
             deadFriends: [],
             deadEnemies: [],
+            selection: -1,
+            enemySelection: -1,
             attackingFriendlyKing: new Set(),
             attackingEnemyKing: new Set(),
-            selection: -1,
-            newPosition: -1,
-            enemySelection: -1,
+            moveArr: [],
             kingPosition: 0,
             enemyKingPosition: 0,
             turn: false,
@@ -52,20 +52,23 @@ class Board extends React.Component {
 
     componentDidMount() {
         // restore state from local storage if possible
-        if (localStorage.getItem('saved') !== null) {
-            console.log('restoring');
-            this.restoreStateFromLocalStorage();
-        }
+        if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
+
         // connect to the socket
         this.socket = io(endpoint);
+
         // listen for the color
         this.socket.on('color', this.handleColorSet);
+
         // listen for incoming board updates and update the state when they are recieved
         this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
+
         // listen for the other player leaving
         this.socket.on('enemy-left', this.handleEnemyLeft);
+
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);
+
         // make sure that game state and socket connections are cleaned up when the user navigates away from this page
         window.onpopstate = this.cleanup;
     }
@@ -90,10 +93,11 @@ class Board extends React.Component {
         localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies));
         localStorage.setItem('selection', this.state.selection);
         localStorage.setItem('enemySelection', this.state.enemySelection);
-        localStorage.setItem('kingPosition', this.state.kingPosition);
-        localStorage.setItem('enemyKingPosition', this.state.enemyKingPosition);
         localStorage.setItem('attackingFriendlyKing', JSON.stringify([...this.state.attackingFriendlyKing]));
         localStorage.setItem('attackingEnemyKing', JSON.stringify([...this.state.attackingEnemyKing]));
+        localStorage.setItem('moveArr', JSON.stringify(this.state.moveArr));
+        localStorage.setItem('kingPosition', this.state.kingPosition);
+        localStorage.setItem('enemyKingPosition', this.state.enemyKingPosition);
         localStorage.setItem('turn', (this.state.turn ? 1 : 0));
         localStorage.setItem('moves', JSON.stringify(this.state.moves));
         localStorage.setItem('lastMove', this.state.lastMove);
@@ -137,12 +141,6 @@ class Board extends React.Component {
         if (localStorage.getItem('enemySelection') !== null) {
             restoredState.enemySelection = parseInt(localStorage.getItem('enemySelection'));
         }
-        if (localStorage.getItem('kingPosition') !== null) {
-            restoredState.kingPosition = parseInt(localStorage.getItem('kingPosition'));
-        }
-        if (localStorage.getItem('enemyKingPosition') !== null) {
-            restoredState.enemyKingPosition = parseInt(localStorage.getItem('enemyKingPosition'));
-        }
         if (localStorage.getItem('attackingFriendlyKing') !== null) {
             restoredState.attackingFriendlyKing = new Set();
             JSON.parse(localStorage.getItem('attackingFriendlyKing')).forEach(position => {
@@ -154,6 +152,15 @@ class Board extends React.Component {
             JSON.parse(localStorage.getItem('attackingEnemyKing')).forEach(position => {
                 restoredState.attackingEnemyKing.add(position);
             });
+        }
+        if (localStorage.getItem('moveArr') !== null) {
+            restoredState.moveArr = JSON.parse(localStorage.getItem('moveArr'));
+        }
+        if (localStorage.getItem('kingPosition') !== null) {
+            restoredState.kingPosition = parseInt(localStorage.getItem('kingPosition'));
+        }
+        if (localStorage.getItem('enemyKingPosition') !== null) {
+            restoredState.enemyKingPosition = parseInt(localStorage.getItem('enemyKingPosition'));
         }
         if (localStorage.getItem('turn') !== null) {
             restoredState.turn = (localStorage.getItem('turn') === '0' ? false : true);
@@ -175,10 +182,10 @@ class Board extends React.Component {
 
     // called when this player first recieves their color 
     handleColorSet(color) {
-        console.log('color set', color);
         // retireve the name of this user from local storage
         let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
             ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
+
         // set the initial state of the game
         this.setState({
             name: name,
@@ -189,12 +196,13 @@ class Board extends React.Component {
             turn: Init.initTurn(color),
             letters: Init.initLetters(color),
             nums: Init.initNumbers(color)
-        }, () => console.log('the state was set upon color receival'));
+        });
     }
 
     // called when this player recieves a board update from the enemy
     handleIncomingBoardUpdate(data) {
         let stateUpdate = {};
+
         // update the state fields that were sent from the enemy
         if (data.turn) {
             stateUpdate.turn = data.turn;
@@ -224,12 +232,15 @@ class Board extends React.Component {
         if (data.code) {
             stateUpdate.moves = [...this.state.moves].concat(data.code);
         }
+
         // if a move was made on the board we will update the board as well
         if (data.move) {
+
             // convert the positions
             let a = Help.convertPos(data.move[0]);
             let b = Help.convertPos(data.move[1]);
             let selectedPiece = this.state.board[a].piece;
+
             // if this move killed a friendly piece
             if (this.state.board[b].piece !== null) {
                 // update the state, then update the danger
@@ -247,6 +258,7 @@ class Board extends React.Component {
                     })
                 }));
             }
+
             // if this move did not kill a friendly piece
             else {
                 // only update the state, then update the danger
@@ -262,7 +274,9 @@ class Board extends React.Component {
                 }));
             }
         }
-        // if no move was made we do not need to update the board
+
+        // if no move was made we do not need to update the board,
+        // however, we still must update the state
         else this.setState(stateUpdate);
     }
 
@@ -277,8 +291,10 @@ class Board extends React.Component {
         // make sure the user really wants to resign
         if (!window.confirm('Are you sure you want to resign? If you do you will lose the game.'))
             return;
+
         // navigate back to the main page
         this.props.history.goBack();
+
         // upon backward navigation, this.cleanup will be called and will clear local storage 
         // and force-disconnect the socket
     }
@@ -289,6 +305,7 @@ class Board extends React.Component {
         // and inform the other player that this player left
         // tell the server to disconnect this socket
         if (this.socket !== null) this.socket.emit('force-disconnect');
+
         // clear local storage in order to remove all state info of this game
         localStorage.clear();
     }
@@ -297,13 +314,17 @@ class Board extends React.Component {
     handleMouseDown(position) {
         // if it is not this player's turn they cannot do anything to the board
         if (!this.state.turn) return;
+
         // if there is no piece currently selected 
         if (this.state.selection === -1) {
+
             // if they clicked on a spot with no piece or if they clicked on a spot with a non-friendly 
             // piece, do nothing
             if (this.state.board[position].piece === null || !this.state.board[position].piece.friendly) return;
+
             // figure out which positions need to be highlighted
             let toHighlight = this.whichHighlight(position);
+
             // set the state with the selected position and the highlighted spots
             // and then send the update to the enemy
             this.setState({
@@ -311,8 +332,10 @@ class Board extends React.Component {
                 highlighted: toHighlight
             }, this.sendUpdate2);
         }
+
         // if there is a piece currently selected
         else {
+
             // if the person clicked on the piece that is selected, unselect it
             if (this.state.selection === position) {
                 // update the state and then send the update to the enemy
@@ -322,29 +345,37 @@ class Board extends React.Component {
                 }, this.sendUpdate2);
                 return;
             }
+
             // if the selection cannot move to this position, do nothing
             if (this.state.board[this.state.selection].piece === null || !Movement.canMove(this.state.board[this.state.selection],
                 this.state.board[position], this.state.board, this.state.kingPosition, this.state.attackingFriendlyKing)) return;
+
             // ***
             // if this piece is able to move, the friendly king must no longer be in check, else 
             // it would be in checkmate. Therefore, the set of pieces attacking the friendly king must be empty
             // *** 
+
             // determine the new king position
-            let newKingPosition = (this.state.board[this.state.selection].piece.pieceType === 'King' ? 
+            let newKingPosition = (this.state.board[this.state.selection].piece.pieceType === 'King' ?
                 position : this.state.kingPosition);
+
             // get the piece that is being moved
             let selectedPiece = this.state.board[this.state.selection].piece;
+
             // get the chess code of this move
             let code = Help.getNumLetterCode(position, selectedPiece.pieceType, this.state.color);
+
             // if there is an enemy piece at this location, it is now dead
             if (this.state.board[position].piece !== null) {
+
                 // get the piece that is being killed
                 let dead = this.state.board[position].piece.pieceType;
+
                 // update the board accordingly
                 this.setState(prevState => ({
                     turn: false,
                     selection: -1,
-                    newPosition: position,
+                    moveArr: [prevState.selection, position],
                     attackingFriendlyKing: new Set(),
                     kingPosition: newKingPosition,
                     deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ?
@@ -360,14 +391,19 @@ class Board extends React.Component {
                         })
                     })
                 }), this.updateAttackers);
+
+                // when the state is done being updated, the set of attackers
+                // will be updated
             }
+
             // if this move does not kill an enemy
             else {
+
                 // update the board accordingly
                 this.setState(prevState => ({
                     turn: false,
                     selection: -1,
-                    newPosition: position,
+                    moveArr: [prevState.selection, position],
                     attackingFriendlyKing: new Set(),
                     kingPosition: newKingPosition,
                     highlighted: new Set(),
@@ -380,6 +416,9 @@ class Board extends React.Component {
                         })
                     })
                 }), this.updateAttackers);
+
+                // when the state is done being updated, the set of attackers
+                // will be updated
             }
         }
     }
@@ -391,6 +430,8 @@ class Board extends React.Component {
     updateAttackers() {
         let attackers = new Set();
         let threats = new Set();
+        // loop over the board, if any friendly piece is able to attack the 
+        // enemy king, add it to the set of attackers
         for (let i = 0; i < 64; i++) {
             if (this.state.board[i].piece !== null && this.state.board[i].piece.friendly
                 && Movement.canMove(this.state.board[i], this.state.board[this.state.enemyKingPosition],
@@ -398,12 +439,17 @@ class Board extends React.Component {
                 attackers.add(i);
             }
         }
+
+        // update the state with the new attackers, 
+        // when the state is done being updates, the entire
+        // state update that resulted from this move will be sent to the enemy
         this.setState({ attackingEnemyKing: attackers }, this.sendUpdate1);
     }
 
     // sends the main type of state update to the enemy
     sendUpdate1() {
         if (this.socket === null) return;
+
         // create an object with the updated state
         let update = {
             turn: true,
@@ -413,8 +459,9 @@ class Board extends React.Component {
             attackingEnemyKing: [],
             enemyKingPosition: this.state.kingPosition,
             enemyHighlighted: [],
-            move: [this.state.selection, this.state.newPosition]
+            move: this.state.moveArr
         }
+
         // send the update to the enemy
         this.socket.emit('outgoing-board-update', update);
     }
@@ -430,6 +477,9 @@ class Board extends React.Component {
 
     // returns a set of the positions of all the spots that can be moved to
     whichHighlight(position) {
+        // loop over every spot on the board.
+        // if the selected piece can move to a spot then add that
+        // spot to the set of spots that should be highlighted
         let positions = new Set();
         for (let i = 0; i < this.state.board.length; i++) {
             if (Movement.canMove(this.state.board[position], this.state.board[i], this.state.board,
@@ -450,6 +500,8 @@ class Board extends React.Component {
             src = this.state.board[position].piece.src;
             key = this.state.board[position].piece.id;
         }
+
+        // render a list item containing a square with all the desired props
         return (<li key={key}>
             <Square
                 handleMouseDown={() => this.handleMouseDown(position)}
@@ -472,20 +524,28 @@ class Board extends React.Component {
         board.length = 8;
         let position = 0;
         while (position < 64) {
+
             // calculate the current row of the board
             let row = Math.floor(position / 8);
+
             // the array of squares to add to the board
             let toAdd = [];
             toAdd.length = 8;
+
+            // fill the array of squares with list elements that contain square components
             for (let column = 0; column < 8; column++) {
                 let shade = ((row % 2 === 0 && column % 2 === 0) || (row % 2 !== 0 && column % 2 !== 0)) ?
                     'light' : 'dark';
                 toAdd[column] = this.renderSquare(position + column, shade);
             }
+
             // in this case it is okay to use the index as a key because the row uls of the chessboard will not change
             board[row] = <li key={row}><ul className='row'>{toAdd}</ul></li>;
+
+            // move to the next row
             position += 8;
         }
+
         return (<div className='board-and-stats'>
             <StatsBar
                 className='stats-bar'

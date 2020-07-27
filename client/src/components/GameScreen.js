@@ -6,7 +6,7 @@ import '../stylesheets/GameScreen.scss';
 export default class GameScreen extends React.Component {
     render() {
         return (<div className="game-wrapper">
-                    <Board />
-                </div>);
+            <Board />
+        </div>);
     }
 }

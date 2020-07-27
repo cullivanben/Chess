@@ -10,6 +10,10 @@ import Spot from '../../chess-classes/Spot';
 export default class Help {
     // converts enemy positions to friendly positions
     static convertPos(position) {
+        // since we are essentially just rotating the board 180 degrees, 
+        // subtracting the position of the current piece from the maximum 
+        // position gives the position that this piece will have on the 
+        // enemy's board
         return 63 - position;
     }
 
@@ -40,7 +44,11 @@ export default class Help {
 
     // returns the chess code for the move with the color appended to the beginning for id purposes
     static getNumLetterCode(location, pieceType, color) {
+        // convert the position if necessary
         if (color === 'white') location = 63 - location;
+
+        // append the first letter of the color of the piece that made this move to 
+        // the beginning of the code. This will be used when the dead piece is rendered
         return (color.substring(0, 1) +
             this.getPieceLetter(pieceType) +
             String.fromCharCode(97 + (location % 8)) +

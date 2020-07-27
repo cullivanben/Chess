@@ -11,7 +11,7 @@ export default function Square(props) {
         else if (props.highlighted) style.background = color.lightSqareHighlight;
         else if (props.enemyHighlighted) style.background = color.lightEnemyHighlight;
         else style.background = color.lightSquareColor;
-    } 
+    }
     else {
         if (props.selected || props.enemySelected) style.background = color.darkSquareSelect;
         else if (props.highlighted) style.background = color.darkSquareHighlight;
@@ -19,6 +19,7 @@ export default function Square(props) {
         else style.background = color.darkSquareColor;
     }
 
+    // set the svg source and className
     let src, name;
     if (props.src === 'null') {
         src = sources.blackKnight;
@@ -33,11 +34,11 @@ export default function Square(props) {
         className="square"
         onMouseDown={props.handleMouseDown}
         style={style}>
-            <img 
-                className={name}
-                src={src}
-                alt="Chess Piece"
-                draggable="false"
-            />
+        <img
+            className={name}
+            src={src}
+            alt="Chess Piece"
+            draggable="false"
+        />
     </button>);
 }

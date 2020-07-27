@@ -1,3 +1,4 @@
+// the hex color codes of the various colors used for styling
 const color = {
     white: '#ffffff',
     black: '#000000',

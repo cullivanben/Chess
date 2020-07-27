@@ -21,13 +21,20 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
+        // restore the state of the chat from local storage if possible
         if (localStorage.getItem('messages') !== null) {
-            // restore the state of the chat from local storage
             this.setState({ messages: JSON.parse(localStorage.getItem('messages')) });
         }
+
+        // connect to the server via a socket
         this.socket = io(endpoint);
+
+        // listen for incoming messages
         this.socket.on('incoming-message', this.handleIncoming);
+
+        // listen for the enemy leaving
         this.socket.on('enemy-left', this.cleanup);
+
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);
     }
@@ -49,13 +56,17 @@ export default class Chat extends React.Component {
     // handles when this user presses the send button to send a message
     handleSend(message) {
         if (!this.socket) return;
+
+        // create an object containin the message as well as the sender
         let payload = {
             id: uuid(),
             user: this.props.name,
             content: message
         }
+
         // send the message to the other player
         this.socket.emit('outgoing-message', payload);
+
         // update the state with the new message
         this.setState(prevState => ({
             messages: prevState.messages.concat(payload)

@@ -9,9 +9,6 @@ import Pawn from '../../chess-classes/pieces/Pawn';
 // this class contains static methods that help initialize the chess game
 export default class Init {
 
-    static testMethod() {
-        console.log('This is a static test method');
-    }
     // initializes the chess board with all the pieces in their starting locations 
     static initBoard(color) {
         // set up the array that will hold all of the spots on the board
@@ -49,7 +46,8 @@ export default class Init {
             board[4].piece = new King(false, color);
             board[59].piece = new Queen(true, color);
             board[60].piece = new King(true, color);
-        } else {
+        }
+        else {
             board[4].piece = new Queen(false, color);
             board[3].piece = new King(false, color);
             board[60].piece = new Queen(true, color);
@@ -82,7 +80,7 @@ export default class Init {
 
     // initializes the order of the number labels on the side of the board
     static initNumbers(color) {
-        return (color === 'black' ? [8, 7, 6, 5, 4, 3, 2, 1] : 
+        return (color === 'black' ? [8, 7, 6, 5, 4, 3, 2, 1] :
             [1, 2, 3, 4, 5, 6, 7, 8]);
     }
 }

@@ -32,6 +32,7 @@ function arrangeDead(arr) {
         if (counts.has(piece)) counts.set(piece, counts.get(piece) + 1);
         else counts.set(piece, 1);
     });
+
     // loop over the map and sort the pieces based on the number of dead,
     // if the number of dead of two piece types are equal, ties are broken 
     // alphabetically
@@ -75,9 +76,9 @@ function setUpRow(arr) {
 
 export default function StatsBar(props) {
     // create the rows of enemies and friends
-    console.log('MOVES', props.moves);
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));
     let rowFriends = setUpRow(arrangeDead(props.deadFriends));
+
     return (<div className="stats-wrapper">
         <div className="enemy-name-wrapper"><h3 className="enemy-name">{props.enemyName}</h3></div>
         <ul className="dead-enemy">{rowEnemies}</ul>
