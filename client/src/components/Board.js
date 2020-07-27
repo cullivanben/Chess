@@ -11,8 +11,19 @@ import Help from './helpers/Help';
 import '../stylesheets/Board.scss';
 const endpoint = 'http://localhost:5000';
 
-// this component will manage the state of the chess board
+/**
+ *Manages the state of the chess board.
+ *
+ * @export
+ * @class Board
+ * @extends {React.Component}
+ */
 class Board extends React.Component {
+    /**
+     *Creates an instance of Board.
+     * @param {object} props
+     * @memberof Board
+     */
     constructor(props) {
         super(props);
         this.socket = null;
@@ -73,12 +84,16 @@ class Board extends React.Component {
         window.onpopstate = this.cleanup;
     }
 
-    // if the component gets a chance to unmount, remove the event listener
     componentWillUnmount() {
+        // if the component gets a chance to unmount, remove the event listener
         window.removeEventListener('beforeunload', this.saveStateToLocalStorage);
     }
 
-    // saves the state of the game to local storage before the window unloads
+    /**
+     *Saves the state of the game to local storage before the window unloads.
+     *
+     * @memberof Board
+     */
     saveStateToLocalStorage() {
         localStorage.setItem('saved', 'true');
         localStorage.setItem('guest-name', this.state.name);
@@ -105,7 +120,11 @@ class Board extends React.Component {
         localStorage.setItem('nums', JSON.stringify(this.state.nums));
     }
 
-    // restores the state of the game from local storage
+    /**
+     *Restores the state of the game from local storage.
+     *
+     * @memberof Board
+     */
     restoreStateFromLocalStorage() {
         let restoredState = {};
         if (localStorage.getItem('guest-name') !== null) {
@@ -180,7 +199,12 @@ class Board extends React.Component {
         this.setState(restoredState);
     }
 
-    // called when this player first recieves their color 
+    /**
+     *Callback for when this player first recieves their color.
+     *
+     * @param {string} color - The color of this player.
+     * @memberof Board
+     */
     handleColorSet(color) {
         // retireve the name of this user from local storage
         let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
@@ -199,7 +223,12 @@ class Board extends React.Component {
         });
     }
 
-    // called when this player recieves a board update from the enemy
+    /**
+     *Callback for when this player recieves a board update from the enemy.
+     *
+     * @param {object} data - The object containing the updated state information.
+     * @memberof Board
+     */
     handleIncomingBoardUpdate(data) {
         let stateUpdate = {};
 
@@ -280,13 +309,21 @@ class Board extends React.Component {
         else this.setState(stateUpdate);
     }
 
-    // handles when the enemy leaves the game
+    /**
+     *Callback for when the enemy leaves the game.
+     *
+     * @memberof Board
+     */
     handleEnemyLeft() {
         // clear local storage and disconnect from the socket
         this.cleanup();
     }
 
-    // handles when this player clicks 'resign'
+    /**
+     *Callback for when the player clicks the resign button.
+     *
+     * @memberof Board
+     */
     handleResign() {
         // make sure the user really wants to resign
         if (!window.confirm('Are you sure you want to resign? If you do you will lose the game.'))
@@ -299,7 +336,11 @@ class Board extends React.Component {
         // and force-disconnect the socket
     }
 
-    // disconnects the sockets and clears local storage
+    /**
+     *Disconnects the socket and clears local storage.
+     *
+     * @memberof Board
+     */
     cleanup() {
         // when this socket disconnects, the server will do all the necessary socket cleanup 
         // and inform the other player that this player left
@@ -310,7 +351,12 @@ class Board extends React.Component {
         localStorage.clear();
     }
 
-    // handles when a mouse is initially pressed down
+    /**
+     *Handles when the player presses a square on the board.
+     *
+     * @param {number} position - The location of the square where the mouse was pressed.
+     * @memberof Board
+     */
     handleMouseDown(position) {
         // if it is not this player's turn they cannot do anything to the board
         if (!this.state.turn) return;
@@ -423,10 +469,14 @@ class Board extends React.Component {
         }
     }
 
-    // updates whether any of the friendly pieces are attacking the enemy king,
-    // this is necessary because occasionally double-checks are possible, this cannot
-    // be accounted for unless the board is scanned
-    // once the state is updated, the update is send to the enemy
+    /**
+     *Updates whether any of the friendly pieces are attacking the enemy king. 
+     This is necessary because occasionally double-checks are possible and this cannot 
+     be accounted for unless the board is scanned. Once the state is updated, 
+     the update is sent to the enemy.
+     *
+     * @memberof Board
+     */
     updateAttackers() {
         let attackers = new Set();
         let threats = new Set();
@@ -446,7 +496,11 @@ class Board extends React.Component {
         this.setState({ attackingEnemyKing: attackers }, this.sendUpdate1);
     }
 
-    // sends the main type of state update to the enemy
+    /**
+     *Sends the main type of state update to the enemy.
+     *
+     * @memberof Board
+     */
     sendUpdate1() {
         if (this.socket === null) return;
 
@@ -466,7 +520,11 @@ class Board extends React.Component {
         this.socket.emit('outgoing-board-update', update);
     }
 
-    // sends the second type of update to the enemy
+    /**
+     *Sends the second type of state update to the enemy.
+     *
+     * @memberof Board
+     */
     sendUpdate2() {
         if (this.socket === null) return;
         this.socket.emit('outgoing-board-update', {
@@ -475,7 +533,13 @@ class Board extends React.Component {
         });
     }
 
-    // returns a set of the positions of all the spots that can be moved to
+    /**
+     *Finds all the spots that can be moved to.
+     *
+     * @param {number} position - The position of the selected piece.
+     * @returns {Set<number>} All the positions that can be moved to.
+     * @memberof Board
+     */
     whichHighlight(position) {
         // loop over every spot on the board.
         // if the selected piece can move to a spot then add that
@@ -488,7 +552,14 @@ class Board extends React.Component {
         return positions;
     }
 
-    // renders an individual square of the board
+    /**
+     *Renders an individual square of the board.
+     *
+     * @param {*} position - The position of this square.
+     * @param {*} shade - The color shade of this square: dark or light.
+     * @returns {li} A list element containing a Square Component.
+     * @memberof Board
+     */
     renderSquare(position, shade) {
         // set the svg source and the li key
         let src, key;

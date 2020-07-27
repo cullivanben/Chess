@@ -2,6 +2,13 @@ import React from 'react';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/DeadSquare.scss';
 
+/**
+ *Renders a dead square.
+ *
+ * @export
+ * @param {object} props
+ * @returns
+ */
 export default function DeadSquare(props) {
     // set the source and classnames
     let src = props.src === 'null' ? sources.blackKnight : props.src;

@@ -7,6 +7,13 @@ import uuid from 'react-uuid';
 import '../stylesheets/Chat.scss';
 const endpoint = 'http://localhost:5000';
 
+/**
+ *Manages the state of the chat.
+ *
+ * @export
+ * @class Chat
+ * @extends {React.Component}
+ */
 export default class Chat extends React.Component {
     constructor(props) {
         super(props);

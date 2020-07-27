@@ -1,7 +1,20 @@
 import uuid from 'react-uuid';
 import sources from './sources';
 
+/**
+ *Represents a chess Bishop.
+ *
+ * @export
+ * @class Bishop
+ */
 export default class Bishop {
+
+    /**
+     *Creates an instance of Bishop.
+     * @param {boolean} friendly - Whether this piece is on the user's side.
+     * @param {boolean} color - The color of this piece.
+     * @memberof Bishop
+     */
     constructor(friendly, color) {
         // an id which will be used as a key in list items
         this.id = uuid();

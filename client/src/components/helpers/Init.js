@@ -6,10 +6,22 @@ import Bishop from '../../chess-classes/pieces/Bishop';
 import Rook from '../../chess-classes/pieces/Rook';
 import Pawn from '../../chess-classes/pieces/Pawn';
 
-// this class contains static methods that help initialize the chess game
+/**
+ *Static methods that help initialize the state of the game.
+ *
+ * @export
+ * @class Init
+ */
 export default class Init {
 
-    // initializes the chess board with all the pieces in their starting locations 
+    /**
+     *Initializes the chess board with all the pieces in their starting locations.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {Array<Spot>} The chess board.
+     * @memberof Init
+     */
     static initBoard(color) {
         // set up the array that will hold all of the spots on the board
         let board = [];
@@ -57,28 +69,63 @@ export default class Init {
         return board;
     }
 
-    // initializes the position of the friendly king
+    /**
+     *Initializes the position of the friendly King.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {number} The starting position of the friendly king.
+     * @memberof Init
+     */
     static initKingPos(color) {
         return color === 'black' ? 60 : 59;
     }
 
-    // initializes the position of the enemy king
+    /**
+     *Initializes the position of the enemy King.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {number} The starting position of the enemy king.
+     * @memberof Init
+     */
     static initEnemyKingPos(color) {
         return color === 'black' ? 4 : 3;
     }
 
-    // determines whether this player goes first
+    /**
+     *Determines whether this player goes first.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {boolean} Whether this player goes first.
+     * @memberof Init
+     */
     static initTurn(color) {
         return color === 'black';
     }
 
-    // initializes the order of the letter labels on the bottom of the board
+    /**
+     *Initializes the order of the letter lables on the bottom of the board.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {Array<string>} The letter labels in the correct order.
+     * @memberof Init
+     */
     static initLetters(color) {
         return (color === 'black' ? ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] :
             ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a']);
     }
 
-    // initializes the order of the number labels on the side of the board
+    /**
+     *Initializes the order of the number labels on the side of the board.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {Array<number>} The number labels in the correct order.
+     * @memberof Init
+     */
     static initNumbers(color) {
         return (color === 'black' ? [8, 7, 6, 5, 4, 3, 2, 1] :
             [1, 2, 3, 4, 5, 6, 7, 8]);

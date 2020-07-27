@@ -1,7 +1,20 @@
 import uuid from 'react-uuid';
 import sources from './sources';
 
+/**
+ *Represents a chess Pawn.
+ *
+ * @export
+ * @class Pawn
+ */
 export default class Pawn {
+
+    /**
+     *Creates an instance of Pawn.
+     * @param {boolean} friendly - Whether this piece is on the user's side.
+     * @param {boolean} color - The color of this piece.
+     * @memberof Pawn
+     */
     constructor(friendly, color) {
         // an id which will be used as a key in list items
         this.id = uuid();

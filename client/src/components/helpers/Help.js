@@ -7,8 +7,22 @@ import Pawn from '../../chess-classes/pieces/Pawn';
 import Spot from '../../chess-classes/Spot';
 
 
+/**
+ *Static helper methods.
+ *
+ * @export
+ * @class Help
+ */
 export default class Help {
-    // converts enemy positions to friendly positions
+
+    /**
+     *Converts an enemy position number to a friendly position number. 
+     *
+     * @static
+     * @param {number} position - The enemy position number.
+     * @returns {number} The friendly position number.
+     * @memberof Help
+     */
     static convertPos(position) {
         // since we are essentially just rotating the board 180 degrees, 
         // subtracting the position of the current piece from the maximum 
@@ -17,7 +31,14 @@ export default class Help {
         return 63 - position;
     }
 
-    // converts an object to a spot
+    /**
+     *Converts an object to a Spot.
+     *
+     * @static
+     * @param {object} obj - The object to be converted.
+     * @returns {Spot} The newly constructed Spot.
+     * @memberof Help
+     */
     static createSpot(obj) {
         let spot = new Spot(obj.position);
         if (obj.piece !== null) spot.piece = this.createPiece(obj.piece);
@@ -25,6 +46,14 @@ export default class Help {
     }
 
     // converts an object to a piece
+    /**
+     *Converts and object to a Piece.
+     *
+     * @static
+     * @param {object} obj - The object to be converted.
+     * @returns The newly constructed piece.
+     * @memberof Help
+     */
     static createPiece(obj) {
         switch (obj.pieceType) {
             case 'Pawn':
@@ -42,7 +71,16 @@ export default class Help {
         }
     }
 
-    // returns the chess code for the move with the color appended to the beginning for id purposes
+    /**
+     *Determines the chess code of the move that just took place.
+     *
+     * @static
+     * @param {number} location - The location that this piece moved to.
+     * @param {string} pieceType - The type of this piece.
+     * @param {string} color - The color of this piece.
+     * @returns {string} The chess code of the move.
+     * @memberof Help
+     */
     static getNumLetterCode(location, pieceType, color) {
         // convert the position if necessary
         if (color === 'white') location = 63 - location;
@@ -55,6 +93,14 @@ export default class Help {
             (8 - Math.floor(location / 8)));
     }
 
+    /**
+     *Gets the uppercase letter for a given piece type.
+     *
+     * @static
+     * @param {string} pieceType - The type of this piece.
+     * @returns {string} The uppercase letter.
+     * @memberof Help
+     */
     static getPieceLetter(pieceType) {
         switch (pieceType) {
             case 'Pawn':

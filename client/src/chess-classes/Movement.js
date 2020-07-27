@@ -1,9 +1,25 @@
 import Spot from './Spot';
 
-// this class will contain static methods for dealing with gameplay logic
+/**
+ *Static methods for dealing with gameplay logic.
+ *
+ * @export
+ * @class Movement
+ */
 export default class Movement {
 
-    // returns whether the piece at start can be moved to destination
+    /**
+     *Determines whether the piece at start can be moved to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
+     * @returns {boolean} Whether the piece at start can be moved to the destination
+     * @memberof Movement
+     */
     static canMove(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
         switch (start.piece.pieceType) {
@@ -25,7 +41,18 @@ export default class Movement {
         }
     }
 
-    // returns whether a pawn can be moved from the start to the destination
+    /**
+     *Determines whether a Pawn can be moved from the start to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
+     * @returns {boolean} Whether the Pawn at start can be moved to the destination.
+     * @memberof Movement
+     */
     static canMovePawn(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
 
@@ -99,7 +126,18 @@ export default class Movement {
     }
 
 
-    // returns whether a rook can be moved from the start to the destination
+    /**
+     *Determines whether a Rook can be moved from the start to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
+     * @returns {boolean} Whether the Rook at start can be moved to the destination.
+     * @memberof Movement
+     */
     static canMoveRook(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
 
@@ -178,7 +216,18 @@ export default class Movement {
         return !this.cantMove(start, destination, board, kingPosition);
     }
 
-    // returns whether a bishop can be moved from the start to the destination
+    /**
+     *Determines whether a Bishop can be moved from the start to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
+     * @returns {boolean} Whether the Bishop at start can be moved to the destination.
+     * @memberof Movement
+     */
     static canMoveBishop(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
 
@@ -262,7 +311,18 @@ export default class Movement {
         return !this.cantMove(start, destination, board, kingPosition);
     }
 
-    // returns whether a knight can be moved from the start to the destination
+    /**
+     *Determines whether a Knight can be moved from the start to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
+     * @returns {boolean} Whether the Knight at start can be moved to the destination.
+     * @memberof Movement
+     */
     static canMoveKnight(start, destination, board, kingPosition, attackingFriendlyKing) {
         if (start.piece === null) return false;
 
@@ -295,7 +355,17 @@ export default class Movement {
         return !this.cantMove(start, destination, board, kingPosition);
     }
 
-    // returns whether a king can be moved from the start to the destination
+    /**
+     *Determines whether a King can be moved from the start to the destination.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {boolean} calledFromDangerous - Whether this method was called from this.dangerous.
+     * @returns {boolean} Whether the King at start can be moved to the destination
+     * @memberof Movement
+     */
     static canMoveKing(start, destination, board, calledFromDangerous) {
         if (start.piece === null) return false;
 
@@ -324,14 +394,33 @@ export default class Movement {
         return !this.dangerous(start, destination, board, start.piece.friendly);
     }
 
-    // determines whether two pieces are on the same team
+    /**
+     *Determines whether the pieces at start and destination are on the same team.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @returns {boolean} Whether the pieces at start and destination are on the same team.
+     * @memberof Movement
+     */
     static teammates(start, destination) {
         // if they are both friendly or are both non-friendly then they are teammates
         return ((start.piece.friendly && destination.piece.friendly) ||
             (!start.piece.friendly && !destination.piece.friendly));
     }
 
-    // determines if making this move will remove the king from check
+    /**
+     *Determines whether making this move will remove the friendly King from check.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @param {Set<number>} attackerPositions
+     * @returns {boolean} Whether making this move will remove the friendly King from check.
+     * @memberof Movement
+     */
     static willRemoveCheck(start, destination, board, kingPosition, attackerPositions) {
         // if there is only one attacker and this piece is about to kill the attacker, 
         // this move will remove the king from check
@@ -378,8 +467,18 @@ export default class Movement {
         return true;
     }
 
-    // if this function executes we know that the king is not currently in check
-    // this function returns whether the king would be in check if this move took place
+    /**
+     *Determines whether this move will put the friendly King in check. If this 
+     method executes we know that the friendly King is not currently in check.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} destination - The destination spot of the piece that is being moved.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the King on the chess board.
+     * @returns {boolean} Whether this move will put the friendly King in check.
+     * @memberof Movement
+     */
     static cantMove(start, destination, board, kingPosition) {
         // loop over every spot on the board.
         // at any given spot, if there is a piece and it is on the opposite team as the piece that is moving
@@ -411,7 +510,17 @@ export default class Movement {
         return false;
     }
 
-    // whether a given spot on the board is being attacked by the enemy
+    /**
+     *Determines whether a given spot on the board is being attacked by the enemy.
+     *
+     * @static
+     * @param {Spot} start - The starting spot of the piece that is being moved.
+     * @param {Spot} location - The destination location that the piece is trying to move to.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {boolean} friendly - Whether the piece that is attempting to move is friendly.
+     * @returns {boolean} Whether location is being attacked by the enemy.
+     * @memberof Movement
+     */
     static dangerous(startLocation, location, board, friendly) {
         // check every piece on the board and see if it can attack the specified location
         // when we perform these checks we do not need to take into account whether the enemy
@@ -443,8 +552,20 @@ export default class Movement {
         return false;
     }
 
-    // returns whether a rook will be able to attack the king after 
-    // the piece at ignore moves to blocked
+    /**
+     *Determines whether the Rook at position will be able to attack the King 
+     after the piece at ignore moves to blocked.
+     *
+     * @static
+     * @param {Spot} position - The spot where the Rook is located.
+     * @param {number} kingPosition - The position of the King on the board.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {Spot} ignore - The spot that will be vacated after the current move takes place.
+     * @param {Spot} blocked - The spot that will be blocked after the current move takes place.
+     * @returns {boolean} Whether the Rook at position will be able to attack the 
+     * King after the piece at ignore moves to blocked.
+     * @memberof Movement
+     */
     static rookWillAttack(position, kingPosition, board, ignore, blocked) {
         // convert the positions to rows and columns
 
@@ -557,8 +678,20 @@ export default class Movement {
         return true;
     }
 
-    // returns whether a bishop will be able to attack the king after 
-    // the piece at ignore moves to blocked
+    /**
+     *Determines whether the Bishop at position will be able to attack the King 
+     after the piece at ignore moves to blocked.
+     *
+     * @static
+     * @param {Spot} position - The spot where the Bishop is located.
+     * @param {number} kingPosition - The position of the King on the board.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {Spot} ignore - The spot that will be vacated after the current move takes place.
+     * @param {Spot} blocked - The spot that will be blocked after the current move takes place.
+     * @returns {boolean} Whether the Bishop at position will be able to attack the 
+     * King after the piece at ignore moves to blocked.
+     * @memberof Movement
+     */
     static bishopWillAttack(position, kingPosition, board, ignore, blocked) {
         // convert the positions to rows and columns
 
@@ -672,17 +805,5 @@ export default class Movement {
         // if none of the above conditions were met
         // this enemy bishop will be able to attack the friendly king
         return true;
-    }
-
-    // determines whether this move just put the enemy king in check
-    putKingInCheck(startSpot, piece, enemyKingSpot, board, kingPosition) {
-        // set this piece as the piece at startSpot
-        startSpot.piece = piece;
-
-        // this player's king will not be in check because even if it was in check before this move, 
-        // the only moves are allowed when a player is in check are moves that bring them out of check
-        // therefore, if this player is able to make a move, they will not be in check after this turn
-        // for this reason we can use an empty set to represent the pieces that are attacking the friendly king
-        return this.canMove(startSpot, enemyKingSpot, board, kingPosition, new Set());
     }
 }
