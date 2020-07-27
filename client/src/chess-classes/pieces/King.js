@@ -8,7 +8,6 @@ import sources from './sources';
  * @class King
  */
 export default class King {
-
     /**
      *Creates an instance of King.
      * @param {boolean} friendly - Whether this piece is on the user's side.

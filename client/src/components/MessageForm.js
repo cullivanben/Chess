@@ -1,15 +1,30 @@
 import React from 'react';
 import '../stylesheets/MessageForm.scss';
 
-// handles message input and sends the message when the user submits the form
+/**
+ *Handles message input and sends user messages.
+ *
+ * @export
+ * @class MessageForm
+ * @extends {React.Component}
+ */
 export default class MessageForm extends React.Component {
+    /**
+     *Creates an instance of MessageForm.
+     * @param {object} props
+     * @memberof MessageForm
+     */
     constructor(props) {
         super(props);
         this.inputRef = React.createRef();
         this.handleSend = this.handleSend.bind(this);
     }
 
-    // handles when the send button is pressed
+    /**
+     *Handles when the send button is pressed.
+     *
+     * @memberof MessageForm
+     */
     handleSend() {
         this.props.handleSend(this.inputRef.current.value);
         this.inputRef.current.value = '';

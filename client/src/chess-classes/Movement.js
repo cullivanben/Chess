@@ -7,7 +7,6 @@ import Spot from './Spot';
  * @class Movement
  */
 export default class Movement {
-
     /**
      *Determines whether the piece at start can be moved to the destination.
      *

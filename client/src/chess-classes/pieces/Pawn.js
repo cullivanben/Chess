@@ -8,7 +8,6 @@ import sources from './sources';
  * @class Pawn
  */
 export default class Pawn {
-
     /**
      *Creates an instance of Pawn.
      * @param {boolean} friendly - Whether this piece is on the user's side.

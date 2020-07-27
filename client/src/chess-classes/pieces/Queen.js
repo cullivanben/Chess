@@ -8,7 +8,6 @@ import sources from './sources';
  * @class Queen
  */
 export default class Queen {
-
     /**
      *Creates an instance of Queen.
      * @param {boolean} friendly - Whether this piece is on the user's side.

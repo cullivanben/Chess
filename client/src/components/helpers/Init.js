@@ -13,7 +13,6 @@ import Pawn from '../../chess-classes/pieces/Pawn';
  * @class Init
  */
 export default class Init {
-
     /**
      *Initializes the chess board with all the pieces in their starting locations.
      *

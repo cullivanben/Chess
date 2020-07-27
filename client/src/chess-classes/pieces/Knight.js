@@ -8,7 +8,6 @@ import sources from './sources';
  * @class Knight
  */
 export default class Knight {
-
     /**
      *Creates an instance of Knight.
      * @param {boolean} friendly - Whether this piece is on the user's side. 

@@ -14,7 +14,6 @@ import Spot from '../../chess-classes/Spot';
  * @class Help
  */
 export default class Help {
-
     /**
      *Converts an enemy position number to a friendly position number. 
      *

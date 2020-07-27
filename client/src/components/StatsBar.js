@@ -3,7 +3,12 @@ import DeadSquare from './DeadSquare';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/StatsBar.scss';
 
-// gets the svg source of a piece
+/**
+ *Gets the source url of the svg of a chess piece.
+ *
+ * @param {*} piece - The chess piece.
+ * @returns {string} The url of the svg.
+ */
 function getSrc(piece) {
     let color = piece.substring(0, 1) === 'b' ? 'black' : 'white';
     let parsed = piece.substring(1);
@@ -23,8 +28,13 @@ function getSrc(piece) {
     }
 }
 
-// counts the number of dead pieces of each type and returns an array of them sorted by 
-// number of casualties
+/**
+ *Counts the number of dead pieces of each type and returns an array of them sorted
+ by number of casualties.
+ *
+ * @param {Array<string>} arr - The array of dead piece types.
+ * @returns {Array<Array>} A 2d array of the piece types and their counts in sorted order.
+ */
 function arrangeDead(arr) {
     // add the number of occurrences of each piece type to a hashmap
     let counts = new Map();
@@ -50,7 +60,13 @@ function arrangeDead(arr) {
     return out;
 }
 
-// constructs a square with a piece svg and the number of this piece that have been killed
+/**
+ *Renders a square with a piece svg and the number of this piece that have been killed. 
+ *
+ * @param {Array<Array>} arr - A 2d array of the dead piece types and their corresponding numbers of dead pieces.
+ * @param {number} i - The current index into arr.
+ * @returns {li} A list item containing a DeadSquare React Component.
+ */
 function renderDeadSquare(arr, i) {
     let src, count, key;
     if (i < arr.length) {
@@ -66,7 +82,12 @@ function renderDeadSquare(arr, i) {
     return <li key={key}><DeadSquare src={src} count={count} /></li>;
 }
 
-// sets up a row of dead enemies or dead friends
+/**
+ *Sets up a row of dead enemies or dead friends.
+ *
+ * @param {Array<Array>} arr - A 2d array of the dead piece types and their corresponding numbers of dead pieces.
+ * @returns {Array<li>} An array of list items containing DeadSquare React Components.
+ */
 function setUpRow(arr) {
     let row = [];
     row.length = 5;
@@ -74,6 +95,13 @@ function setUpRow(arr) {
     return row;
 }
 
+/**
+ *A component that contains all the current gameplay stats.
+ *
+ * @export
+ * @param {object} props
+ * @returns A StatsBar React Component.
+ */
 export default function StatsBar(props) {
     // create the rows of enemies and friends
     let rowEnemies = setUpRow(arrangeDead(props.deadEnemies));

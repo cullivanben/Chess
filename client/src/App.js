@@ -4,8 +4,13 @@ import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import './stylesheets/App.scss';
 
+/**
+ *The main App Component.
+ *
+ * @export
+ * @returns The main App React Component.
+ */
 export default function App() {
-
   useEffect(() => {
     // TODO: ONLY FOR DEV
     fetch('/test').then(res => console.log(res)).catch(err => console.log(err));

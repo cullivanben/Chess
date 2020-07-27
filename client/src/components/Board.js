@@ -71,7 +71,7 @@ class Board extends React.Component {
         // listen for the color
         this.socket.on('color', this.handleColorSet);
 
-        // listen for incoming board updates and update the state when they are recieved
+        // listen for incoming board updates and update the state when they are received
         this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
 
         // listen for the other player leaving
@@ -200,7 +200,7 @@ class Board extends React.Component {
     }
 
     /**
-     *Callback for when this player first recieves their color.
+     *Callback for when this player first receives their color.
      *
      * @param {string} color - The color of this player.
      * @memberof Board
@@ -224,7 +224,7 @@ class Board extends React.Component {
     }
 
     /**
-     *Callback for when this player recieves a board update from the enemy.
+     *Callback for when this player receives a board update from the enemy.
      *
      * @param {object} data - The object containing the updated state information.
      * @memberof Board
@@ -611,15 +611,15 @@ class Board extends React.Component {
             }
 
             // in this case it is okay to use the index as a key because the row uls of the chessboard will not change
-            board[row] = <li key={row}><ul className='row'>{toAdd}</ul></li>;
+            board[row] = <li key={row}><ul className="row">{toAdd}</ul></li>;
 
             // move to the next row
             position += 8;
         }
 
-        return (<div className='board-and-stats'>
+        return (<div className="board-and-stats">
             <StatsBar
-                className='stats-bar'
+                className="stats-bar"
                 name={this.state.name}
                 enemyName={this.state.enemyName}
                 moves={this.state.moves}
@@ -629,17 +629,17 @@ class Board extends React.Component {
             />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
             <div className="ml-wrapper">
-                <ul className='num-labels'>
-                    {this.state.nums.map(num => <li className='num-label' key={num}><p className='num-p'>{num}</p></li>)}
+                <ul className="num-labels">
+                    {this.state.nums.map(num => <li className="num-label" key={num}><p className="num-p">{num}</p></li>)}
                 </ul>
-                <div className='middle-column'>
-                    <ul className='rows'>{board}</ul>
-                    <ul className='letter-labels'>
-                        {this.state.letters.map(letter => <li className='letter-label' key={letter}>{letter}</li>)}
+                <div className="middle-column">
+                    <ul className="rows">{board}</ul>
+                    <ul className="letter-labels">
+                        {this.state.letters.map(letter => <li className="letter-label" key={letter}>{letter}</li>)}
                     </ul>
                 </div>
             </div>
-            <Chat className='board-chat' name={this.state.name} />
+            <Chat className="board-chat" name={this.state.name} />
         </div>);
     }
 }

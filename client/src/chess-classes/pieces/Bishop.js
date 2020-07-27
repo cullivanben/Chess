@@ -8,7 +8,6 @@ import sources from './sources';
  * @class Bishop
  */
 export default class Bishop {
-
     /**
      *Creates an instance of Bishop.
      * @param {boolean} friendly - Whether this piece is on the user's side.

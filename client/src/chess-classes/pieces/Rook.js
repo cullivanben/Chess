@@ -8,7 +8,6 @@ import sources from './sources';
  * @class Rook
  */
 export default class Rook {
-
     /**
      *Creates an instance of Rook.
      * @param {boolean} friendly - Whether this piece is on the user's side.

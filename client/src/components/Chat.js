@@ -50,21 +50,34 @@ export default class Chat extends React.Component {
         window.removeEventListener('beforeunload', this.saveStateToLocalStorage);
     }
 
-    // saves the state of the chat to local storage before the window unloads
+    /**
+     *Saves the state of the chat to local storage before the window unloads.
+     *
+     * @memberof Chat
+     */
     saveStateToLocalStorage() {
         localStorage.setItem('messages', JSON.stringify(this.state.messages));
     }
 
-    // disconnects the socket
+    /**
+     *Closes the socket.
+     *
+     * @memberof Chat
+     */
     cleanup() {
         if (this.socket !== null) this.socket.emit('disconnect-message');
     }
 
-    // handles when this user presses the send button to send a message
+    /**
+     *Handles when this user presses the send button to send a message.
+     *
+     * @param {string} message - The message to be sent.
+     * @memberof Chat
+     */
     handleSend(message) {
         if (!this.socket) return;
 
-        // create an object containin the message as well as the sender
+        // create an object containing the message as well as the sender
         let payload = {
             id: uuid(),
             user: this.props.name,
@@ -80,7 +93,12 @@ export default class Chat extends React.Component {
         }));
     }
 
-    // handles when this user recieves a message
+    /**
+     *Handles when this user receives a message.
+     *
+     * @param {string} message - The message that was received.
+     * @memberof Chat
+     */
     handleIncoming(message) {
         this.setState(prevState => ({
             messages: prevState.messages.concat(message)

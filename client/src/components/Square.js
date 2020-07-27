@@ -3,6 +3,13 @@ import color from './helpers/color';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/Square.scss';
 
+/**
+ *This component represents an individual square on the chess board.
+ *
+ * @export
+ * @param {object} props
+ * @returns A Square React Component.
+ */
 export default function Square(props) {
     // set the style of this component based on the props
     let style = {};

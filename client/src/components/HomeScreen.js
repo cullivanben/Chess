@@ -3,7 +3,20 @@ import { withRouter } from 'react-router-dom';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/HomeScreen.scss';
 
+/**
+ *The component that comprises the entire home screen.
+ The home screen is mainly static.
+ *
+ * @export
+ * @class HomeScreen
+ * @extends {React.Component}
+ */
 class HomeScreen extends React.Component {
+    /**
+     *Creates an instance of HomeScreen.
+     * @param {object} props
+     * @memberof HomeScreen
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -13,6 +26,11 @@ class HomeScreen extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
+    /**
+     *Handles when the user clicks 'Play as guest'.
+     *
+     * @memberof HomeScreen
+     */
     handleClick() {
         // save the guest name to local storage
         let input = this.inputRef.current.value.trim();
