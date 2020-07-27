@@ -11,7 +11,7 @@ export default class Bishop {
     /**
      *Creates an instance of Bishop.
      * @param {boolean} friendly - Whether this piece is on the user's side.
-     * @param {boolean} color - The color of this piece.
+     * @param {string} color - The color of this piece.
      * @memberof Bishop
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class Bishop {
         this.pieceType = 'Bishop';
 
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackBishop : sources.whiteBishop;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whiteBishop : sources.blackBishop;
     }
 }

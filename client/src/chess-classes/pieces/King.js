@@ -11,7 +11,7 @@ export default class King {
     /**
      *Creates an instance of King.
      * @param {boolean} friendly - Whether this piece is on the user's side.
-     * @param {boolean} color - The color of this piece.
+     * @param {string} color - The color of this piece.
      * @memberof King
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class King {
         this.pieceType = 'King';
 
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackKing : sources.whiteKing;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whiteKing : sources.blackKing;
     }
 }

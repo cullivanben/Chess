@@ -11,7 +11,7 @@ export default class Knight {
     /**
      *Creates an instance of Knight.
      * @param {boolean} friendly - Whether this piece is on the user's side. 
-     * @param {boolean} color - The color of this piece.
+     * @param {string} color - The color of this piece.
      * @memberof Knight
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class Knight {
         this.pieceType = 'Knight';
 
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackKnight : sources.whiteKnight;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whiteKnight : sources.blackKnight;
     }
 }

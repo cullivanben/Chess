@@ -34,3 +34,8 @@ function arrangeDead(arr) {
 }
 
 console.log(arrangeDead(arr));
+
+console.log('------');
+let set1 = new Set([3, 2, 4, 5]);
+let set2 = new Set([5, 4, 3, 2]);
+console.log('set1 is set2', Object.is(set1, set2));

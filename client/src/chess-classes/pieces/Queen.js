@@ -11,7 +11,7 @@ export default class Queen {
     /**
      *Creates an instance of Queen.
      * @param {boolean} friendly - Whether this piece is on the user's side.
-     * @param {boolean} color - The color of this piece.
+     * @param {string} color - The color of this piece.
      * @memberof Queen
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class Queen {
         this.pieceType = 'Queen';
 
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackQueen : sources.whiteQueen;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whiteQueen : sources.blackQueen;
     }
 }

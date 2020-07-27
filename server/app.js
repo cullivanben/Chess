@@ -58,7 +58,7 @@ io.on('connection', socket => {
         let roomId = currentId;
         socket.join(roomId);
         // determine the color of this user
-        let color = roomOpen ? 'black' : 'white';
+        let color = roomOpen ? 'white' : 'black';
         // save the user's room and color
         guestInfo.set(socket.request.session.guest, { room: roomId, color: color });
         // send the color to the user

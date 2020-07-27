@@ -29,7 +29,7 @@ export default function Square(props) {
     // set the svg source and className
     let src, name;
     if (props.src === 'null') {
-        src = sources.blackKnight;
+        src = sources.whiteKnight;
         name = 'transparent';
     }
     else {

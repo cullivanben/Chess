@@ -11,7 +11,7 @@ export default class Pawn {
     /**
      *Creates an instance of Pawn.
      * @param {boolean} friendly - Whether this piece is on the user's side.
-     * @param {boolean} color - The color of this piece.
+     * @param {string} color - The color of this piece.
      * @memberof Pawn
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class Pawn {
         this.pieceType = 'Pawn';
         
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackPawn : sources.whitePawn;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whitePawn : sources.blackPawn;
     }
 }

@@ -52,7 +52,7 @@ export default class Init {
         board[63].piece = new Rook(true, color);
 
         // set up the kings and queens
-        if (color === 'black') {
+        if (color === 'white') {
             board[3].piece = new Queen(false, color);
             board[4].piece = new King(false, color);
             board[59].piece = new Queen(true, color);
@@ -77,7 +77,7 @@ export default class Init {
      * @memberof Init
      */
     static initKingPos(color) {
-        return color === 'black' ? 60 : 59;
+        return color === 'white' ? 60 : 59;
     }
 
     /**
@@ -89,7 +89,7 @@ export default class Init {
      * @memberof Init
      */
     static initEnemyKingPos(color) {
-        return color === 'black' ? 4 : 3;
+        return color === 'white' ? 4 : 3;
     }
 
     /**
@@ -101,7 +101,7 @@ export default class Init {
      * @memberof Init
      */
     static initTurn(color) {
-        return color === 'black';
+        return color === 'white';
     }
 
     /**
@@ -113,7 +113,7 @@ export default class Init {
      * @memberof Init
      */
     static initLetters(color) {
-        return (color === 'black' ? ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] :
+        return (color === 'white' ? ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] :
             ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a']);
     }
 
@@ -126,7 +126,7 @@ export default class Init {
      * @memberof Init
      */
     static initNumbers(color) {
-        return (color === 'black' ? [8, 7, 6, 5, 4, 3, 2, 1] :
+        return (color === 'white' ? [8, 7, 6, 5, 4, 3, 2, 1] :
             [1, 2, 3, 4, 5, 6, 7, 8]);
     }
 }

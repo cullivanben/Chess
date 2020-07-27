@@ -44,6 +44,8 @@ class Board extends React.Component {
             kingPosition: 0,
             enemyKingPosition: 0,
             turn: false,
+            movedKing: false,
+            movedSideRook: false,
             moves: [],
             lastMove: '',
             letters: [],
@@ -276,8 +278,8 @@ class Board extends React.Component {
                 let dead = this.state.board[b].piece.pieceType;
                 this.setState(prevState => ({
                     ...stateUpdate,
-                    deadFriends: prevState.deadFriends.concat((prevState.color === 'black' ?
-                        'b' + dead : 'w' + dead)),
+                    deadFriends: prevState.deadFriends.concat((prevState.color === 'white' ?
+                        'w' + dead : 'b' + dead)),
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === b) spot.piece = selectedPiece;
@@ -424,8 +426,8 @@ class Board extends React.Component {
                     moveArr: [prevState.selection, position],
                     attackingFriendlyKing: new Set(),
                     kingPosition: newKingPosition,
-                    deadEnemies: prevState.deadEnemies.concat((prevState.color === 'black' ?
-                        'w' + dead : 'b' + dead)),
+                    deadEnemies: prevState.deadEnemies.concat((prevState.color === 'white' ?
+                        'b' + dead : 'w' + dead)),
                     highlighted: new Set(),
                     moves: prevState.moves.concat(code),
                     lastMove: code,
@@ -454,6 +456,7 @@ class Board extends React.Component {
                     kingPosition: newKingPosition,
                     highlighted: new Set(),
                     moves: prevState.moves.concat(code),
+                    lastMove: code,
                     board: update(prevState.board, {
                         $apply: board => board.map((spot, i) => {
                             if (i === position) spot.piece = selectedPiece;

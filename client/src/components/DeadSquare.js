@@ -11,7 +11,7 @@ import '../stylesheets/DeadSquare.scss';
  */
 export default function DeadSquare(props) {
     // set the source and classnames
-    let src = props.src === 'null' ? sources.blackKnight : props.src;
+    let src = props.src === 'null' ? sources.whiteKnight : props.src;
     let name = props.src === 'null' ? 'dead-transparent' : 'dead-opaque';
 
     // override countName if there is only one dead piece of this pieceType

@@ -11,7 +11,7 @@ export default class Rook {
     /**
      *Creates an instance of Rook.
      * @param {boolean} friendly - Whether this piece is on the user's side.
-     * @param {boolean} color - The color of this piece. 
+     * @param {string} color - The color of this piece. 
      * @memberof Rook
      */
     constructor(friendly, color) {
@@ -28,7 +28,7 @@ export default class Rook {
         this.pieceType = 'Rook';
 
         // the url to the svg of this piece
-        this.src = ((color === 'black' && friendly) || (color === 'white' && !friendly)) ?
-            sources.blackRook : sources.whiteRook;
+        this.src = ((color === 'white' && friendly) || (color === 'black' && !friendly)) ?
+            sources.whiteRook : sources.blackRook;
     }
 }

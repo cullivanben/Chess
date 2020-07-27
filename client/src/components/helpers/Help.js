@@ -82,7 +82,7 @@ export default class Help {
      */
     static getNumLetterCode(location, pieceType, color) {
         // convert the position if necessary
-        if (color === 'white') location = 63 - location;
+        if (color === 'black') location = 63 - location;
 
         // append the first letter of the color of the piece that made this move to 
         // the beginning of the code. This will be used when the dead piece is rendered
