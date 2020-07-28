@@ -93,6 +93,30 @@ export default class Init {
     }
 
     /**
+     *Initializes the position of the kingside rook.
+     *
+     * @static
+     * @param {string} color - The color of this player
+     * @returns {number} The starting position of the kingside rook.
+     * @memberof Init
+     */
+    static initKsRookPos(color) {
+        return color === 'white' ? 63 : 56;
+    }
+
+    /**
+     *Initializes the position of the queenside rook.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @returns {number} The starting position of the queenside rook.
+     * @memberof Init
+     */
+    static initQsRookPos(color) {
+        return color === 'white' ? 56 : 63;
+    }
+
+    /**
      *Determines whether this player goes first.
      *
      * @static

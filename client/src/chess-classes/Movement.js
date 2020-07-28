@@ -16,7 +16,7 @@ export default class Movement {
      * @param {Array<Spot>} board - The chess board.
      * @param {number} kingPosition - The position of the King on the chess board.
      * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly King.
-     * @returns {boolean} Whether the piece at start can be moved to the destination
+     * @returns {boolean} Whether the piece at start can be moved to the destination.
      * @memberof Movement
      */
     static canMove(start, destination, board, kingPosition, attackingFriendlyKing) {
@@ -804,5 +804,65 @@ export default class Movement {
         // if none of the above conditions were met
         // this enemy bishop will be able to attack the friendly king
         return true;
+    }
+
+    /**
+     *Determines whether a kingside castle is possible.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @param {number} kingPosition - The position of the friendly king.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {boolean} movedKing - Whether the friendly king has moved.
+     * @param {boolean} movedKsRook - Whether the kingside rook has moved.
+     * @param {Set<number>} attackingFriendlyKing - A set of the pieces that are attacking the friendly king.
+     * @returns Whether a kingside castle is possible.
+     * @memberof Movement
+     */
+    static canKsCastle(color, kingPosition, board, movedKing, movedKsRook, attackingFriendlyKing) {
+        // if the king is in check or the king has been moved or the kingside rook has been moved
+        // castling is not possible
+        if (attackingFriendlyKing.size > 0 || movedKing || movedKsRook) return false;
+
+        // determine whether the kingside rook is to the left or the right of the king
+        let shift = color === 'white' ? 1 : -1;
+
+        // if the two spots between the king and the rook are empty
+            // and they are not being attacked
+            // it is possible for the king to castle
+            return (board[kingPosition + shift].piece === null && board[kingPosition + 2 * shift].piece === null
+                && !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true)
+                && !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true));
+    }
+
+    /**
+     *Determines whether a queenside castle is possible.
+     *
+     * @static
+     * @param {string} color - The color of this player.
+     * @param {number} kingPosition - The position of the friendly king.
+     * @param {Array<Spot>} board - The chess board.
+     * @param {boolean} movedKing - Whether the friendly king has been moved.
+     * @param {boolean} movedQsRook - Whether the queenside rook has been moved.
+     * @param {Set<number>} attackingFriendlyKing - A set of the pieces that are attacking the friendly king.
+     * @returns {boolean} Whether a queenside castle is possible.
+     * @memberof Movement
+     */
+    static canQsCastle(color, kingPosition, board, movedKing, movedQsRook, attackingFriendlyKing) {
+        // if the king is in check or the king has been moved or the kingside rook has been moved
+        // castling is not possible
+        if (attackingFriendlyKing.size > 0 || movedKing || movedQsRook) return false;
+
+        // determine whether the queenside rook is to the left or the right of the king
+        let shift = color === 'white' ? -1 : 1;
+
+        // if the three spots between the king and the rook are empty
+        // and they are not being attacked
+        // it is possible for the king to castle
+        return (board[kingPosition + shift].piece === null && board[kingPosition + 2 * shift].piece === null
+            && board[kingPosition + 3 * shift].piece === null && !this.dangerous(board[kingPosition],
+                board[kingPosition + shift], board, true) && !this.dangerous(board[kingPosition],
+                    board[kingPosition + 2 * shift], board, true) && !this.dangerous(board[kingPosition],
+                        board[kingPosition + 3 * shift], board, true));
     }
 }
