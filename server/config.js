@@ -7,6 +7,7 @@ module.exports = {
     baseURL: baseURL,
     port: port,
     secret: {
-        cookie: process.env.COOKIE_SECRET
+        cookie: process.env.COOKIE_SECRET,
+        connection: process.env.DB_CONNECTION
     }
 }

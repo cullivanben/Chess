@@ -5,12 +5,24 @@ const uuid = require('uuid');
 const session = require('express-session');
 const config = require('./config');
 const path = require('path');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
+
+// connect to the db
+mongoose.connect(
+    config.secret.connection,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }
+);
 
 // set up the middleware for recognizing user sessions
 var sessionMiddleWare = session({
     secret: config.secret.cookie,
     saveUninitialized: true,
-    resave: false
+    resave: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
 });
 
 // set up express
@@ -25,7 +37,7 @@ app.get('/test', (req, res) => {
     if (req.session.guest === undefined) {
         req.session.guest = uuid.v1();
     }
-    res.send({msg: 'yay'});
+    res.send({ msg: 'yay' });
 });
 
 app.get('/robots.txt', (req, res) => {
@@ -103,7 +115,7 @@ io.on('connection', socket => {
         console.log('actual-disconnect');
         console.log(reason);
     });
-}); 
+});
 
 // start listening on the specified port
 server.listen(config.port, () => {
