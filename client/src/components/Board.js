@@ -100,8 +100,10 @@ class Board extends React.Component {
     }
 
     componentWillUnmount() {
-        // if the component gets a chance to unmount, remove the event listener
+        // if the component gets a chance to unmount, remove the event listener 
+        // and save the state to local storage
         window.removeEventListener('beforeunload', this.saveStateToLocalStorage);
+        this.saveStateToLocalStorage();
     }
 
     /**
@@ -245,6 +247,8 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleColorSet(color) {
+
+        console.log('color sert', color);
         // retireve the name of this user from local storage
         let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
             ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
@@ -524,8 +528,11 @@ class Board extends React.Component {
         // determine whether the king has been moved
         let kingHasMoved = this.hasKingJustMoved(newKingPos);
 
-        // determine whether the castle rook has moved
-        let rookHasMoved = this.hasKsRookJustMoved();
+        // determine whether the kingside rook has moved
+        let ksMoved = this.hasKsRookJustMoved();
+
+        // determine whether the queenside rook has moved
+        let qsMoved = this.hasQsRookJustMoved();
 
         // get the piece that is being moved
         let selectedPiece = this.state.board[this.state.selection].piece;
@@ -548,7 +555,8 @@ class Board extends React.Component {
                 attackingFriendlyKing: new Set(),
                 kingPos: newKingPos,
                 movedKing: kingHasMoved,
-                movedKsRook: rookHasMoved,
+                movedKsRook: ksMoved,
+                movedQsRook: qsMoved,
                 deadEnemies: prevState.deadEnemies.concat((prevState.color === 'white' ?
                     'b' + dead : 'w' + dead)),
                 highlighted: new Set(),
@@ -579,7 +587,8 @@ class Board extends React.Component {
                 attackingFriendlyKing: new Set(),
                 kingPos: newKingPos,
                 movedKing: kingHasMoved,
-                movedKsRook: rookHasMoved,
+                movedKsRook: ksMoved,
+                movedQsRook: qsMoved,
                 highlighted: new Set(),
                 moves: prevState.moves.concat(code),
                 lastMove: code,
@@ -647,7 +656,7 @@ class Board extends React.Component {
             else if (option === 'qs') {
                 newKingPos = 61;
                 newRookPos = 60;
-                castleArr = [4, 6, 7, 5];
+                castleArr = [4, 2, 0, 3];
                 code = 'b0-0-0';
             }
 

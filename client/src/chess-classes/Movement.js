@@ -828,11 +828,12 @@ export default class Movement {
         let shift = color === 'white' ? 1 : -1;
 
         // if the two spots between the king and the rook are empty
-            // and they are not being attacked
-            // it is possible for the king to castle
-            return (board[kingPosition + shift].piece === null && board[kingPosition + 2 * shift].piece === null
-                && !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true)
-                && !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true));
+        // and they are not being attacked
+        // it is possible for the king to castle
+        return (board[kingPosition + shift].piece === null && 
+            board[kingPosition + 2 * shift].piece === null && 
+            !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) && 
+            !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true));
     }
 
     /**
@@ -859,10 +860,11 @@ export default class Movement {
         // if the three spots between the king and the rook are empty
         // and they are not being attacked
         // it is possible for the king to castle
-        return (board[kingPosition + shift].piece === null && board[kingPosition + 2 * shift].piece === null
-            && board[kingPosition + 3 * shift].piece === null && !this.dangerous(board[kingPosition],
-                board[kingPosition + shift], board, true) && !this.dangerous(board[kingPosition],
-                    board[kingPosition + 2 * shift], board, true) && !this.dangerous(board[kingPosition],
-                        board[kingPosition + 3 * shift], board, true));
+        return (board[kingPosition + shift].piece === null && 
+            board[kingPosition + 2 * shift].piece === null && 
+            board[kingPosition + 3 * shift].piece === null &&
+            !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) &&
+            !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true) &&
+            !this.dangerous(board[kingPosition], board[kingPosition + 3 * shift], board, true));
     }
 }
