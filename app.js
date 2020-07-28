@@ -1,16 +1,19 @@
-const express = require('express');
 const http = require('http');
-const socketIO = require('socket.io');
-const uuid = require('uuid');
+const express = require('express');
 const session = require('express-session');
-const config = require('./config');
-const path = require('path');
+const socketIO = require('socket.io');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
+const uuid = require('uuid');
+const path = require('path');
+require('dotenv').config();
+
+// the port to listen on
+const PORT = process.env.PORT || 5000;
 
 // connect to the db
 mongoose.connect(
-    config.secret.connection,
+    process.env.MONGODB_CONNECTION,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -19,18 +22,20 @@ mongoose.connect(
 
 // set up the middleware for recognizing user sessions
 var sessionMiddleWare = session({
-    secret: config.secret.cookie,
+    secret: process.env.COOKIE_SECRET,
     saveUninitialized: true,
     resave: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
+    store: new MongoStore({ mongooseConnection: mongoose.connection }) // use mongodb for session storage
 });
 
 // set up express
 const app = express();
 app.use(sessionMiddleWare);
 
-// set up routes
-// TODO: replace '/test' with '/' for production
+// serve the react client
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// DEVELOPMENT
 app.get('/test', (req, res) => {
     // make sure the user has a guest id 
     console.log('guest from route ', req.session.guest);
@@ -42,7 +47,14 @@ app.get('/test', (req, res) => {
 
 app.get('/robots.txt', (req, res) => {
     res.sendFile(path.join(__dirname, 'robots.txt'));
-})
+});
+
+app.get('*', (req, res) => {
+    if (req.session.guest === undefined) {
+        req.session.guest = uuid.v1();
+    }
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 // set up the server and socket.io
 const server = http.createServer(app);
@@ -59,9 +71,14 @@ io.use((socket, next) => sessionMiddleWare(socket.request, socket.request.res ||
 
 // handle connection to the socket
 io.on('connection', socket => {
-    console.log('guest from socket', socket.request.session.guest);
+
+    // get the guest id
+    let guest = socket.request.session.guest;
+
+    console.log('guest from socket', guest);
     // if this user is already part of a game, add them to the same room
-    if (guestInfo.has(socket.request.session.guest)) socket.join(guestInfo.get(socket.request.session.guest).room);
+    if (guestInfo.has(guest)) socket.join(guestInfo.get(guest).room);
+
     // if the user is not currently part of a game
     else {
         // add them to the open game
@@ -69,38 +86,40 @@ io.on('connection', socket => {
         roomOpen = !roomOpen;
         let roomId = currentId;
         socket.join(roomId);
+
         // determine the color of this user
         let color = roomOpen ? 'white' : 'black';
+
         // save the user's room and color
-        guestInfo.set(socket.request.session.guest, { room: roomId, color: color });
+        guestInfo.set(guest, { room: roomId, color: color });
+
         // send the color to the user
-        socket.emit('color', guestInfo.get(socket.request.session.guest).color);
+        socket.emit('color', guestInfo.get(guest).color);
     }
 
     // when the board is updated, send the board update to the other user connected to this room
     socket.on('outgoing-board-update', data => {
-        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-board-update', data);
-        //socket.broadcast.to(roomId).emit('incoming-board-update', data);
+        socket.to(guestInfo.get(guest).room).emit('incoming-board-update', data);
     });
 
     // inform the user when it is their turn
     socket.on('outgoing-turn', () => {
-        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-turn');
+        socket.to(guestInfo.get(guest).room).emit('incoming-turn');
     });
 
     // when a message is recieved, send the message to the other user
     socket.on('outgoing-message', data => {
-        socket.to(guestInfo.get(socket.request.session.guest).room).emit('incoming-message', data);
+        socket.to(guestInfo.get(guest).room).emit('incoming-message', data);
     });
 
     // forcibly disconnect the user
     socket.on('force-disconnect', () => {
         console.log('force-disconnect');
         // inform the other player that this player left the room
-        console.log(guestInfo.has(socket.request.session.guest));
-        socket.to(guestInfo.get(socket.request.session.guest).room).emit('enemy-left');
+        console.log(guestInfo.has(guest));
+        socket.to(guestInfo.get(guest).room).emit('enemy-left');
         // remove this player from the map of guest info
-        if (guestInfo.has(socket.request.session.guest)) guestInfo.delete(socket.request.session.guest);
+        if (guestInfo.has(guest)) guestInfo.delete(guest);
         // disconnect the socket
         socket.disconnect(true);
     });
@@ -117,7 +136,9 @@ io.on('connection', socket => {
     });
 });
 
+if (process.env.NODE_ENV === 'production') {
+    
+}
+
 // start listening on the specified port
-server.listen(config.port, () => {
-    console.log(`Listening on port ${config.port}`);
-});
+server.listen(PORT);
