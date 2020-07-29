@@ -9,9 +9,19 @@
     padding: 0;
     font-size: 0;
 }
+.rd-wrapper {
+    margin: 0;
+    padding: 0;
+}
 .resign {
     color: white;
-    background-color: $dark-enemy-highlight;
+    background: $dark-enemy-highlight;
+    border: none;
+    padding: 0;
+}
+.request-draw {
+    color: white;
+    background: $dark-square-color;
     border: none;
     padding: 0;
 }
@@ -53,7 +63,7 @@
     .stats-wrapper {
         order: 2;
     }
-    .moves-played {
+    .moves-played, .moves-ul {
         height: 36vw;
     }
     .enemy-name-wrapper, .your-name-wrapper {
@@ -64,21 +74,35 @@
         font-size: 6vw;
     }
     .resign {
+        display: inline-block;
+        vertical-align: top;
         width: 40vw;
         height: 10vw;
-        font-size: 6vw;
+        font-size: 5vw;
         border-radius: 2vw;
         margin-top: 2vw;
         margin-bottom: 2vw;
-        margin-left: 26vw;
-        margin-right: 26vw;
+        margin-left: 4vw;
+        margin-right: 2vw;
+    }
+    .request-draw {
+        display: inline-block;
+        vertical-align: top;
+        width: 40vw;
+        height: 10vw;
+        font-size: 5vw;
+        border-radius: 2vw;
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        margin-left: 2vw;
+        margin-right: 4vw;
     }
 }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 5/4) {
     .stats-wrapper {
         display: inline-block;
     }
-    .moves-played {
+    .moves-played, .moves-ul {
         height: 36vw;
     }
     .enemy-name-wrapper, .your-name-wrapper {
@@ -89,18 +113,32 @@
         font-size: 2.5vw;
     }
     .resign {
-        width: 19vw;
+        display: inline-block;
+        vertical-align: top;
+        width: 11vw;
         height: 7vw;
-        font-size: 3.5vw;
+        font-size: 2vw;
         margin-top: 2vw;
         margin-bottom: 2vw;
-        margin-left: 3vw;
-        margin-right: 3vw;
+        margin-left: 1vw;
+        margin-right: 0.25vw;
+        border-radius: 1vw;
+    }
+    .request-draw {
+        display: inline-block;
+        vertical-align: top;
+        width: 11vw;
+        height: 7vw;
+        font-size: 2vw;
+        margin-top: 2vw;
+        margin-bottom: 2vw;
+        margin-left: 0.25vw;
+        margin-right: 1vw;
         border-radius: 1vw;
     }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
-    .moves-played {
+    .moves-played, .moves-ul {
         height: 35.5vw;
     }
     .enemy-name-wrapper, .your-name-wrapper {
@@ -111,18 +149,32 @@
         font-size: 1.5vw;
     }
     .resign {
-        width: 12.5vw;
+        display: inline-block;
+        vertical-align: top;
+        width: 7.75vw;
         height: 4vw;
-        font-size: 2.25vw;
+        font-size: 1.5vw;
         margin-top: 1vw;
         margin-bottom: 1vw;
-        margin-left: 2.5vw;
-        margin-right: 2.5vw;
+        margin-left: 0.75vw;
+        margin-right: 0.25vw;
+        border-radius: 1vw;
+    }
+    .request-draw {
+        display: inline-block;
+        vertical-align: top;
+        width: 7.75vw;
+        height: 4vw;
+        font-size: 1.25vw;
+        margin-top: 1vw;
+        margin-bottom: 1vw;
+        margin-left: 0.25vw;
+        margin-right: 0.75vw;
         border-radius: 1vw;
     }
 }
 @media (min-aspect-ratio: 3/2) {
-    .moves-played {
+    .moves-played, .moves-ul {
         height: 27vw;
     }
     .enemy-name-wrapper, .your-name-wrapper {
@@ -133,13 +185,27 @@
         font-size: 1.5vw;
     }
     .resign {
-        width: 11vw;
-        height: 3vw;
-        font-size: 2vw;
-        margin-top: 1vw;
-        margin-bottom: 1vw;
-        margin-left: 2vw;
-        margin-right: 2vw;
+        display: inline-block;
+        vertical-align: top;
+        width: 6.5vw;
+        height: 3.5vw;
+        font-size: 1.3vw;
+        margin-top: 0.75vw;
+        margin-bottom: 0.75vw;
+        margin-left: 0.75vw;
+        margin-right: 0.25vw;
+        border-radius: 0.75vw;
+    }
+    .request-draw {
+        display: inline-block;
+        vertical-align: top;
+        width: 6.5vw;
+        height: 3.5vw;
+        font-size: 1.3vw;
+        margin-top: 0.75vw;
+        margin-bottom: 0.75vw;
+        margin-left: 0.25vw;
+        margin-right: 0.75vw;
         border-radius: 0.75vw;
     }
 }

@@ -115,6 +115,8 @@ export default class Movement {
             // this piece can only move to the spot directly in front of it
             if (startRow + shift !== destinationRow || startColumn !== destinationColumn) return false;
 
+            console.log('will this remove', attackingFriendlyKing.size);
+
             // if the friendly king is in check, this move will only be legal if it removes the king from check
             if (attackingFriendlyKing.size > 0)
                 return this.willRemoveCheck(start, destination, board, kingPosition, attackingFriendlyKing);
@@ -425,6 +427,9 @@ export default class Movement {
         // this move will remove the king from check
         if (attackerPositions.size === 1 && attackerPositions.has(destination.position)) return true;
 
+        if (start.piece !== null && start.piece.pieceType === 'Pawn') 
+            console.log('in will remove');
+
         // if there is more than one attacker and this piece is about to kill one of them,
         // this move will not remove the king from check
         if (attackerPositions.size > 1 && attackerPositions.has(destination.position)) return false;
@@ -442,6 +447,8 @@ export default class Movement {
         // if the piece will be able to attack the king after this move, then this move does not remove 
         // the king from check, return false
         for (let pos of attackerPositions) {
+            console.log('attacker pos', pos);
+            console.log('king pos', kingPosition);
             if (board[pos].piece !== null) {
                 switch (board[pos].piece.pieceType) {
                     case 'Pawn':
@@ -816,7 +823,7 @@ export default class Movement {
      * @param {boolean} movedKing - Whether the friendly king has moved.
      * @param {boolean} movedKsRook - Whether the kingside rook has moved.
      * @param {Set<number>} attackingFriendlyKing - A set of the pieces that are attacking the friendly king.
-     * @returns Whether a kingside castle is possible.
+     * @returns {boolean} Whether a kingside castle is possible.
      * @memberof Movement
      */
     static canKsCastle(color, kingPosition, board, movedKing, movedKsRook, attackingFriendlyKing) {
@@ -866,5 +873,34 @@ export default class Movement {
             !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) &&
             !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true) &&
             !this.dangerous(board[kingPosition], board[kingPosition + 3 * shift], board, true));
+    }
+
+    /**
+     *Determines whether this player is in checkmate.
+     *
+     * @static
+     * @param {Array<Spot>} board - The chess board.
+     * @param {number} kingPosition - The position of the friendly king.
+     * @param {Set<number>} attackingFriendlyKing - A set of all the enemy pieces that are attacking the friendly king.
+     * @returns {boolean} Whether this player is in checkmate.
+     * @memberof Movement
+     */
+    static inCheckMate(board, kingPosition, attackingFriendlyKing) {
+        // loop over every position on the board, if it is possible to make any move,
+        // then this player is not in checkmate
+        for (let i = 0; i < board.length; i++) {
+            // if we encounter a friendly piece
+            if (board[i].piece !== null && board[i].piece.friendly) {
+                // see if the piece can move, if it can, this player is not in checkmate
+                for (let j = 0; j < board.length; j++) {
+                    if (j !== i && this.canMove(board[i], board[j], board, kingPosition, attackingFriendlyKing)) {
+                        console.log('thisfailed', i, j);
+                        return false;
+                    }
+                }
+            }
+        }
+        // if no move can be made, this player is in checkmate
+        return true;
     }
 }

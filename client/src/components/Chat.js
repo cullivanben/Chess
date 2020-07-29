@@ -75,13 +75,17 @@ export default class Chat extends React.Component {
      * @memberof Chat
      */
     handleSend(message) {
-        if (!this.socket) return;
+        if (!this.socket || this.props.gameOver) return;
+
+        // make sure the message is not empty
+        let parsed = message.trim();
+        if (parsed.length === 0) return;
 
         // create an object containing the message as well as the sender
         let payload = {
             id: uuid(),
             user: this.props.name,
-            content: message
+            content: parsed
         }
 
         // send the message to the other player

@@ -28,8 +28,13 @@ class Board extends React.Component {
         super(props);
         this.socket = null;                         // the websocket that this component will use to communicate with the server
         this.state = {
+            loading: true,                          // whether this client is waiting for an opponent
+            enemyLeft: false,                       // whether the enemy player has left the game
+            youWon: false,                          // whether this player won the game
+            youLost: false,                         // whether this player lost the game
+            draw: false,                            // whether the game was a draw
             name: '',                               // the name of this player
-            enemyName: 'Phil Hanlon',               // the name of the enemy player
+            enemyName: '',                          // the name of the enemy player
             color: '',                              // the color of this player
             board: [],                              // an array representing the chess board
             highlighted: new Set(),                 // the locations of highlighted spots on the board
@@ -57,11 +62,20 @@ class Board extends React.Component {
             nums: []                                // the numbers labeling the side of the board
         }
         this.handleColorSet = this.handleColorSet.bind(this);
+        this.handleEnemyConnection = this.handleEnemyConnection.bind(this);
+        this.handleEnemyNameReceival = this.handleEnemyNameReceival.bind(this);
+        this.sendName = this.sendName.bind(this);
         this.handleIncomingBoardUpdate = this.handleIncomingBoardUpdate.bind(this);
+        this.checkForCheckmate = this.checkForCheckmate.bind(this);
         this.handleEnemyLeft = this.handleEnemyLeft.bind(this);
+        this.handleVictory = this.handleVictory.bind(this);
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
         this.cleanup = this.cleanup.bind(this);
         this.handleResign = this.handleResign.bind(this);
+        this.handleDrawRequest = this.handleDrawRequest.bind(this);
+        this.handleIncomingDrawRequest = this.handleIncomingDrawRequest.bind(this);
+        this.handleDraw = this.handleDraw.bind(this);
+        this.handleExit = this.handleExit.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.attemptSelect = this.attemptSelect.bind(this);
         this.unselect = this.unselect.bind(this);
@@ -86,11 +100,26 @@ class Board extends React.Component {
         // listen for the color
         this.socket.on('color', this.handleColorSet);
 
+        // listen for an enemy connection
+        this.socket.on('enemy-connected', this.handleEnemyConnection);
+
+        // listen for the enemy name
+        this.socket.on('incoming-enemy-name', this.handleEnemyNameReceival);
+
         // listen for incoming board updates and update the state when they are received
         this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
 
         // listen for the other player leaving
         this.socket.on('enemy-left', this.handleEnemyLeft);
+
+        // listening for a draw request
+        this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
+
+        // listen for the match being a draw
+        this.socket.on('match-was-draw', this.handleDraw);
+
+        // listen for winning
+        this.socket.on('you-won', this.handleVictory);
 
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);
@@ -113,7 +142,13 @@ class Board extends React.Component {
      */
     saveStateToLocalStorage() {
         localStorage.setItem('saved', JSON.stringify(true));
-        localStorage.setItem('guest-name', JSON.stringify(this.state.name));
+        localStorage.setItem('loading', JSON.stringify(this.state.loading));
+        localStorage.setItem('enemyLeft', JSON.stringify(this.state.enemyLeft));
+        localStorage.setItem('youWon', JSON.stringify(this.state.youWon));
+        localStorage.setItem('youLost', JSON.stringify(this.state.youLost));
+        localStorage.setItem('draw', JSON.stringify(this.state.draw));
+        localStorage.setItem('name', JSON.stringify(this.state.name));
+        localStorage.setItem('enemyName', JSON.stringify(this.state.enemyName));
         localStorage.setItem('color', JSON.stringify(this.state.color));
         localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
             if (key === 'src' || key === 'id') return undefined;
@@ -150,8 +185,26 @@ class Board extends React.Component {
      */
     restoreStateFromLocalStorage() {
         let restoredState = {};
-        if (localStorage.getItem('guest-name') !== null) {
+        if (localStorage.getItem('loading') !== null) {
+            restoredState.loading = JSON.parse(localStorage.getItem('loading'));
+        }
+        if (localStorage.getItem('enemyLeft') !== null) {
+            restoredState.enemyLeft = JSON.parse(localStorage.getItem('enemyLeft'));
+        }
+        if (localStorage.getItem('youWon') !== null) {
+            restoredState.youWon = JSON.parse(localStorage.getItem('youWon'));
+        }
+        if (localStorage.getItem('youLost') !== null) {
+            restoredState.youLost = JSON.parse(localStorage.getItem('youLost'));
+        }
+        if (localStorage.getItem('draw') !== null) {
+            restoredState.draw = JSON.parse(localStorage.getItem('draw'));
+        }
+        if (localStorage.getItem('name') !== null) {
             restoredState.name = JSON.parse(localStorage.getItem('guest-name'));
+        }
+        if (localStorage.getItem('enemyName') !== null) {
+            restoredState.enemyName = JSON.parse(localStorage.getItem('enemyName'));
         }
         if (localStorage.getItem('color') !== null) {
             restoredState.color = JSON.parse(localStorage.getItem('color'));
@@ -247,10 +300,8 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleColorSet(color) {
-
-        console.log('color sert', color);
         // retireve the name of this user from local storage
-        let name = (localStorage.getItem('guest-name') !== null ? localStorage.getItem('guest-name') :
+        let name = (localStorage.getItem('name') !== null ? localStorage.getItem('name') :
             ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
 
         // set the initial state of the game
@@ -266,6 +317,35 @@ class Board extends React.Component {
             letters: Init.initLetters(color),
             nums: Init.initNumbers(color)
         });
+    }
+
+    /**
+     *Handles when an enemy joins the game. Updates the state so that the board is rendered.
+     *
+     * @memberof Board
+     */
+    handleEnemyConnection() {
+        this.setState({ loading: false }, this.sendName);
+    }
+
+    /**
+     *Sends the name of this player to the enemy player.
+     *
+     * @memberof Board
+     */
+    sendName() {
+        if (this.socket === null) return;
+        this.socket.emit('outgoing-name', this.state.name);
+    }
+
+    /**
+     *Handles when this player recieves the name of the enemy player.
+     *
+     * @param {string} name - The name of the enemy player.
+     * @memberof Board
+     */
+    handleEnemyNameReceival(name) {
+        this.setState({ enemyName: name });
     }
 
     /**
@@ -330,7 +410,8 @@ class Board extends React.Component {
                             return spot;
                         })
                     })
-                }));
+                }), this.checkForCheckmate);
+                // check if this move put this player in checkmate
             }
 
             // if this move did not kill a friendly piece
@@ -345,7 +426,8 @@ class Board extends React.Component {
                             return spot;
                         })
                     })
-                }));
+                }), this.checkForCheckmate);
+                // check if this move put this player in checkmate
             }
         }
 
@@ -374,12 +456,53 @@ class Board extends React.Component {
                         return spot;
                     })
                 })
-            }))
+            }), this.checkForCheckmate);
+            // check if this move put this player in checkmate
         }
 
         // if no move or castle was made we do not need to update the board,
         // however, we still must update the state
+        // in this case we also do not need to check if this player is in checkmate because no move was made
         else this.setState(stateUpdate);
+    }
+
+    /**
+     *Checks if this player is in checkmate.
+     *
+     * @memberof Board
+     */
+    checkForCheckmate() {
+        console.log('check for checkmate');
+        // if this player is not in check, they must not be in checkmate
+        if (this.state.attackingFriendlyKing.size === 0) return;
+
+        console.log('the king is in check');
+        console.log('undef???', this.state.kingPos)
+
+        // if this player is in checkmate, they have lost the game
+        if (Movement.inCheckMate(this.state.board, this.state.kingPos, this.state.attackingFriendlyKing)) {
+
+            // tell the enemy that they have won and force disconnect the socket
+            if (this.socket !== null) this.socket.emit('i-lost');
+            this.socket = null;
+
+            // update the state and let this user know that they have lost
+            this.setState({ youLost: true }, () => this.informUser('youLost'));
+        }
+    }
+
+    /**
+     *Callback for when this user wins.
+     *
+     * @memberof Board
+     */
+    handleVictory() {
+        // disconnect this socket
+        if (this.socket !== null) this.socket.emit('secondary-disconnect');
+        this.socket = null;
+
+        // update the state and inform the user that they have won
+        this.setState({ youWon: true }, () => this.informUser('youWon'));
     }
 
     /**
@@ -388,8 +511,12 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleEnemyLeft() {
-        // clear local storage and disconnect from the socket
-        this.cleanup();
+        // disconnect the socket
+        if (this.socket !== null) this.socket.emit('secondary-disconnect');
+        this.socket = null;
+
+        // set that the enemy has left
+        this.setState({ enemyLeft: true }, () => this.informUser('enemyLeft'));
     }
 
     /**
@@ -398,6 +525,13 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleResign() {
+        // if the user called this to exit the window
+        if (this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw) {
+            // navigate back without a prompt
+            this.props.history.goBack();
+            return;
+        }
+
         // make sure the user really wants to resign
         if (!window.confirm('Are you sure you want to resign? If you do you will lose the game.'))
             return;
@@ -407,6 +541,92 @@ class Board extends React.Component {
 
         // upon backward navigation, this.cleanup will be called and will clear local storage 
         // and force-disconnect the socket
+    }
+
+    /**
+     *Handles when this user receives a draw request that the other user sent.
+     *
+     * @memberof Board
+     */
+    handleIncomingDrawRequest() {
+        if (window.confirm('Your opponent has requested for this match to be a draw. By clicking \'ok\' ' +
+            'you are accepting this request and the match will be ruled a draw.')) {
+            // let the enemy know that this match is a draw
+            if (this.socket !== null) this.socket.emit('its-a-draw');
+
+            // update the state and inform the user that the match was a draw
+            this.setState({ draw: true }, () => this.informUser('draw'));
+        }
+    }
+
+    /**
+     *Handles when this user is making a draw request.
+     *
+     * @memberof Board
+     */
+    handleDrawRequest() {
+        // confirm that the user wants to request a draw
+        if (!window.confirm('Are you sure you want to request a draw? By clicking \'ok\' ' +
+            'a request will be sent to your opponent.')) return;
+
+        // send the request to the enemy
+        if (this.socket !== null) this.socket.emit('outgoing-draw-request');
+    }
+
+    /**
+     *Handles when this user receives an update stating that the match is officially a draw.
+     *
+     * @memberof Board
+     */
+    handleDraw() {
+        // update the state and inform this user that the match was a draw
+        this.setState({ draw: true }, () => this.informUser('draw'));
+        // disconnect the socket
+        if (this.socket !== null) this.socket.emit('secondary-disconnect');
+        this.socket = null;
+    }
+
+    /**
+     *Handles when the user wants to leave the game.
+     *
+     * @memberof Board
+     */
+    handleExit() {
+        // go back to the main page
+        this.props.history.goBack();
+
+        // upon backward navigation, this.cleanup will be called and will clear local storage 
+        // and force-disconnect the socket
+    }
+
+    /**
+     *Informs the user that the game is over and why it ended.
+     *
+     * @param {string} message - The reason the game is over.
+     * @memberof Board
+     */
+    informUser(message) {
+        switch (message) {
+            case 'enemyLeft':
+                window.alert('Your opponent has left the game. You win! ' +
+                    'You may view the final game board or click the exit button' +
+                    ' to return to the main page.');
+                return;
+            case 'youWon':
+                window.alert('You won the game! You may view the final game' +
+                    ' board or click the exit button to return to the main page.');
+                return;
+            case 'youLost':
+                window.alert('You lost the game. You may view the final game' +
+                    ' board or click the exit button to return to the main page.');
+                return;
+            case 'draw':
+                window.alert('It\'s a draw! You may view the final game' +
+                    ' board or click the exit button to return to the main page.');
+                return;
+            default:
+                return;
+        }
     }
 
     /**
@@ -873,7 +1093,23 @@ class Board extends React.Component {
             key = this.state.board[position].piece.id;
         }
 
-        // render a list item containing a square with all the desired props
+        // if the game is over, do not include a listener with the rendered square
+        if (this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw) {
+            return (<li key={key}>
+                <Square
+                    highlighted={false}
+                    enemyHighlighted={false}
+                    selected={false}
+                    enemySelected={false}
+                    shade={shade}
+                    src={src}
+                />
+            </li>);
+        }
+
+        // if the game is not over,
+        // render a list item containing a square with all the desired props and 
+        // a listener for when the user selects it
         return (<li key={key}>
             <Square
                 handleMouseDown={() => this.handleMouseDown(position)}
@@ -887,9 +1123,62 @@ class Board extends React.Component {
         </li>);
     }
 
+    /**
+     *Render's the screen that the user will see while waiting for an opponent to connect.
+     *
+     * @returns The loading screen.
+     * @memberof Board
+     */
+    renderLoadingScreen() {
+        return (
+            <div className="loading-wrapper">
+                <div className="surrounder">
+                    <h1 className="waiting">Waiting for an opponent.</h1>
+                    <div className="lds-dual-ring"></div>
+                </div>
+            </div>
+        );
+    }
+
+    /**
+     *Renders the message that is displayed when the game is over.
+     *
+     * @returns The end of game message.
+     * @memberof Board
+     */
+    renderEogMessage() {
+        // if the game is not over, there is not end of game message
+        if (!this.state.enemyLeft && !this.state.youWon && !this.state.youLost && !this.state.draw) {
+            return <div className="game-not-over"></div>;
+        }
+
+        // set the apropriate message
+        let eogMessage = '';
+
+        // if the enemy left the game
+        if (this.state.enemyLeft) eogMessage = 'Your opponent has left the game. You won!';
+
+        // if this player won the game
+        else if (this.state.youWon) eogMessage = 'You won!';
+
+        // if this player lost the game
+        else if (this.state.youLost) eogMessage = 'You lost.';
+
+        // if the game resulted in a draw
+        else if (this.state.draw) eogMessage = 'It\'s a draw!';
+
+        return (<div className="center-eog-div">
+            <h1 className="eog-message">{eogMessage}</h1>
+            <button className="exit-button" onClick={this.handleExit}>Exit</button>
+        </div>)
+    }
+
     render() {
         // if a color has not yet been set, render nothing
         if (this.state.color === '' || this.state.color === undefined) return <div></div>;
+
+        // if this client is waiting for an opponent, display the loading screen
+        if (this.state.loading) return this.renderLoadingScreen();
 
         // set up the board of squares to render
         let board = [];
@@ -927,6 +1216,8 @@ class Board extends React.Component {
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}
                 handleResign={this.handleResign}
+                handleDrawRequest={this.state.handleDrawRequest}
+                gameOver={this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw}
             />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
             <div className="ml-wrapper">
@@ -940,7 +1231,11 @@ class Board extends React.Component {
                     </ul>
                 </div>
             </div>
-            <Chat className="board-chat" name={this.state.name} />
+            <Chat
+                className="board-chat"
+                name={this.state.name}
+                gameOver={this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw}
+            />
         </div>);
     }
 }

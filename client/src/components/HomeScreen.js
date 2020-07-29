@@ -37,7 +37,7 @@ class HomeScreen extends React.Component {
         if (input === '') {
             input = 'Guest ' + (Math.floor(Math.random() * 90000) + 10000);
         }
-        localStorage.setItem('guest-name', input);
+        localStorage.setItem('name', input);
 
         // navigate to the game screen
         this.props.history.push('/play');

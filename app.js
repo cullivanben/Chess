@@ -95,6 +95,9 @@ io.on('connection', socket => {
 
         // send the color to the user
         socket.emit('color', guestInfo.get(guest).color);
+
+        // if this is the second player to enter the room, tell both players that an opponent has connected
+        if (!roomOpen) io.in(roomId).emit('enemy-connected');
     }
 
     // when the board is updated, send the board update to the other user connected to this room
@@ -102,22 +105,51 @@ io.on('connection', socket => {
         socket.to(guestInfo.get(guest).room).emit('incoming-board-update', data);
     });
 
-    // inform the user when it is their turn
-    socket.on('outgoing-turn', () => {
-        socket.to(guestInfo.get(guest).room).emit('incoming-turn');
-    });
-
     // when a message is recieved, send the message to the other user
     socket.on('outgoing-message', data => {
         socket.to(guestInfo.get(guest).room).emit('incoming-message', data);
     });
 
+    // when the user emits their name, tell the other user
+    socket.on('outgoing-name', data => {
+        socket.to(guestInfo.get(guest).room).emit('incoming-enemy-name', data);
+    });
+
+    // when the user is requesting a draw with the other user
+    socket.on('outgoing-draw-request', () => {
+        socket.to(guestInfo.get(guest).room).emit('incoming-draw-request');
+    });
+
+    // when a user accepts another user's draw request
+    socket.on('its-a-draw', () => {
+        socket.to(guestInfo.get(guest).room).emit('match-was-draw');
+        // remove this player from the map of guest info
+        if (guestInfo.has(guest)) guestInfo.delete(guest);
+        // disconnect the socket
+        socket.disconnect(true);
+    })
+
+    // when a user loses, tell the other user that they have won
+    socket.on('i-lost', () => {
+        socket.to(guestInfo.get(guest).room).emit('you-won');
+        // remove this player from the map of guest info
+        if (guestInfo.has(guest)) guestInfo.delete(guest);
+        // disconnect the socket
+        socket.disconnect(true);
+    });
+
     // forcibly disconnect the user
     socket.on('force-disconnect', () => {
-        console.log('force-disconnect');
         // inform the other player that this player left the room
-        console.log(guestInfo.has(guest));
         socket.to(guestInfo.get(guest).room).emit('enemy-left');
+        // remove this player from the map of guest info
+        if (guestInfo.has(guest)) guestInfo.delete(guest);
+        // disconnect the socket
+        socket.disconnect(true);
+    });
+
+    // handles when this user is the second user to disconnect
+    socket.on('secondary-disconnect', () => {
         // remove this player from the map of guest info
         if (guestInfo.has(guest)) guestInfo.delete(guest);
         // disconnect the socket
@@ -127,12 +159,6 @@ io.on('connection', socket => {
     // forcibly disconnect the message socket
     socket.on('disconnect-message', () => {
         socket.disconnect(true);
-    });
-
-    // when a client disconnects
-    socket.on('disconnect', (reason) => {
-        console.log('actual-disconnect');
-        console.log(reason);
     });
 });
 

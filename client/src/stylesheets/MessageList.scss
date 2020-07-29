@@ -32,6 +32,7 @@
         display: inline-block;
     }
     .message-list {
+        height: 80vw;
        padding: 1vw;
        li {
            padding-bottom: 1vw;
@@ -53,10 +54,11 @@
         vertical-align: top;
     }
     .message-list {
-       padding: 0.5vw;
-       li {
-           padding-bottom: 0.5vw;
-       }
+        height: 30vw;
+        padding: 0.5vw;
+        li {
+            padding-bottom: 0.5vw;
+        }
     }
     .message-content {
         padding: 0.5vw;
@@ -71,10 +73,11 @@
         height: 45.5vw;
     }
     .message-list {
-       padding: 0.5vw;
-       li {
-           padding-bottom: 0.5vw;
-       }
+        height: 45.5vw;
+        padding: 0.5vw;
+        li {
+            padding-bottom: 0.5vw;
+        }
     }
     .message-content {
         padding: 0.5vw;
@@ -89,10 +92,11 @@
         height: 36vw;
     }
     .message-list {
-       padding: 0.5vw;
-       li {
-           padding-bottom: 0.5vw;
-       }
+        height: 36vw;
+        padding: 0.5vw;
+        li {
+            padding-bottom: 0.5vw;
+        }
     }
     .message-content {
         padding: 0.5vw;
