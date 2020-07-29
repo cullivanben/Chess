@@ -121,7 +121,7 @@ export default function StatsBar(props) {
         <div className="your-name-wrapper"><h3 className="your-name">{props.name}</h3></div>
         <div className="rd-wrapper">
             <button className="resign" onClick={props.handleResign}>{props.gameOver ? 'Exit' : 'Resign'}</button>
-            <button className="request-draw" onClick={props.handleDrawReq}>Request Draw</button>
+            <button className="request-draw" onClick={props.handleDrawRequest}>Request Draw</button>
         </div>
     </div>);
 }
