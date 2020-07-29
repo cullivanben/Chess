@@ -9,6 +9,7 @@ import Movement from '../chess-classes/Movement';
 import Init from './helpers/Init';
 import Help from './helpers/Help';
 import '../stylesheets/Board.scss';
+const guestIdRoute = '/set_guestid_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
 
 /**
  *Manages the state of the chess board.
@@ -90,35 +91,40 @@ class Board extends React.Component {
     }
 
     componentDidMount() {
-        // restore state from local storage if possible
-        if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
+        // ensure the guest id is set, when the check is finished, connect to the socket and restore the state
+        fetch(guestIdRoute).then(() => {
+            // create the socket
+            this.socket = io();
 
-        // create the socket
-        this.socket = io();
+            // listen for the color
+            this.socket.on('color', this.handleColorSet);
 
-        // listen for the color
-        this.socket.on('color', this.handleColorSet);
+            // listen for an enemy connection
+            this.socket.on('enemy-connected', this.handleEnemyConnection);
 
-        // listen for an enemy connection
-        this.socket.on('enemy-connected', this.handleEnemyConnection);
+            // listen for the enemy name
+            this.socket.on('incoming-enemy-name', this.handleEnemyNameReceival);
 
-        // listen for the enemy name
-        this.socket.on('incoming-enemy-name', this.handleEnemyNameReceival);
+            // listen for incoming board updates and update the state when they are received
+            this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
 
-        // listen for incoming board updates and update the state when they are received
-        this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
+            // listen for the other player leaving
+            this.socket.on('enemy-left', this.handleEnemyLeft);
 
-        // listen for the other player leaving
-        this.socket.on('enemy-left', this.handleEnemyLeft);
+            // listening for a draw request
+            this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
 
-        // listening for a draw request
-        this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
+            // listen for the match being a draw
+            this.socket.on('match-was-draw', this.handleDraw);
 
-        // listen for the match being a draw
-        this.socket.on('match-was-draw', this.handleDraw);
+            // listen for winning
+            this.socket.on('you-won', this.handleVictory);
 
-        // listen for winning
-        this.socket.on('you-won', this.handleVictory);
+            // restore state from local storage if possible
+            if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
+        }).catch(err => {
+            console.log(err);
+        });
 
         // add an event listener that will save the state to local storage before the window unloads
         window.addEventListener('beforeunload', this.saveStateToLocalStorage);

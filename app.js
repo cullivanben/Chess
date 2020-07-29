@@ -8,6 +8,7 @@ const MongoStore = require('connect-mongo')(session);
 const uuid = require('uuid');
 const path = require('path');
 require('dotenv').config();
+const guestIdRoute = '/set_guestid_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
 
 // connect to redis
 var client = redis.createClient();
@@ -32,6 +33,8 @@ var sessionMiddleWare = session({
 // set up express
 const app = express();
 app.use(sessionMiddleWare);
+
+// serve the react app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 // serve the robots.txt file
@@ -39,11 +42,18 @@ app.get('/robots.txt', (req, res) => {
     res.sendFile(path.join(__dirname, 'robots.txt'));
 });
 
-// serve the react app
-app.get('*', (req, res) => {
-    if (req.session.guest === undefined) {
+// set the guest id
+app.get(guestIdRoute, (req, res) => {
+    console.log('guest req received');
+    console.log(req.session.guest);
+    if (req.session.guest === undefined || req.session.guest === null) {
         req.session.guest = uuid.v1();
     }
+    res.send('success');
+});
+
+// serve the react app on all other requests
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
@@ -63,6 +73,8 @@ io.on('connection', socket => {
 
     // get the guest id
     let guest = socket.request.session.guest;
+
+    console.log('connection', guest);
 
     client.exists(guest, (err, reply) => {
         // if this user is already part of a game, add them to the same room
@@ -287,4 +299,15 @@ server.listen(process.env.PORT || 5000);
 //         req.session.guest = uuid.v1();
 //     }
 //     res.send({ msg: 'yay' });
+// });
+
+// // serve the react app
+// app.get('/', (req, res) => {
+//     console.log(req);
+//     console.log(req.session.guest);
+//     if (req.session.guest === undefined) {
+//         console.log('setting guest');
+//         req.session.guest = uuid.v1();
+//     }
+//     //res.sendFile(path.join(__dirname, 'client/build/index.html'));
 // });
