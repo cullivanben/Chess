@@ -9,7 +9,6 @@ import Movement from '../chess-classes/Movement';
 import Init from './helpers/Init';
 import Help from './helpers/Help';
 import '../stylesheets/Board.scss';
-const endpoint = 'http://localhost:5000';
 
 /**
  *Manages the state of the chess board.
@@ -94,8 +93,8 @@ class Board extends React.Component {
         // restore state from local storage if possible
         if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
 
-        // connect to the socket
-        this.socket = io(endpoint);
+        // create the socket
+        this.socket = io();
 
         // listen for the color
         this.socket.on('color', this.handleColorSet);

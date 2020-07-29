@@ -11,10 +11,10 @@ import './stylesheets/App.scss';
  * @returns The main App React Component.
  */
 export default function App() {
-  useEffect(() => {
-    // TODO: ONLY FOR DEV
-    fetch('/test').then(res => console.log(res)).catch(err => console.log(err));
-  });
+  // useEffect(() => {
+  //   // TODO: ONLY FOR DEV
+  //   fetch('/test').then(res => console.log(res)).catch(err => console.log(err));
+  // });
 
   return (
     <BrowserRouter>

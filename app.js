@@ -33,17 +33,17 @@ const app = express();
 app.use(sessionMiddleWare);
 
 // serve the react client
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-// DEVELOPMENT
-app.get('/test', (req, res) => {
-    // make sure the user has a guest id 
-    console.log('guest from route ', req.session.guest);
-    if (req.session.guest === undefined) {
-        req.session.guest = uuid.v1();
-    }
-    res.send({ msg: 'yay' });
-});
+// // DEVELOPMENT
+// app.get('/test', (req, res) => {
+//     // make sure the user has a guest id 
+//     console.log('guest from route ', req.session.guest);
+//     if (req.session.guest === undefined) {
+//         req.session.guest = uuid.v1();
+//     }
+//     res.send({ msg: 'yay' });
+// });
 
 app.get('/robots.txt', (req, res) => {
     res.sendFile(path.join(__dirname, 'robots.txt'));
@@ -53,7 +53,7 @@ app.get('*', (req, res) => {
     if (req.session.guest === undefined) {
         req.session.guest = uuid.v1();
     }
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
 // set up the server and socket.io
@@ -75,7 +75,6 @@ io.on('connection', socket => {
     // get the guest id
     let guest = socket.request.session.guest;
 
-    console.log('guest from socket', guest);
     // if this user is already part of a game, add them to the same room
     if (guestInfo.has(guest)) socket.join(guestInfo.get(guest).room);
 
