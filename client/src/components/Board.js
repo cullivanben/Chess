@@ -94,7 +94,7 @@ class Board extends React.Component {
         // ensure the guest id is set, when the check is finished, connect to the socket and restore the state
         fetch(guestIdRoute).then(() => {
             // create the socket
-            this.socket = io();
+            this.socket = io('http://localhost:5000');
 
             // listen for the color
             this.socket.on('color', this.handleColorSet);

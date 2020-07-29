@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import Modal from './Modal';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/HomeScreen.scss';
 
@@ -20,9 +21,12 @@ class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            playing: false
+            playing: false,
+            showModal: false,
+            randNum: 0
         }
         this.inputRef = React.createRef();
+        this.idRef = React.createRef();
         this.handleClick = this.handleClick.bind(this);
     }
 
@@ -37,46 +41,68 @@ class HomeScreen extends React.Component {
         if (input === '') {
             input = 'Guest ' + (Math.floor(Math.random() * 90000) + 10000);
         }
-        localStorage.setItem('name', input);
+        localStorage.setItem('name', JSON.stringify(input));
+        // save the guest id to local storage
+        let gameId = this.idRef.current.value.trim();
+        if (gameId === '') return;
+        localStorage.setItem('gameId', JSON.stringify(gameId));
 
         // navigate to the game screen
         this.props.history.push('/play');
     }
 
     render() {
-        return (<div className="home-wrapper">
-            <div className="br-wrapper">
-                <img
-                    src={sources.blackRook}
-                    alt="Black Rook"
-                    className="home-br"
-                    draggable="false"
-                />
-            </div>
-            <div className="home-screen">
-                <h1 className="logo-header">Live Chess</h1>
-                <div className="play-button-wrapper">
-                    <button className="play-button">Sign in</button>
-                    <h5 className="guest-prompt">Or enter a guest name and play as a guest.</h5>
-                    <input
-                        className="guest-name-input"
-                        placeholder="Guest name"
-                        type="text"
-                        maxLength="20"
-                        ref={this.inputRef}
+        return (<div className="outer-home">
+            <Modal
+                handleClose={() => this.setState({ showModal: false })}
+                show={this.state.showModal}
+                randNum={this.state.randNum}
+            />
+            <div className="home-wrapper">
+                <div className="br-wrapper">
+                    <img
+                        src={sources.blackRook}
+                        alt="Black Rook"
+                        className="home-br"
+                        draggable="false"
                     />
-                    <div>
-                        <button className="play-button" onClick={this.handleClick}>Play as guest</button>
+                </div>
+                <div className="home-screen">
+                    <h1 className="logo-header">Live Chess</h1>
+                    <div className="play-button-wrapper">
+                        <button className="generate" onClick={() => {
+                            this.setState({
+                                showModal: true,
+                                randNum: (Math.floor(Math.random() * 900000) + 100000)
+                            });
+                        }}>Generate Game ID</button>
+                        <input
+                            className="game-id-input"
+                            placeholder="Enter your game id"
+                            type="text"
+                            maxLength="10"
+                            ref={this.idRef}
+                        />
+                        <input
+                            className="guest-name-input"
+                            placeholder="Enter your name"
+                            type="text"
+                            maxLength="20"
+                            ref={this.inputRef}
+                        />
+                        <div>
+                            <button className="play-button" onClick={this.handleClick}>Play</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="wr-wrapper">
-                <img
-                    src={sources.whiteRook}
-                    alt="White Rook"
-                    className="home-br"
-                    draggable="false"
-                />
+                <div className="wr-wrapper">
+                    <img
+                        src={sources.whiteRook}
+                        alt="White Rook"
+                        className="home-br"
+                        draggable="false"
+                    />
+                </div>
             </div>
         </div>);
     }

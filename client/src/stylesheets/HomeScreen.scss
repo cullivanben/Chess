@@ -1,5 +1,9 @@
 @import './colors.scss';
 
+.outer-home {
+    margin: 0;
+    padding: 0;
+}
 .home-wrapper {
     padding: 0;
 }
@@ -13,11 +17,8 @@
 .logo-header {
     color: white;
 }
-.guest-prompt {
-    color: white;
-}
-.guest-name-input:focus {
-    outline: none;
+.guest-name-input:focus, .game-id-input:focus {
+    outline: solid 1px white;
 }
 .br-wrapper {
     background: $dark-square-highlight;
@@ -26,26 +27,20 @@
     background: $dark-enemy-highlight;
 }
 .play-button-wrapper {
+    text-align: center;
     padding: 0;
 }
 .home-screen {
     text-align: center;
 }
-.play-button {
-    margin: 0;
+.play-button, .generate {
+    margin-top: 0;
     padding: 0;
     background: $dark-gray;
     color: white;
 }
-.guest-prompt {
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0;
-}
-.guest-name-input {
+.guest-name-input, .game-id-input {
     margin-top: 0;
-    margin-left: 0;
-    margin-right: 0;
     padding: 0;
     background-color: $dark-gray;
     color: white;
@@ -60,7 +55,7 @@
         margin-right: 4vw;
     }
     .home-screen {
-        width: 40vw;
+        width: 92vw;
         height: 90vw;
     }
     .logo-header {
@@ -68,12 +63,27 @@
         height: 20vw;
         font-size: 15vw;
     }
-    .play-button {
-        width: 50vw;
+    .generate {
+        display: block;
+        width: 70vw;
         height: 15vw;
         font-size: 7vw;
         border-radius: 7vw;
         border: none;
+        margin-left: 11vw;
+        margin-right: 11vw;
+        margin-bottom: 2.5vw;
+    }
+    .play-button {
+        display: block;
+        width: 35vw;
+        height: 15vw;
+        font-size: 7vw;
+        border-radius: 7vw;
+        border: none;
+        margin-left: 28.5vw;
+        margin-right: 28.5vw;
+        margin-bottom: 0;
     }
     .play-button-wrapper {
         margin: 0;
@@ -94,19 +104,13 @@
     .wr-wrapper {
         margin-top: 18vw; 
     }
-    .guest-prompt {
-        width: 60vw;
-        text-align: center;
-        margin-top: 2.5vw;
-        margin-bottom: 2.5vw;
-        margin-left: 16vw;
-        margin-right: 16vw;
-        font-size: 6vw;
-    }
-    .guest-name-input {
+    .guest-name-input, .game-id-input {
+        display: block;
         margin-bottom: 2.5vw;
         height: 10vw;
-        width: 50vw;
+        width: 70vw;
+        margin-left: 11vw;
+        margin-right: 11vw;
         font-size: 5vw;
     }
 }
@@ -130,12 +134,27 @@
         height: 12vw;
         font-size: 8vw;
     }
-    .play-button {
-        width: 21vw;
+    .generate {
+        display: block;
+        width: 30vw;
         height: 8vw;
         font-size: 3.25vw;
         border-radius: 3vw;
         border: none;
+        margin-bottom: 1.5vw;
+        margin-left: 5vw;
+        margin-right: 5vw;
+    }
+    .play-button {
+        display: block;
+        width: 18vw;
+        height: 8vw;
+        font-size: 3.25vw;
+        border-radius: 3vw;
+        border: none;
+        margin-bottom: 0;
+        margin-left: 11vw;
+        margin-right: 11vw;
     }
     .play-button-wrapper {
         margin: 0;
@@ -154,22 +173,19 @@
         margin-left: 6vw;
         margin-right: 0;
     }
-    .guest-prompt {
-        margin-top: 2vw;
-        margin-bottom: 2vw;
-        font-size: 3vw;
-    }
-    .guest-name-input {
+    .guest-name-input, .game-id-input {
+        display: block;
         margin-bottom: 1.5vw;
         height: 3.5vw;
-        width: 21vw;
+        width: 22vw;
         font-size: 2.5vw;
+        margin-left: 9vw;
+        margin-right: 9vw;
     }
 }
 @media (min-aspect-ratio: 5/4) and (max-aspect-ratio: 3/2) {
     .home-wrapper {
         width: 92vw;
-        height: 62vw;
         margin-top: 4vw;
         margin-left: 4vw;
         margin-right: 4vw;
@@ -186,12 +202,27 @@
         height: 10vw;
         font-size: 8vw;
     }
-    .play-button {
-        width: 18vw;
+    .generate {
+        display: block;
+        width: 24vw;
         height: 6vw;
         font-size: 2.5vw;
         border-radius: 2vw;
         border: none;
+        margin-left: 8vw;
+        margin-right: 8vw;
+        margin-bottom: 1.5vw;
+    }
+    .play-button {
+        display: block;
+        width: 12vw;
+        height: 5vw;
+        font-size: 2.5vw;
+        border-radius: 2vw;
+        border: none;
+        margin-left: 14vw;
+        margin-right: 14vw;
+        margin-bottom: 0;
     }
     .play-button-wrapper {
         margin: 0;
@@ -210,16 +241,14 @@
         margin-left: 6vw;
         margin-right: 0;
     }
-    .guest-prompt {
-        margin-top: 2vw;
-        margin-bottom: 2vw;
-        font-size: 2.5vw;
-    }
-    .guest-name-input {
+    .guest-name-input, .game-id-input {
+        display: block;
         margin-bottom: 1.5vw;
         height: 3vw;
         width: 18vw;
         font-size: 2vw;
+        margin-left: 11vw;
+        margin-right: 11vw;
     }
 }
 @media (min-aspect-ratio: 3/2) {
@@ -241,14 +270,29 @@
         height: 10vw;
         font-size: 7vw;
     }
-    .play-button {
+    .generate {
+        display: block;
         width: 16vw;
         height: 4vw;
         font-size: 1.75vw;
         border-radius: 1vw;
         border: none;
+        margin-bottom: 1vw;
+        margin-left: 12vw;
+    }
+    .play-button {
+        display: block;
+        width: 10vw;
+        height: 4vw;
+        font-size: 1.75vw;
+        border-radius: 1vw;
+        border: none;
+        margin-left: 15vw;
+        margin-right: 15vw;
+        margin-bottom: 0;
     }
     .play-button-wrapper {
+        width: 40vw;
         margin: 0;
     }
     .br-wrapper, .wr-wrapper, .home-br, .home-wr {
@@ -265,15 +309,13 @@
         margin-left: 6vw;
         margin-right: 0;
     }
-    .guest-prompt {
-        margin-top: 2vw;
-        margin-bottom: 2vw;
-        font-size: 2vw;
-    }
-    .guest-name-input {
+    .guest-name-input, .game-id-input {
+        display: block;
         margin-bottom: 1vw;
         height: 2vw;
         width: 16vw;
         font-size: 1vw;
+        margin-left: 12vw;
+        margin-right: 12vw;
     }
 }
