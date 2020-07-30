@@ -1,8 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Modal from './Modal';
+import Loader from './Loader';
 import sources from '../chess-classes/pieces/sources';
 import '../stylesheets/HomeScreen.scss';
+const guestIdRoute = '/set_guestid_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
 
 /**
  *The component that comprises the entire home screen.
@@ -23,7 +25,8 @@ class HomeScreen extends React.Component {
         this.state = {
             playing: false,
             showModal: false,
-            randNum: 0
+            randNum: 0,
+            loading: false
         }
         this.inputRef = React.createRef();
         this.idRef = React.createRef();
@@ -35,23 +38,43 @@ class HomeScreen extends React.Component {
      *
      * @memberof HomeScreen
      */
-    handleClick() {
+    async handleClick() {
         // save the guest name to local storage
         let input = this.inputRef.current.value.trim();
         if (input === '') {
             input = 'Guest ' + (Math.floor(Math.random() * 90000) + 10000);
         }
+        localStorage.clear();
         localStorage.setItem('name', JSON.stringify(input));
         // save the guest id to local storage
         let gameId = this.idRef.current.value.trim();
         if (gameId === '') return;
         localStorage.setItem('gameId', JSON.stringify(gameId));
 
+        this.inputRef.current.value = '';
+        this.idRef.current.value = '';
+
+        // tell the server that this gameid corresponds to this user
+        this.setState({ loading: true });
+        await fetch(guestIdRoute, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                gameId: gameId
+            })
+        });
+        this.setState({ loading: false });
+
         // navigate to the game screen
         this.props.history.push('/play');
     }
 
     render() {
+        // display loading screen if in the middle of a fetch call
+        if (this.state.loading) return <Loader message="Setting color." />;
+        // else, display the home screen 
         return (<div className="outer-home">
             <Modal
                 handleClose={() => this.setState({ showModal: false })}

@@ -5,11 +5,12 @@ import update from 'immutability-helper';
 import Square from './Square';
 import StatsBar from './StatsBar';
 import Chat from './Chat';
+import Loader from './Loader';
 import Movement from '../chess-classes/Movement';
 import Init from './helpers/Init';
 import Help from './helpers/Help';
 import '../stylesheets/Board.scss';
-const guestIdRoute = '/set_guestid_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
+const colorRoute = '/get_color_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
 
 /**
  *Manages the state of the chess board.
@@ -29,38 +30,39 @@ class Board extends React.Component {
         this.socket = null;                         // the websocket that this component will use to communicate with the server
         this.state = {
             loading: true,                          // whether this client is waiting for an opponent
-            enemyLeft: false,                       // whether the enemy player has left the game
-            youWon: false,                          // whether this player won the game
-            youLost: false,                         // whether this player lost the game
-            draw: false,                            // whether the game was a draw
-            name: '',                               // the name of this player
-            enemyName: '',                          // the name of the enemy player
-            color: '',                              // the color of this player
-            board: [],                              // an array representing the chess board
-            highlighted: new Set(),                 // the locations of highlighted spots on the board
-            enemyHighlighted: new Set(),            // the locations of the enemy's highlighted spots on the board
-            deadFriends: [],                        // the dead friendly pieces
-            deadEnemies: [],                        // the dead enemy pieces
-            selection: -1,                          // the location of the selected piece
-            enemySelection: -1,                     // the location of the enemy's selected piece
-            attackingFriendlyKing: new Set(),       // the locations of the enemy pieces that have the friendly king in check
-            attackingEnemyKing: new Set(),          // the locations of the friendly pieces that have the enemy king in check
-            moveArr: [],                            // the start and end location of the move that was just made
-            castleArr: [],                          // the start and end locations of the king and rook after a castle
-            kingPos: 0,                             // the position of the friendly king
-            enemyKingPos: 0,                        // the position of the enemy king
-            ksRookPos: 0,                           // the position of the kingside rook
-            qsRookPos: 0,                           // the position of the queenside rook
-            turn: false,                            // whether it is this player's turn
-            movedKing: false,                       // whether this player has moved their king
-            movedKsRook: false,                     // whether this player has moved their kingside rook
-            movedQsRook: false,                     // whether this player has moved their queenside rook
-            justCastled: false,                     // whether this player just castled
-            moves: [],                              // the chess codes of all the moves that have been made
-            lastMove: '',                           // the chess code of the move that was just made
-            letters: [],                            // the letters labeling the bottom of the board
-            nums: []                                // the numbers labeling the side of the board
+            enemyLeft: null,                        // whether the enemy player has left the game
+            youWon: null,                           // whether this player won the game
+            youLost: null,                          // whether this player lost the game
+            draw: null,                             // whether the game was a draw
+            name: null,                             // the name of this player
+            enemyName: null,                        // the name of the enemy player
+            color: null,                            // the color of this player
+            board: null,                            // an array representing the chess board
+            highlighted: null,                      // the locations of highlighted spots on the board
+            enemyHighlighted: null,                 // the locations of the enemy's highlighted spots on the board
+            deadFriends: null,                      // the dead friendly pieces
+            deadEnemies: null,                      // the dead enemy pieces
+            selection: null,                        // the location of the selected piece
+            enemySelection: null,                   // the location of the enemy's selected piece
+            attackingFriendlyKing: null,            // the locations of the enemy pieces that have the friendly king in check
+            attackingEnemyKing: null,               // the locations of the friendly pieces that have the enemy king in check
+            moveArr: null,                          // the start and end location of the move that was just made
+            castleArr: null,                        // the start and end locations of the king and rook after a castle
+            kingPos: null,                          // the position of the friendly king
+            enemyKingPos: null,                     // the position of the enemy king
+            ksRookPos: null,                        // the position of the kingside rook
+            qsRookPos: null,                        // the position of the queenside rook
+            turn: null,                             // whether it is this player's turn
+            movedKing: null,                        // whether this player has moved their king
+            movedKsRook: null,                      // whether this player has moved their kingside rook
+            movedQsRook: null,                      // whether this player has moved their queenside rook
+            justCastled: null,                      // whether this player just castled
+            moves: null,                            // the chess codes of all the moves that have been made
+            lastMove: null,                         // the chess code of the move that was just made
+            letters: null,                          // the letters labeling the bottom of the board
+            nums: null                              // the numbers labeling the side of the board
         }
+        this.initSocket = this.initSocket.bind(this);
         this.handleColorSet = this.handleColorSet.bind(this);
         this.handleEnemyConnection = this.handleEnemyConnection.bind(this);
         this.handleEnemyNameReceival = this.handleEnemyNameReceival.bind(this);
@@ -91,44 +93,25 @@ class Board extends React.Component {
     }
 
     componentDidMount() {
-        // ensure the guest id is set, when the check is finished, connect to the socket and restore the state
-        fetch(guestIdRoute).then(() => {
-            // create the socket
-            this.socket = io('http://localhost:5000');
-
-            // listen for the color
-            this.socket.on('color', this.handleColorSet);
-
-            // listen for an enemy connection
-            this.socket.on('enemy-connected', this.handleEnemyConnection);
-
-            // listen for the enemy name
-            this.socket.on('incoming-enemy-name', this.handleEnemyNameReceival);
-
-            // listen for incoming board updates and update the state when they are received
-            this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
-
-            // listen for the other player leaving
-            this.socket.on('enemy-left', this.handleEnemyLeft);
-
-            // listening for a draw request
-            this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
-
-            // listen for the match being a draw
-            this.socket.on('match-was-draw', this.handleDraw);
-
-            // listen for winning
-            this.socket.on('you-won', this.handleVictory);
-
-            // restore state from local storage if possible
-            if (localStorage.getItem('saved') !== null) this.restoreStateFromLocalStorage();
-        }).catch(err => {
-            console.log(err);
-        });
-
-        // add an event listener that will save the state to local storage before the window unloads
-        window.addEventListener('beforeunload', this.saveStateToLocalStorage);
-
+        // try to load the color from local storage
+        let color = localStorage.getItem('color') === null ? null : JSON.parse(localStorage.getItem('color'));
+        if (color === 'white' || color === 'black') {
+            // restore the state from local storage
+            this.restoreStateFromLocalStorage();
+            // add an event listener that will save the state to local storage before the window unloads
+            window.addEventListener('beforeunload', this.saveStateToLocalStorage);
+        } else {
+            // fetch the color from the server and init the socket connection and board
+            fetch(colorRoute)
+                .then(res => res.json())
+                .then(res => {
+                    this.handleColorSet(res.color);
+                    this.initSocket();
+                    // add an event listener that will save the state to local storage before the window unloads
+                    window.addEventListener('beforeunload', this.saveStateToLocalStorage);
+                })
+                .catch(err => console.log(err));
+        }
         // make sure that game state and socket connections are cleaned up when the user navigates away from this page
         window.onpopstate = this.cleanup;
     }
@@ -141,46 +124,136 @@ class Board extends React.Component {
     }
 
     /**
+     *Sets up the socket connection with the server.
+     *
+     * @memberof Board
+     */
+    initSocket() {
+        // create the socket
+        this.socket = io();
+
+        // listen for an enemy connection
+        this.socket.on('enemy-connected', this.handleEnemyConnection);
+
+        // listen for the enemy name
+        this.socket.on('incoming-enemy-name', this.handleEnemyNameReceival);
+
+        // listen for incoming board updates and update the state when they are received
+        this.socket.on('incoming-board-update', this.handleIncomingBoardUpdate);
+
+        // listen for the other player leaving
+        this.socket.on('enemy-left', this.handleEnemyLeft);
+
+        // listening for a draw request
+        this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
+
+        // listen for the match being a draw
+        this.socket.on('match-was-draw', this.handleDraw);
+
+        // listen for winning
+        this.socket.on('you-won', this.handleVictory);
+    }
+
+    /**
      *Saves the state of the game to local storage before the window unloads.
      *
      * @memberof Board
      */
     saveStateToLocalStorage() {
-        localStorage.setItem('saved', JSON.stringify(true));
         localStorage.setItem('loading', JSON.stringify(this.state.loading));
-        localStorage.setItem('enemyLeft', JSON.stringify(this.state.enemyLeft));
-        localStorage.setItem('youWon', JSON.stringify(this.state.youWon));
-        localStorage.setItem('youLost', JSON.stringify(this.state.youLost));
-        localStorage.setItem('draw', JSON.stringify(this.state.draw));
-        localStorage.setItem('name', JSON.stringify(this.state.name));
-        localStorage.setItem('enemyName', JSON.stringify(this.state.enemyName));
-        localStorage.setItem('color', JSON.stringify(this.state.color));
-        localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
-            if (key === 'src' || key === 'id') return undefined;
-            else return value;
-        }));
-        localStorage.setItem('highlighted', JSON.stringify([...this.state.highlighted]));
-        localStorage.setItem('enemyHighlighted', JSON.stringify([...this.state.enemyHighlighted]));
-        localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends));
-        localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies));
-        localStorage.setItem('selection', JSON.stringify(this.state.selection));
-        localStorage.setItem('enemySelection', JSON.stringify(this.state.enemySelection));
-        localStorage.setItem('attackingFriendlyKing', JSON.stringify([...this.state.attackingFriendlyKing]));
-        localStorage.setItem('attackingEnemyKing', JSON.stringify([...this.state.attackingEnemyKing]));
-        localStorage.setItem('moveArr', JSON.stringify(this.state.moveArr));
-        localStorage.setItem('castleArr', JSON.stringify(this.state.castleArr));
-        localStorage.setItem('kingPos', JSON.stringify(this.state.kingPos));
-        localStorage.setItem('enemyKingPos', JSON.stringify(this.state.enemyKingPos));
-        localStorage.setItem('ksRookPos', JSON.stringify(this.state.ksRookPos));
-        localStorage.setItem('qsRookPos', JSON.stringify(this.state.qsRookPos));
-        localStorage.setItem('turn', JSON.stringify(this.state.turn));
-        localStorage.setItem('movedKing', JSON.stringify(this.state.movedKing));
-        localStorage.setItem('movedKsRook', JSON.stringify(this.state.movedKsRook));
-        localStorage.setItem('movedQsRook', JSON.stringify(this.state.movedQsRook));
-        localStorage.setItem('moves', JSON.stringify(this.state.moves));
-        localStorage.setItem('lastMove', JSON.stringify(this.state.lastMove));
-        localStorage.setItem('letters', JSON.stringify(this.state.letters));
-        localStorage.setItem('nums', JSON.stringify(this.state.nums));
+        if (this.state.enemyLeft !== null) {
+            localStorage.setItem('enemyLeft', JSON.stringify(this.state.enemyLeft));
+        }
+        if (this.state.youWon !== null) {
+            localStorage.setItem('youWon', JSON.stringify(this.state.youWon));
+        }
+        if (this.state.youLost !== null) {
+            localStorage.setItem('youLost', JSON.stringify(this.state.youLost));
+        }
+        if (this.state.draw !== null) {
+            localStorage.setItem('draw', JSON.stringify(this.state.draw));
+        }
+        if (this.state.name !== null) {
+            localStorage.setItem('name', JSON.stringify(this.state.name));
+        }
+        if (this.state.enemyName !== null) {
+            localStorage.setItem('enemyName', JSON.stringify(this.state.enemyName));
+        }
+        if (this.state.color !== null) {
+            localStorage.setItem('color', JSON.stringify(this.state.color));
+        }
+        if (this.state.board !== null) {
+            localStorage.setItem('board', JSON.stringify(this.state.board, (key, value) => {
+                if (key === 'src' || key === 'id') return undefined;
+                else return value;
+            }));
+        }
+        if (this.state.highlighted !== null) {
+            localStorage.setItem('highlighted', JSON.stringify([...this.state.highlighted]));
+        }
+        if (this.state.enemyHighlighted !== null) {
+            localStorage.setItem('enemyHighlighted', JSON.stringify([...this.state.enemyHighlighted]));
+        }
+        if (this.state.deadFriends !== null) {
+            localStorage.setItem('deadFriends', JSON.stringify(this.state.deadFriends));
+        }
+        if (this.state.deadEnemies !== null) {
+            localStorage.setItem('deadEnemies', JSON.stringify(this.state.deadEnemies));
+        }
+        if (this.state.selection !== null) {
+            localStorage.setItem('selection', JSON.stringify(this.state.selection));
+        }
+        if (this.state.enemySelection !== null) {
+            localStorage.setItem('enemySelection', JSON.stringify(this.state.enemySelection));
+        }
+        if (this.state.attackingFriendlyKing !== null) {
+            localStorage.setItem('attackingFriendlyKing', JSON.stringify([...this.state.attackingFriendlyKing]));
+        }
+        if (this.state.attackingEnemyKing !== null) {
+            localStorage.setItem('attackingEnemyKing', JSON.stringify([...this.state.attackingEnemyKing]));
+        }
+        if (this.state.moveArr !== null) {
+            localStorage.setItem('moveArr', JSON.stringify(this.state.moveArr));
+        }
+        if (this.state.castleArr !== null) {
+            localStorage.setItem('castleArr', JSON.stringify(this.state.castleArr));
+        }
+        if (this.state.kingPos !== null) {
+            localStorage.setItem('kingPos', JSON.stringify(this.state.kingPos));
+        }
+        if (this.state.enemyKingPos !== null) {
+            localStorage.setItem('enemyKingPos', JSON.stringify(this.state.enemyKingPos));
+        }
+        if (this.state.ksRookPos !== null) {
+            localStorage.setItem('ksRookPos', JSON.stringify(this.state.ksRookPos));
+        }
+        if (this.state.qsRookPos !== null) {
+            localStorage.setItem('qsRookPos', JSON.stringify(this.state.qsRookPos));
+        }
+        if (this.state.turn !== null) {
+            localStorage.setItem('turn', JSON.stringify(this.state.turn));
+        }
+        if (this.state.movedKing !== null) {
+            localStorage.setItem('movedKing', JSON.stringify(this.state.movedKing));
+        }
+        if (this.state.movedKsRook !== null) {
+            localStorage.setItem('movedKsRook', JSON.stringify(this.state.movedKsRook));
+        }
+        if (this.state.movedQsRook !== null) {
+            localStorage.setItem('movedQsRook', JSON.stringify(this.state.movedQsRook));
+        }
+        if (this.state.moves !== null) {
+            localStorage.setItem('moves', JSON.stringify(this.state.moves));
+        }
+        if (this.state.lastMove !== null) {
+            localStorage.setItem('lastMove', JSON.stringify(this.state.lastMove));
+        }
+        if (this.state.letters !== null) {
+            localStorage.setItem('letters', JSON.stringify(this.state.letters));
+        }
+        if (this.state.nums !== null) {
+            localStorage.setItem('nums', JSON.stringify(this.state.nums));
+        }
     }
 
     /**
@@ -206,7 +279,7 @@ class Board extends React.Component {
             restoredState.draw = JSON.parse(localStorage.getItem('draw'));
         }
         if (localStorage.getItem('name') !== null) {
-            restoredState.name = JSON.parse(localStorage.getItem('guest-name'));
+            restoredState.name = JSON.parse(localStorage.getItem('name'));
         }
         if (localStorage.getItem('enemyName') !== null) {
             restoredState.enemyName = JSON.parse(localStorage.getItem('enemyName'));
@@ -215,7 +288,8 @@ class Board extends React.Component {
             restoredState.color = JSON.parse(localStorage.getItem('color'));
         }
         if (localStorage.getItem('board') !== null) {
-            restoredState.board = JSON.parse(localStorage.getItem('board')).map(obj => Help.createSpot(obj));
+            let board = JSON.parse(localStorage.getItem('board')).map(obj => Help.createSpot(obj));
+            if (board.length > 63) restoredState.board = board;
         }
         if (localStorage.getItem('highlighted') !== null) {
             restoredState.highlighted = new Set();
@@ -295,7 +369,9 @@ class Board extends React.Component {
         if (localStorage.getItem('nums') !== null) {
             restoredState.nums = JSON.parse(localStorage.getItem('nums'));
         }
-        this.setState(restoredState);
+
+        // set the state and then initialize the socket connection
+        this.setState(restoredState, this.initSocket);
     }
 
     /**
@@ -305,20 +381,43 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleColorSet(color) {
-        // retireve the name of this user from local storage
-        let name = (localStorage.getItem('name') !== null ? localStorage.getItem('name') :
-            ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
+        // if the color has already been set, do nothing
+        if (this.state.color === 'white' || this.state.color === 'black' ||
+            localStorage.getItem('color') !== null) return;
 
+        // retireve the name of this user from local storage
+        let name = (localStorage.getItem('name') !== null ? JSON.parse(localStorage.getItem('name')) :
+            ('Guest ' + (Math.floor(Math.random() * 90000) + 10000)));
         // set the initial state of the game
         this.setState({
+            enemyLeft: false,
+            youWon: false,
+            youLost: false,
+            draw: false,
             name: name,
             color: color,
             board: Init.initBoard(color),
+            highlighted: new Set(),
+            enemyHighlighted: new Set(),
+            deadFriends: [],
+            deadEnemies: [],
+            selection: -1,
+            enemySelection: -1,
+            attackingFriendlyKing: new Set(),
+            attackingEnemyKing: new Set(),
+            moveArr: [],
+            castleArr: [],
             kingPos: Init.initKingPos(color),
             enemyKingPos: Init.initEnemyKingPos(color),
             ksRookPos: Init.initKsRookPos(color),
             qsRookPos: Init.initQsRookPos(color),
             turn: Init.initTurn(color),
+            movedKing: false,
+            movedKsRook: false,
+            movedQsRook: false,
+            justCastled: false,
+            moves: [],
+            lastMove: '',
             letters: Init.initLetters(color),
             nums: Init.initNumbers(color)
         });
@@ -340,7 +439,7 @@ class Board extends React.Component {
      */
     sendName() {
         if (this.socket === null) return;
-        this.socket.emit('outgoing-name', this.state.name);
+        this.socket.emit('outgoing-name', JSON.parse(localStorage.getItem('name')));
     }
 
     /**
@@ -350,7 +449,9 @@ class Board extends React.Component {
      * @memberof Board
      */
     handleEnemyNameReceival(name) {
-        this.setState({ enemyName: name });
+        // only update the state if this is the first time this player has received the enemy name
+        if (localStorage.getItem('enemyName') === null || localStorage.getItem('enemyName') === '')
+            this.setState({ enemyName: name });
     }
 
     /**
@@ -477,12 +578,8 @@ class Board extends React.Component {
      * @memberof Board
      */
     checkForCheckmate() {
-        console.log('check for checkmate');
         // if this player is not in check, they must not be in checkmate
         if (this.state.attackingFriendlyKing.size === 0) return;
-
-        console.log('the king is in check');
-        console.log('undef???', this.state.kingPos)
 
         // if this player is in checkmate, they have lost the game
         if (Movement.inCheckMate(this.state.board, this.state.kingPos, this.state.attackingFriendlyKing)) {
@@ -1021,9 +1118,6 @@ class Board extends React.Component {
         if (this.state.justCastled) update.castle = this.state.castleArr;
         else update.move = this.state.moveArr;
 
-        console.log('move', update.move);
-        console.log('castle', update.castle);
-
         // send the update to the enemy
         this.socket.emit('outgoing-board-update', update);
     }
@@ -1129,23 +1223,6 @@ class Board extends React.Component {
     }
 
     /**
-     *Render's the screen that the user will see while waiting for an opponent to connect.
-     *
-     * @returns The loading screen.
-     * @memberof Board
-     */
-    renderLoadingScreen() {
-        return (
-            <div className="loading-wrapper">
-                <div className="surrounder">
-                    <h1 className="waiting">Waiting for an opponent.</h1>
-                    <div className="lds-dual-ring"></div>
-                </div>
-            </div>
-        );
-    }
-
-    /**
      *Renders the message that is displayed when the game is over.
      *
      * @returns The end of game message.
@@ -1183,7 +1260,7 @@ class Board extends React.Component {
         if (this.state.color === '' || this.state.color === undefined) return <div></div>;
 
         // if this client is waiting for an opponent, display the loading screen
-        if (this.state.loading) return this.renderLoadingScreen();
+        if (this.state.loading) return <Loader message="Waiting for an opponent." />
 
         // set up the board of squares to render
         let board = [];
@@ -1221,7 +1298,7 @@ class Board extends React.Component {
                 deadEnemies={this.state.deadEnemies}
                 deadFriends={this.state.deadFriends}
                 handleResign={this.handleResign}
-                handleDrawRequest={this.state.handleDrawRequest}
+                handleDrawRequest={this.handleDrawRequest}
                 gameOver={this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw}
             />
             {/* for the num labels it is okay to use each num as the key for its li because they never change */}
