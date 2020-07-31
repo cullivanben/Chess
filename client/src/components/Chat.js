@@ -5,7 +5,6 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import uuid from 'react-uuid';
 import '../stylesheets/Chat.scss';
-const endpoint = 'http://localhost:5000';
 
 /**
  *Manages the state of the chat.
@@ -34,7 +33,7 @@ export default class Chat extends React.Component {
         }
 
         // connect to the server via a socket
-        this.socket = io(endpoint);
+        this.socket = io();
 
         // listen for incoming messages
         this.socket.on('incoming-message', this.handleIncoming);
