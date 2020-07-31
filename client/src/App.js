@@ -1,5 +1,5 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React from 'react';
 import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import './stylesheets/App.scss';
