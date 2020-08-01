@@ -130,7 +130,7 @@ class Board extends React.Component {
      */
     initSocket() {
         // create the socket
-        this.socket = io('http://localhost:5000');
+        this.socket = io();
 
         // listen for an enemy connection
         this.socket.on('enemy-connected', this.handleEnemyConnection);

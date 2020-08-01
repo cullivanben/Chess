@@ -427,7 +427,7 @@ export default class Movement {
         // this move will remove the king from check
         if (attackerPositions.size === 1 && attackerPositions.has(destination.position)) return true;
 
-        if (start.piece !== null && start.piece.pieceType === 'Pawn') 
+        if (start.piece !== null && start.piece.pieceType === 'Pawn')
             console.log('in will remove');
 
         // if there is more than one attacker and this piece is about to kill one of them,
@@ -539,6 +539,9 @@ export default class Movement {
         for (let i = 0; i < board.length; i++) {
             if (board[i].piece !== null && friendly !== board[i].piece.friendly) {
                 switch (board[i].piece.pieceType) {
+                    case 'Pawn':
+                        if (this.pawnWillAttack(board[i], location.position)) return true;
+                        break;
                     case 'Rook':
                         if (this.rookWillAttack(board[i], location.position, board, startLocation, new Spot(-1))) return true;
                         break;
@@ -814,6 +817,41 @@ export default class Movement {
     }
 
     /**
+     *Determines whether a Pawn will be able to attack the King at a specific location.
+     *
+     * @static
+     * @param {Spot} position - The spot on the board where this Pawn is located.
+     * @param {number} kingPosition - The position of the king.
+     * @returns {boolean} Whether this pawn will be able to attack the king.
+     * @memberof Movement
+     */
+    static pawnWillAttack(position, kingPosition) {
+        // convert the positions to rows and columns
+
+        // thisRow and thisColumn represent the location of the enemy piece that 
+        // may be able to attack the friendly king
+        let thisRow = Math.floor(position.position / 8);
+        let thisColumn = position.position % 8;
+
+        // kingRow and kingColumn represent the location of the friendly king
+        let kingRow = Math.floor(kingPosition / 8);
+        let kingColumn = kingPosition % 8;
+
+        // determine whether the piece at position is friendly or not
+
+        // if the piece is friendly it can only move forward to lower row numbers
+        if (position.friendly && kingRow !== thisRow - 1) return false;
+
+        // if the piece is not friendly it can only move forward to higher row numbers
+        else if (kingRow !== thisRow + 1) return false;
+
+        // if the column the king in is attackable, return true
+        if (thisColumn === 0) return kingColumn == 1;
+        if (thisColumn === 7) return kingColumn == 6;
+        return kingColumn == thisColumn - 1 || kingColumn == thisColumn + 1;
+    }
+
+    /**
      *Determines whether a kingside castle is possible.
      *
      * @static
@@ -837,9 +875,9 @@ export default class Movement {
         // if the two spots between the king and the rook are empty
         // and they are not being attacked
         // it is possible for the king to castle
-        return (board[kingPosition + shift].piece === null && 
-            board[kingPosition + 2 * shift].piece === null && 
-            !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) && 
+        return (board[kingPosition + shift].piece === null &&
+            board[kingPosition + 2 * shift].piece === null &&
+            !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) &&
             !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true));
     }
 
@@ -867,8 +905,8 @@ export default class Movement {
         // if the three spots between the king and the rook are empty
         // and they are not being attacked
         // it is possible for the king to castle
-        return (board[kingPosition + shift].piece === null && 
-            board[kingPosition + 2 * shift].piece === null && 
+        return (board[kingPosition + shift].piece === null &&
+            board[kingPosition + 2 * shift].piece === null &&
             board[kingPosition + 3 * shift].piece === null &&
             !this.dangerous(board[kingPosition], board[kingPosition + shift], board, true) &&
             !this.dangerous(board[kingPosition], board[kingPosition + 2 * shift], board, true) &&
