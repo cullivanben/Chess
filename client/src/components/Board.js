@@ -130,7 +130,7 @@ class Board extends React.Component {
      */
     initSocket() {
         // create the socket
-        this.socket = io();
+        this.socket = io('http://localhost:5000');
 
         // listen for an enemy connection
         this.socket.on('enemy-connected', this.handleEnemyConnection);
@@ -146,6 +146,9 @@ class Board extends React.Component {
 
         // listening for a draw request
         this.socket.on('incoming-draw-request', this.handleIncomingDrawRequest);
+
+        // listen for the refusal of a draw request
+        this.socket.on('incoming-draw-refusal', () => window.alert('Your opponent did not accept your draw request.'));
 
         // listen for the match being a draw
         this.socket.on('match-was-draw', this.handleDraw);
@@ -658,7 +661,8 @@ class Board extends React.Component {
 
             // update the state and inform the user that the match was a draw
             this.setState({ draw: true }, () => this.informUser('draw'));
-        }
+        } 
+        else if (this.socket !== null) this.socket.emit('outgoing-draw-refusal');
     }
 
     /**

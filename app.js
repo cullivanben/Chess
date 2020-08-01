@@ -178,6 +178,11 @@ io.on('connection', async socket => {
         socket.to(roomId).emit('incoming-draw-request');
     });
 
+    // when the user refuses a draw with the other user
+    socket.on('outgoing-draw-refusal', () => {
+        socket.to(roomId).emit('incoming-draw-refusal');
+    });
+
     // when a user accepts another user's draw request
     socket.on('its-a-draw', async () => {
         // tell the other user that the match was a draw

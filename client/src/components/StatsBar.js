@@ -112,9 +112,10 @@ export default function StatsBar(props) {
         <ul className="dead-enemy">{rowEnemies}</ul>
         <div className="moves-played">
             <ul className="moves-ul">
-                {props.moves.map((move, i) => (<li key={i + move}>{(i + 1) +
-                    (move.substring(0, 1) === 'b' ? '. Black: ' : '. White: ') +
-                    move.substring(1)}</li>))}
+                {props.moves.map((move, i) => (<li key={props.moves[props.moves.length - i - 1] + (props.moves.length - i)}>
+                    {(props.moves.length - i) +
+                    (props.moves[props.moves.length - i - 1].substring(0, 1) === 'b' ? '. Black: ' : '. White: ') +
+                    props.moves[props.moves.length - i - 1].substring(1)}</li>))}
             </ul>
         </div>
         <ul className="dead-friends">{rowFriends}</ul>
