@@ -1187,6 +1187,7 @@ class Board extends React.Component {
     renderSquare(position, shade) {
         // set the svg source and the li key
         let src, key;
+        let inCheck = false;
         if (this.state.board[position].piece === null) {
             src = 'null';
             key = this.state.board[position].id;
@@ -1194,6 +1195,8 @@ class Board extends React.Component {
         else {
             src = this.state.board[position].piece.src;
             key = this.state.board[position].piece.id;
+            inCheck = (this.state.board[position].piece.pieceType === 'King' &&
+                this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0);
         }
 
         // if the game is over, do not include a listener with the rendered square
@@ -1205,6 +1208,7 @@ class Board extends React.Component {
                     selected={false}
                     enemySelected={false}
                     shade={shade}
+                    inCheck={false}
                     src={src}
                 />
             </li>);
@@ -1221,6 +1225,7 @@ class Board extends React.Component {
                 selected={position === this.state.selection}
                 enemySelected={position === this.state.enemySelection}
                 shade={shade}
+                inCheck={inCheck}
                 src={src}
             />
         </li>);

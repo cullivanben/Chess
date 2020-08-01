@@ -840,7 +840,7 @@ export default class Movement {
         // determine whether the piece at position is friendly or not
 
         // if the piece is friendly it can only move forward to lower row numbers
-        if (position.friendly && kingRow !== thisRow - 1) return false;
+        if (position.piece.friendly && kingRow !== thisRow - 1) return false;
 
         // if the piece is not friendly it can only move forward to higher row numbers
         else if (kingRow !== thisRow + 1) return false;

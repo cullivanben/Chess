@@ -13,7 +13,8 @@ const color = {
     lightEnemyHighlight: '#db9e93',
     darkEnemyHighlight: '#cc604e',
     lightGrey: '#d4d4d4',
-    darkGrey: '#a1a1a1'
+    darkGrey: '#a1a1a1',
+    orange: 'ff9500'
 };
 
 export default color;
