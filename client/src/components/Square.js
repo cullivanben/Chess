@@ -26,7 +26,7 @@ export default function Square(props) {
         else style.background = color.darkSquareColor;
     }
 
-    // overide the background if this is the king's square and it is in check
+    // if the king is in check, override the background color
     if (props.inCheck) style.background = color.orange;
 
     // set the svg source and className

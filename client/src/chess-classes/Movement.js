@@ -115,8 +115,6 @@ export default class Movement {
             // this piece can only move to the spot directly in front of it
             if (startRow + shift !== destinationRow || startColumn !== destinationColumn) return false;
 
-            console.log('will this remove', attackingFriendlyKing.size);
-
             // if the friendly king is in check, this move will only be legal if it removes the king from check
             if (attackingFriendlyKing.size > 0)
                 return this.willRemoveCheck(start, destination, board, kingPosition, attackingFriendlyKing);
@@ -428,7 +426,6 @@ export default class Movement {
         if (attackerPositions.size === 1 && attackerPositions.has(destination.position)) return true;
 
         if (start.piece !== null && start.piece.pieceType === 'Pawn')
-            console.log('in will remove');
 
         // if there is more than one attacker and this piece is about to kill one of them,
         // this move will not remove the king from check
@@ -447,8 +444,6 @@ export default class Movement {
         // if the piece will be able to attack the king after this move, then this move does not remove 
         // the king from check, return false
         for (let pos of attackerPositions) {
-            console.log('attacker pos', pos);
-            console.log('king pos', kingPosition);
             if (board[pos].piece !== null) {
                 switch (board[pos].piece.pieceType) {
                     case 'Pawn':
@@ -742,7 +737,6 @@ export default class Movement {
             if (thisRow < kingRow) {
                 // loop over every position between the enemy bishop and the friendly king
                 for (let i = thisRow + 1, j = thisColumn + 1; i < kingRow; i++) {
-                    console.log(i, j);
                     // if this position is not the position that is being ignored
                     // and there is a piece in this position, or 
                     // this position is the position that is being blocked:
@@ -846,9 +840,9 @@ export default class Movement {
         else if (kingRow !== thisRow + 1) return false;
 
         // if the column the king in is attackable, return true
-        if (thisColumn === 0) return kingColumn == 1;
-        if (thisColumn === 7) return kingColumn == 6;
-        return kingColumn == thisColumn - 1 || kingColumn == thisColumn + 1;
+        if (thisColumn === 0) return kingColumn === 1;
+        if (thisColumn === 7) return kingColumn === 6;
+        return kingColumn === thisColumn - 1 || kingColumn === thisColumn + 1;
     }
 
     /**
@@ -932,7 +926,6 @@ export default class Movement {
                 // see if the piece can move, if it can, this player is not in checkmate
                 for (let j = 0; j < board.length; j++) {
                     if (j !== i && this.canMove(board[i], board[j], board, kingPosition, attackingFriendlyKing)) {
-                        console.log('thisfailed', i, j);
                         return false;
                     }
                 }

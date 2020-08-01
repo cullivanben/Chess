@@ -130,7 +130,7 @@ class Board extends React.Component {
      */
     initSocket() {
         // create the socket
-        this.socket = io();
+        this.socket = io('http://localhost:5000');
 
         // listen for an enemy connection
         this.socket.on('enemy-connected', this.handleEnemyConnection);
@@ -1187,7 +1187,6 @@ class Board extends React.Component {
     renderSquare(position, shade) {
         // set the svg source and the li key
         let src, key;
-        let inCheck = false;
         if (this.state.board[position].piece === null) {
             src = 'null';
             key = this.state.board[position].id;
@@ -1195,9 +1194,13 @@ class Board extends React.Component {
         else {
             src = this.state.board[position].piece.src;
             key = this.state.board[position].piece.id;
-            inCheck = (this.state.board[position].piece.pieceType === 'King' &&
-                this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0);
         }
+
+        if (this.state.attackingFriendlyKing.size > 0) console.log('im in check');
+        if (this.state.attackingEnemyKing.size > 0) console.log('enemy in check');
+        let inCheck = (this.state.board[position].piece !== null && this.state.board[position].piece.pieceType === 'King' &&
+            ((this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0) || 
+            (!this.state.board[position].piece.friendly && this.state.attackingEnemyKing.size > 0)));
 
         // if the game is over, do not include a listener with the rendered square
         if (this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw) {
@@ -1208,8 +1211,8 @@ class Board extends React.Component {
                     selected={false}
                     enemySelected={false}
                     shade={shade}
-                    inCheck={false}
                     src={src}
+                    inCheck={false}
                 />
             </li>);
         }
@@ -1225,8 +1228,8 @@ class Board extends React.Component {
                 selected={position === this.state.selection}
                 enemySelected={position === this.state.enemySelection}
                 shade={shade}
-                inCheck={inCheck}
                 src={src}
+                inCheck={inCheck}
             />
         </li>);
     }
