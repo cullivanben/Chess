@@ -130,7 +130,7 @@ class Board extends React.Component {
      */
     initSocket() {
         // create the socket
-        this.socket = io('http://localhost:5000');
+        this.socket = io();
 
         // listen for an enemy connection
         this.socket.on('enemy-connected', this.handleEnemyConnection);
@@ -1196,8 +1196,6 @@ class Board extends React.Component {
             key = this.state.board[position].piece.id;
         }
 
-        if (this.state.attackingFriendlyKing.size > 0) console.log('im in check');
-        if (this.state.attackingEnemyKing.size > 0) console.log('enemy in check');
         let inCheck = (this.state.board[position].piece !== null && this.state.board[position].piece.pieceType === 'King' &&
             ((this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0) || 
             (!this.state.board[position].piece.friendly && this.state.attackingEnemyKing.size > 0)));
