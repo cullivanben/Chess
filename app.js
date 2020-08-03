@@ -58,13 +58,11 @@ app.get(colorRoute, async (req, res) => {
 app.post(guestIdRoute, async (req, res) => {
     // give them a guest id if they don't have one
     if (req.session.guest === undefined || req.session.guest === null) {
-        //console.log('set the guest iddddd')
         req.session.guest = uuid.v1();
     }
 
     // get the game id from the request
     let gameId = req.body.gameId;
-    //console.log(gameId, req.session.guest);
 
     // see if the other player is already in the game
     let notEmpty = await asyncClient.exists(gameId);
@@ -76,11 +74,9 @@ app.post(guestIdRoute, async (req, res) => {
 
         // if there is only one player
         if (count === '1') {
-            //console.log('oneplayerr')
             let notFirstTime = await asyncClient.exists(req.session.guest);
             // if it is this player's first time joining
             if (notFirstTime !== 1) {
-                //console.log('first time black', req.session.guest)
                 // update the number of players in the game and this player's color
                 await Promise.all([
                     asyncClient.set(gameId, '2'),
@@ -89,15 +85,12 @@ app.post(guestIdRoute, async (req, res) => {
                     asyncClient.expire(req.session.guest + '$color', 30000)
                 ]);
             }
-            //console.log('we have a re join without opponent')
         }
         // we do not need to update the number of players in the game if this
         // is not the player's first time joining
-        //else console.log('bruh, the count is', count);
     }
     // if this player is the first to join the game
     else {
-        //console.log('first to join whiteeeeeee', req.session.guest)
         // set the number of players in the game and 
         // set this player's color
         await Promise.all([
@@ -113,14 +106,11 @@ app.post(guestIdRoute, async (req, res) => {
 
     // if they have, see if we need to update their game id
     if (alreadyAdded === 1) {
-        //console.log('already added', req.session.guest);
         let oldId = await asyncClient.get(req.session.guest);
-        //console.log(oldId, 'diffff', gameId)
         if (oldId !== gameId) await asyncClient.set(req.session.guest, gameId);
     }
     // if they haven't, add them
     else {
-        //console.log('havent been added yet', req.session.guest)
         await Promise.all([
             asyncClient.set(req.session.guest, gameId),
             asyncClient.expire(req.session.guest, 30000)
