@@ -222,6 +222,9 @@ class Board extends React.Component {
         if (this.state.moveArr !== null) {
             localStorage.setItem('moveArr', JSON.stringify(this.state.moveArr));
         }
+        if (this.state.promoteArr !== null) {
+            localStorage.setItem('promoteArr', JSON.stringify(this.state.promoteArr));
+        }
         if (this.state.castleArr !== null) {
             localStorage.setItem('castleArr', JSON.stringify(this.state.castleArr));
         }
@@ -236,6 +239,12 @@ class Board extends React.Component {
         }
         if (this.state.qsRookPos !== null) {
             localStorage.setItem('qsRookPos', JSON.stringify(this.state.qsRookPos));
+        }
+        if (this.state.justCastled !== null) {
+            localStorage.setItem('justCastled', JSON.stringify(this.state.justCastled));
+        }
+        if (this.state.justPromoted !== null) {
+            localStorage.setItem('justPromoted', JSON.stringify(this.state.justPromoted));
         }
         if (this.state.turn !== null) {
             localStorage.setItem('turn', JSON.stringify(this.state.turn));
@@ -337,6 +346,9 @@ class Board extends React.Component {
         if (localStorage.getItem('moveArr') !== null) {
             restoredState.moveArr = JSON.parse(localStorage.getItem('moveArr'));
         }
+        if (localStorage.getItem('promoteArr') !== null) {
+            restoredState.promoteArr = JSON.parse(localStorage.getItem('promoteArr'));
+        }
         if (localStorage.getItem('castleArr') !== null) {
             restoredState.castleArr = JSON.parse(localStorage.getItem('castleArr'));
         }
@@ -351,6 +363,12 @@ class Board extends React.Component {
         }
         if (localStorage.getItem('qsRookPos') !== null) {
             restoredState.qsRookPos = JSON.parse(localStorage.getItem('qsRookPos'));
+        }
+        if (localStorage.getItem('justCastled') !== null) {
+            restoredState.justCastled = JSON.parse(localStorage.getItem('justCastled'));
+        }
+        if (localStorage.getItem('justPromoted') !== null) {
+            restoredState.justPromoted = JSON.parse(localStorage.getItem('justPromoted'));
         }
         if (localStorage.getItem('turn') !== null) {
             restoredState.turn = JSON.parse(localStorage.getItem('turn'));
