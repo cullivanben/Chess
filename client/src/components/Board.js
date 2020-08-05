@@ -9,6 +9,7 @@ import Loader from './Loader';
 import Movement from '../chess-classes/Movement';
 import Init from './helpers/Init';
 import Help from './helpers/Help';
+import Queen from '../chess-classes/pieces/Queen';
 import '../stylesheets/Board.scss';
 const colorRoute = '/get_color_46e5a98a-37a1-42d8-bb24-18be79ee95b0f99bf926-2b0a-4a82-a-da1833803723';
 
@@ -47,6 +48,7 @@ class Board extends React.Component {
             attackingFriendlyKing: null,            // the locations of the enemy pieces that have the friendly king in check
             attackingEnemyKing: null,               // the locations of the friendly pieces that have the enemy king in check
             moveArr: null,                          // the start and end location of the move that was just made
+            promoteArr: null,                       // the start and end location of the pawn that was just promoted
             castleArr: null,                        // the start and end locations of the king and rook after a castle
             kingPos: null,                          // the position of the friendly king
             enemyKingPos: null,                     // the position of the enemy king
@@ -57,6 +59,7 @@ class Board extends React.Component {
             movedKsRook: null,                      // whether this player has moved their kingside rook
             movedQsRook: null,                      // whether this player has moved their queenside rook
             justCastled: null,                      // whether this player just castled
+            justPromoted: null,                     // whether one of this player's pawns was just promoted
             moves: null,                            // the chess codes of all the moves that have been made
             lastMove: null,                         // the chess code of the move that was just made
             letters: null,                          // the letters labeling the bottom of the board
@@ -82,6 +85,7 @@ class Board extends React.Component {
         this.attemptSelect = this.attemptSelect.bind(this);
         this.unselect = this.unselect.bind(this);
         this.movePiece = this.movePiece.bind(this);
+        this.promote = this.promote.bind(this);
         this.castle = this.castle.bind(this);
         this.hasKingJustMoved = this.hasKingJustMoved.bind(this);
         this.hasKsRookJustMoved = this.hasKsRookJustMoved.bind(this);
@@ -409,6 +413,7 @@ class Board extends React.Component {
             attackingFriendlyKing: new Set(),
             attackingEnemyKing: new Set(),
             moveArr: [],
+            promoteArr: [],
             castleArr: [],
             kingPos: Init.initKingPos(color),
             enemyKingPos: Init.initEnemyKingPos(color),
@@ -419,6 +424,7 @@ class Board extends React.Component {
             movedKsRook: false,
             movedQsRook: false,
             justCastled: false,
+            justPromoted: false,
             moves: [],
             lastMove: '',
             letters: Init.initLetters(color),
@@ -540,6 +546,47 @@ class Board extends React.Component {
             }
         }
 
+        // if an enemy pawn was just promoted
+        else if (data.promotion) {
+
+            // convert the positions
+            let a = Help.convertPos(data.promotion[0]);
+            let b = Help.convertPos(data.promotion[1]);
+
+            // if this move killed a friendly piece
+            if (this.state.board[b].piece !== null) {
+                // find the dead piece and update the state
+                let dead = this.state.board[b].piece.pieceType;
+                this.setState(prevState => ({
+                    ...stateUpdate,
+                    deadFriends: prevState.deadFriends.concat((prevState.color === 'white' ?
+                        'w' + dead : 'b' + dead)),
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === b) spot.piece = new Queen(false, prevState.color);
+                            else if (i === a) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }), this.checkForCheckmate);
+            }
+
+            // if this move did not kill an enemy piece
+            else {
+                // update the state
+                this.setState(prevState => ({
+                    ...stateUpdate,
+                    board: update(prevState.board, {
+                        $apply: board => board.map((spot, i) => {
+                            if (i === b) spot.piece = new Queen(false, prevState.color);
+                            else if (i === a) spot.piece = null;
+                            return spot;
+                        })
+                    })
+                }), this.checkForCheckmate);
+            }
+        }
+
         // if a castle was made we will update the board as well
         else if (data.castle) {
 
@@ -569,7 +616,7 @@ class Board extends React.Component {
             // check if this move put this player in checkmate
         }
 
-        // if no move or castle was made we do not need to update the board,
+        // if no move, promotion or castle was made we do not need to update the board,
         // however, we still must update the state
         // in this case we also do not need to check if this player is in checkmate because no move was made
         else this.setState(stateUpdate);
@@ -661,7 +708,7 @@ class Board extends React.Component {
 
             // update the state and inform the user that the match was a draw
             this.setState({ draw: true }, () => this.informUser('draw'));
-        } 
+        }
         else if (this.socket !== null) this.socket.emit('outgoing-draw-refusal');
     }
 
@@ -801,7 +848,8 @@ class Board extends React.Component {
                 this.state.board[position], this.state.board, this.state.kingPos, this.state.attackingFriendlyKing)) return;
 
             // move the piece to the specified location
-            this.movePiece(position);
+            if (this.state.board[this.state.selection].piece.pieceType === 'Pawn' && position < 8) this.promote(position);
+            else this.movePiece(position);
         }
     }
 
@@ -877,6 +925,7 @@ class Board extends React.Component {
                 turn: false,
                 selection: -1,
                 justCastled: false,
+                justPromoted: false,
                 moveArr: [prevState.selection, position],
                 attackingFriendlyKing: new Set(),
                 kingPos: newKingPos,
@@ -909,6 +958,7 @@ class Board extends React.Component {
                 turn: false,
                 selection: -1,
                 justCastled: false,
+                justPromoted: false,
                 moveArr: [prevState.selection, position],
                 attackingFriendlyKing: new Set(),
                 kingPos: newKingPos,
@@ -921,6 +971,75 @@ class Board extends React.Component {
                 board: update(prevState.board, {
                     $apply: board => board.map((spot, i) => {
                         if (i === position) spot.piece = selectedPiece;
+                        else if (i === prevState.selection) spot.piece = null;
+                        return spot;
+                    })
+                })
+            }), this.updateAttackers);
+
+            // when the state is done being updated, the set of attackers
+            // will be updated
+        }
+    }
+
+    /**
+     *Promotes a pawn that has reached the end of the board to a queen.
+     *
+     * @param {number} position - The position where the new queen will be.
+     * @memberof Board
+     */
+    promote(position) {
+        // get the chess code of this move
+        let code = Help.getNumLetterCode(position, this.state.board[this.state.selection].piece.pieceType, this.state.color);
+
+        // if this move is killing an enemy piece
+        if (this.state.board[this.state.selection].piece !== null) {
+
+            // get the piece that is being killed
+            let dead = this.state.board[position].piece.pieceType;
+
+            // update the board accordingly
+            this.setState(prevState => ({
+                turn: false,
+                selection: -1,
+                justCastled: false,
+                justPromoted: true,
+                promoteArr: [prevState.selection, position],
+                attackingFriendlyKing: new Set(),
+                deadEnemies: prevState.deadEnemies.concat((prevState.color === 'white' ?
+                    'b' + dead : 'w' + dead)),
+                highlighted: new Set(),
+                moves: prevState.moves.concat(code),
+                lastMove: code,
+                board: update(prevState.board, {
+                    $apply: board => board.map((spot, i) => {
+                        if (i === position) spot.piece = new Queen(true, prevState.color);
+                        else if (i === prevState.selection) spot.piece = null;
+                        return spot;
+                    })
+                })
+            }), this.updateAttackers);
+
+            // when the state is done being updated, the set of attackers
+            // will be updated
+        }
+
+        // if this move does not kill an enemy
+        else {
+            // update the board accordingly
+            this.setState(prevState => ({
+                turn: false,
+                selection: -1,
+                justCastled: false,
+                justPromoted: true,
+                promoteArr: [prevState.selection, position],
+                attackingFriendlyKing: new Set(),
+                highlighted: new Set(),
+                moves: prevState.moves.concat(code),
+                lastMove: code,
+                board: update(prevState.board, {
+                    $apply: board => board.map((spot, i) => {
+                        if (i === position) spot.piece = new Queen(true, prevState.color);
                         else if (i === prevState.selection) spot.piece = null;
                         return spot;
                     })
@@ -1005,6 +1124,7 @@ class Board extends React.Component {
             selection: -1,
             castleArr: castleArr,
             justCastled: true,
+            justPromoted: false,
             attackingFriendlyKing: new Set(),
             kingPos: newKingPos,
             movedKing: true,
@@ -1120,6 +1240,7 @@ class Board extends React.Component {
         // if the player just castled, add the castle to the update
         // if not, add the regular move to the update
         if (this.state.justCastled) update.castle = this.state.castleArr;
+        else if (this.state.justPromoted) update.promotion = this.state.promoteArr;
         else update.move = this.state.moveArr;
 
         // send the update to the enemy
@@ -1197,8 +1318,8 @@ class Board extends React.Component {
         }
 
         let inCheck = (this.state.board[position].piece !== null && this.state.board[position].piece.pieceType === 'King' &&
-            ((this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0) || 
-            (!this.state.board[position].piece.friendly && this.state.attackingEnemyKing.size > 0)));
+            ((this.state.board[position].piece.friendly && this.state.attackingFriendlyKing.size > 0) ||
+                (!this.state.board[position].piece.friendly && this.state.attackingEnemyKing.size > 0)));
 
         // if the game is over, do not include a listener with the rendered square
         if (this.state.enemyLeft || this.state.youWon || this.state.youLost || this.state.draw) {
