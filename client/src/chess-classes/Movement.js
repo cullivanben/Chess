@@ -34,9 +34,7 @@ export default class Movement {
                 return (this.canMoveBishop(start, destination, board, kingPosition, attackingFriendlyKing) ||
                     this.canMoveRook(start, destination, board, kingPosition, attackingFriendlyKing));
             default:
-                // if the kingPosition is -1 this method was called from this.dangerous
-                return (kingPosition === -1 ? this.canMoveKing(start, destination, board, true) :
-                    this.canMoveKing(start, destination, board, false));
+                return this.canMoveKing(start, destination, board);
         }
     }
 
@@ -365,7 +363,7 @@ export default class Movement {
      * @returns {boolean} Whether the King at start can be moved to the destination
      * @memberof Movement
      */
-    static canMoveKing(start, destination, board, calledFromDangerous) {
+    static canMoveKing(start, destination, board) {
         if (start.piece === null) return false;
 
         // if the destination is occupied by a piece on the same team, the king cannot move there
@@ -380,13 +378,6 @@ export default class Movement {
         // if the destination is not adjacent to the king, it cannot move there
         if (destinationRow < startRow - 1 || destinationRow > startRow + 1 || destinationColumn < startColumn - 1
             || destinationColumn > startColumn + 1) return false;
-
-        // if the piece that will be at the destination is the enemy king, return true
-        // this is because if that is the case this method was called from this.dangerous
-        // in this situation it is not possible for the enemy king to move to the destination because
-        // this piece would be able to move there.
-        // in this case we cannot call this.dangerous because it could lead to infinite recursion
-        if (calledFromDangerous) return true;
 
         // if the king will be attacked at the destination, it cannot move there
         // if there are no threatening pieces at the destination, it can move there
@@ -427,9 +418,9 @@ export default class Movement {
 
         if (start.piece !== null && start.piece.pieceType === 'Pawn')
 
-        // if there is more than one attacker and this piece is about to kill one of them,
-        // this move will not remove the king from check
-        if (attackerPositions.size > 1 && attackerPositions.has(destination.position)) return false;
+            // if there is more than one attacker and this piece is about to kill one of them,
+            // this move will not remove the king from check
+            if (attackerPositions.size > 1 && attackerPositions.has(destination.position)) return false;
 
         // now that we know that none of the attackers are being killed,
         // if the piece is an instanceof knight or pawn then this move will not remove the king from check
@@ -543,13 +534,16 @@ export default class Movement {
                     case 'Bishop':
                         if (this.bishopWillAttack(board[i], location.position, board, startLocation, new Spot(-1))) return true;
                         break;
+                    case 'Knight':
+                        if (this.knightWillAttack(board[i], location.position)) return true;
+                        break;
                     case 'Queen':
                         if (this.rookWillAttack(board[i], location.position, board, startLocation, new Spot(-1)) ||
                             this.bishopWillAttack(board[i], location.position, board, startLocation, new Spot(-1)))
                             return true;
                         break;
                     default:
-                        if (this.canMove(board[i], location, board, -1, new Set())) return true;
+                        if (this.kingWillAttack(board[i], location.position)) return true;
                 }
             }
         }
@@ -843,6 +837,62 @@ export default class Movement {
         if (thisColumn === 0) return kingColumn === 1;
         if (thisColumn === 7) return kingColumn === 6;
         return kingColumn === thisColumn - 1 || kingColumn === thisColumn + 1;
+    }
+
+    /**
+     *Determines whether this Knight will be able to attack the king.
+     *
+     * @static
+     * @param {Spot} position - The spot on the board where this Knight is located.
+     * @param {number} kingPosition - The position of the king.
+     * @memberof Movement
+     * @returns {boolean} Whether this knight will be able to attack the king.
+     */
+    static knightWillAttack(position, kingPosition) {
+        // convert the positions to rows and columns
+        let startRow = Math.floor(position.position / 8);
+        let startColumn = position.position % 8;
+        let destinationRow = Math.floor(kingPosition / 8);
+        let destinationColumn = kingPosition % 8;
+
+        // if the destination is not one of the eight valid moves, the knight will not be able to attack the king
+        if (!((destinationRow === startRow - 2 && destinationColumn === startColumn + 1) ||
+            (destinationRow === startRow - 1 && destinationColumn === startColumn + 2) ||
+            (destinationRow === startRow + 1 && destinationColumn === startColumn + 2) ||
+            (destinationRow === startRow + 2 && destinationColumn === startColumn + 1) ||
+            (destinationRow === startRow + 2 && destinationColumn === startColumn - 1) ||
+            (destinationRow === startRow + 1 && destinationColumn === startColumn - 2) ||
+            (destinationRow === startRow - 1 && destinationColumn === startColumn - 2) ||
+            (destinationRow === startRow - 2 && destinationColumn === startColumn - 1)))
+            return false;
+
+        // the destination is one of the eight valid moves
+        return true;
+    }
+
+
+    /**
+     *Determines whether this king will be able to attack the enemy king.
+     *
+     * @static
+     * @param {Spot} position - The spot on the board where the attacking king is located.
+     * @param {number} kingPosition - The position on the board where the other king is located.
+     * @returns {boolean} Whether this king will be able to attack the other king.
+     * @memberof Movement
+     */
+    static kingWillAttack(position, kingPosition) {
+        // convert the positions to rows and columns
+        let startRow = Math.floor(position.position / 8);
+        let startColumn = position.position % 8;
+        let destinationRow = Math.floor(kingPosition / 8);
+        let destinationColumn = kingPosition % 8;
+
+        // if the destination is not adjacent to the king, it cannot move there
+        if (destinationRow < startRow - 1 || destinationRow > startRow + 1 || destinationColumn < startColumn - 1
+            || destinationColumn > startColumn + 1) return false;
+
+        // the destination must be adjacent to the king, thus it will be able to attack the enemy king
+        return true;
     }
 
     /**
