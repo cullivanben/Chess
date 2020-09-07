@@ -9,3 +9,6 @@ Generate a game id and share it with your opponent. Once you both enter it on th
 The tech stack of this application consists of React, Express, Redis, and MongoDB.
 
 Have fun playing chess!
+
+## Design
+
